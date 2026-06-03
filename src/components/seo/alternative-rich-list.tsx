@@ -3,6 +3,7 @@ import type { AlternativeItem } from '@/types/seo-intelligence'
 import { SectionTitle } from '@/components/seo/section-title'
 import { UIBadge } from '@/components/ui/ui-badge'
 import { UIButton } from '@/components/ui/ui-button'
+import { partImageForMpn } from '@/lib/part-images'
 
 const FACTOR_LABELS: { key: keyof NonNullable<AlternativeItem['compatibility']>; label: string }[] =
   [
@@ -44,6 +45,9 @@ export function AlternativeRichList({
         {items.map((alt) => (
           <article key={alt.mpn} className="seo-alt-card">
             <header className="seo-alt-card__header">
+              <div className="seo-alt-card__thumb">
+                <img src={partImageForMpn(alt.mpn)} alt={`${alt.mpn} package`} />
+              </div>
               <div>
                 <Link href={alt.href} className="seo-alt-card__mpn">
                   {alt.mpn}

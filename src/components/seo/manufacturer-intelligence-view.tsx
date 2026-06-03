@@ -15,7 +15,7 @@ export function ManufacturerIntelligenceView({ page }: { page: ManufacturerIntel
           category: 'Manufacturer intelligence hub',
         }}
       />
-      <p className="seo-direct-answer">{page.shortAnswer}</p>
+      <p className="seo-direct-answer seo-direct-answer--gradient seo-direct-answer--main-width">{page.shortAnswer}</p>
       <p className="seo-section__lead">{page.summary}</p>
 
       <PageLayout

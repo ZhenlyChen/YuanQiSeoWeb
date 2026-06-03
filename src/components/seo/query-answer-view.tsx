@@ -15,7 +15,7 @@ export function QueryAnswerView({ page }: { page: QueryAnswerPage }) {
           category: page.category,
         }}
       />
-      <p className="seo-direct-answer">{page.shortAnswer}</p>
+      <p className="seo-direct-answer seo-direct-answer--gradient seo-direct-answer--main-width">{page.shortAnswer}</p>
 
       <PageLayout
         main={

@@ -149,3 +149,24 @@ export function answerSeoMeta(input: {
     ],
   }
 }
+
+export function categoryFinderSeoMeta(input: {
+  categoryLabel: string
+  slug: string
+}): SeoMeta {
+  const { categoryLabel, slug } = input
+  return {
+    title: `${categoryLabel} Component Finder & Selection Guide | PartGenie`,
+    description: `Find curated ${categoryLabel.toLowerCase()} options with engineering-oriented filters, replacement guidance, and related intelligence pages. Built for fast BOM decision-making.`,
+    h1: `${categoryLabel} Component Finder`,
+    canonicalPath: `/categories/${slug}/finder`,
+    keywords: [
+      `${categoryLabel} finder`,
+      `${categoryLabel} component selection`,
+      `${categoryLabel} alternatives`,
+      `${categoryLabel} BOM`,
+      'component finder',
+      'engineering selection guide',
+    ],
+  }
+}

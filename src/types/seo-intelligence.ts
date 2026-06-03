@@ -82,6 +82,60 @@ export type BomSourcingNotes = {
   bullets: string[]
 }
 
+export type ComponentIdentityFields = {
+  codeNorm: string
+  codeYuanqi: string
+  manufacturerNorm: string
+  identityKey: string
+  codeOther?: string[]
+}
+
+export type ComponentSourceQuality = {
+  datasheetStatus: 'matched' | 'crawled' | 'missing' | 'downloaded' | 'failed'
+  datasheetTextQuality: 'good' | 'partial' | 'ocr' | 'poor' | 'unavailable'
+  enrichmentVersion: string
+  usedSources: string[]
+  requiresHumanReview: boolean
+}
+
+export type ComponentComplianceFields = {
+  rohs?: string
+  reach?: string
+  msl?: string
+  eccn?: string
+  htsus?: string
+}
+
+export type ComponentMechanicalFields = {
+  pinCount?: number
+  pinPitchMm?: number
+  pinType?: string
+  lengthMm?: number
+  widthMm?: number
+  heightMm?: number
+}
+
+export type ComponentMediaFields = {
+  datasheetUrls: string[]
+  productUrls?: string[]
+  imgUrls?: string[]
+}
+
+export type ComponentSourcingSnapshot = {
+  vendorCount: number
+  stockStatus: string
+  minUnitPrice?: number
+  priceCurrency?: string
+  packagingOptions?: string[]
+}
+
+export type ComponentSubstituteSummary = {
+  dropInCount: number
+  functionalCount: number
+  alternateCount: number
+  requiresValidation: boolean
+}
+
 export type ComponentIntelligencePage = {
   pageType: 'component'
   slug: string
@@ -109,6 +163,13 @@ export type ComponentIntelligencePage = {
   relatedAnswers: EntityLink[]
   relatedCategory: EntityLink
   relatedManufacturer: EntityLink
+  identity: ComponentIdentityFields
+  sourceQuality: ComponentSourceQuality
+  compliance?: ComponentComplianceFields
+  mechanical?: ComponentMechanicalFields
+  media: ComponentMediaFields
+  sourcingSnapshot?: ComponentSourcingSnapshot
+  substituteSummary?: ComponentSubstituteSummary
 }
 
 export type ReplacementVerdict = {

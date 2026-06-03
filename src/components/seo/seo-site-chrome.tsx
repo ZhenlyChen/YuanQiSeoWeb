@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { FloatingCtaDock } from '@/components/seo/floating-cta-dock'
-import { UIInput } from '@/components/ui/ui-input'
 import { partFinderUrl } from '@/lib/tool-urls'
 
 export function SeoSiteChrome({ children }: { children: React.ReactNode }) {
@@ -12,18 +11,6 @@ export function SeoSiteChrome({ children }: { children: React.ReactNode }) {
           <Link href="https://www.partgenie.ai/" className="seo-site-header__brand">
             <img src="/logo-wide-en.svg" alt="PartGenie" className="seo-site-header__brand-logo" />
           </Link>
-          <form className="seo-site-header__search" action={partFinderUrl(ctaSlug)} role="search">
-            <label htmlFor="seo-global-search" className="seo-sr-only">
-              Search components
-            </label>
-            <UIInput
-              id="seo-global-search"
-              name="q"
-              type="search"
-              placeholder="Search components, alternatives, or ask a question..."
-              className="seo-site-header__search-input"
-            />
-          </form>
           <nav className="seo-site-header__nav" aria-label="Primary">
             <a href={partFinderUrl(ctaSlug)}>Finder</a>
             <Link href="/dev/seo-previews">Guides</Link>

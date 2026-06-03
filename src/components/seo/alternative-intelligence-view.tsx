@@ -12,13 +12,17 @@ import type { AlternativeIntelligencePage } from '@/types/seo-intelligence'
 function ViewToggle({ slug, active }: { slug: string; active: 'list' | 'graph' }) {
   return (
     <div className="seo-view-toggle" role="group" aria-label="View mode">
-      <span className={`seo-view-toggle__btn ${active === 'list' ? 'seo-view-toggle__btn--active' : ''}`}>
+      <Link
+        href={`/alternatives/${slug}`}
+        className={`seo-view-toggle__btn ${active === 'list' ? 'seo-view-toggle__btn--active' : ''}`}
+        aria-current={active === 'list' ? 'page' : undefined}
+      >
         List
-      </span>
+      </Link>
       <Link
         href={`/alternatives/${slug}?view=graph`}
         className={`seo-view-toggle__btn ${active === 'graph' ? 'seo-view-toggle__btn--active' : ''}`}
-        aria-disabled={active === 'list'}
+        aria-current={active === 'graph' ? 'page' : undefined}
       >
         Graph
       </Link>
@@ -41,7 +45,7 @@ export function AlternativeIntelligenceView({
           subtitle={page.subtitle}
           actions={<ViewToggle slug={page.slug} active="graph" />}
         />
-        <p className="seo-direct-answer">{page.shortAnswer}</p>
+        <p className="seo-direct-answer seo-direct-answer--gradient">{page.shortAnswer}</p>
         <div className="seo-card seo-graph-teaser">
           <p>
             Full alternative graph rankings and supplier weights are available inside PartGenie — not
@@ -65,7 +69,7 @@ export function AlternativeIntelligenceView({
         subtitle={page.subtitle}
         actions={<ViewToggle slug={page.slug} active="list" />}
       />
-      <p className="seo-direct-answer">{page.shortAnswer}</p>
+      <p className="seo-direct-answer seo-direct-answer--gradient seo-direct-answer--main-width">{page.shortAnswer}</p>
 
       <PageLayout
         main={
@@ -110,6 +114,36 @@ export function AlternativeIntelligenceView({
               viewAllHref={`/alternatives/${page.slug}`}
             />
             <CompatibilityMatrix rows={page.compatibilityMatrix} />
+
+            <section className="seo-section">
+              <SectionTitle title="Feature comparison snapshot" icon="specs" />
+              <div className="seo-card">
+                <div className="seo-table-wrap">
+                  <table className="seo-table seo-table--enhanced">
+                    <thead>
+                      <tr>
+                        <th scope="col">Feature</th>
+                        <th scope="col">{page.featureComparisonHeaders.original}</th>
+                        <th scope="col">{page.featureComparisonHeaders.alt1}</th>
+                        <th scope="col">{page.featureComparisonHeaders.alt2}</th>
+                        <th scope="col">{page.featureComparisonHeaders.alt3}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {page.featureComparison.map((row) => (
+                        <tr key={row.feature}>
+                          <th scope="row">{row.feature}</th>
+                          <td>{row.original}</td>
+                          <td>{row.alt1}</td>
+                          <td>{row.alt2}</td>
+                          <td>{row.alt3}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
 
             <section className="seo-section">
               <SectionTitle title="Application compatibility" icon="fit" />

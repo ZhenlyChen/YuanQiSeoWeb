@@ -19,6 +19,7 @@ const mozillaHeadline = Mozilla_Headline({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-mozilla-headline',
+  weight: ['400', '600', '700'],
 })
 
 export const metadata: Metadata = {
