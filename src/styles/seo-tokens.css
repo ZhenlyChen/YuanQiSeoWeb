@@ -1,0 +1,38 @@
+/* Extended tokens from variables.json (mock / SEO pages) */
+:root {
+  --pg-color-brand-50: #f0fafb;
+  --pg-color-brand-100: #d5f0f2;
+  --pg-color-brand-200: #a8e0e5;
+  --pg-color-brand-500: #22808d;
+  --pg-color-brand-700: #1a656f;
+
+  --pg-color-gray-50: #f9fafb;
+  --pg-color-gray-100: #f2f4f7;
+  --pg-color-gray-200: #e4e7ec;
+  --pg-color-gray-300: #d0d5dd;
+  --pg-color-gray-500: #667085;
+  --pg-color-gray-600: #475467;
+  --pg-color-gray-700: #344054;
+  --pg-color-gray-900: #101828;
+
+  --pg-color-success-bg: #dcfae6;
+  --pg-color-success-text: #067647;
+  --pg-color-warning-bg: #fef0c7;
+  --pg-color-warning-text: #b54708;
+  --pg-color-error-bg: #fee4e2;
+  --pg-color-error-text: #b42318;
+
+  --pg-space-1: 4px;
+  --pg-space-2: 8px;
+  --pg-space-3: 12px;
+  --pg-space-4: 16px;
+  --pg-space-5: 20px;
+  --pg-space-6: 24px;
+  --pg-space-8: 32px;
+  --pg-space-10: 40px;
+  --pg-space-12: 48px;
+  --pg-space-16: 64px;
+
+  --pg-content-max: 1200px;
+  --pg-section-gap: 48px;
+}

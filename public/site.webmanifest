@@ -1,0 +1,15 @@
+{
+  "name": "PartGenie",
+  "short_name": "PartGenie",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "theme_color": "#22808d",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
