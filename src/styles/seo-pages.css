@@ -462,6 +462,7 @@
 }
 
 .seo-top-summary-card {
+  --seo-summary-inset: var(--pg-space-4);
   position: relative;
   border: 1px solid transparent;
   border-radius: 14px;
@@ -840,7 +841,7 @@
 }
 
 .seo-top-summary-card .seo-ai-summary {
-  padding: 0 var(--pg-space-6) var(--pg-space-6);
+  padding: 0 var(--seo-summary-inset) var(--pg-space-6);
 }
 
 .seo-ai-summary__title {
@@ -869,7 +870,7 @@
 
 .seo-top-summary-card > .seo-ai-summary__title--lead {
   margin: 0;
-  padding: var(--pg-space-5) var(--pg-space-6) var(--pg-space-6);
+  padding: var(--pg-space-5) var(--seo-summary-inset) var(--pg-space-5);
 }
 
 .seo-top-summary-card > .seo-ai-summary__title--lead + .seo-model-visual--embedded {
@@ -883,6 +884,7 @@
 }
 
 .seo-verdict-card--embedded {
+  width: 100%;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -1050,30 +1052,52 @@
   gap: 0;
 }
 
-.seo-overview-hero .seo-model-visual--embedded {
+.seo-top-summary-card .seo-overview-hero .seo-model-visual--embedded {
   margin-bottom: 0;
-  padding: var(--pg-space-5) var(--pg-space-4) var(--pg-space-3);
+  padding: var(--pg-space-5) var(--seo-summary-inset) var(--pg-space-3);
   align-items: stretch;
 }
 
 .seo-overview-hero .seo-model-visual__image-wrap {
-  width: 112px;
-  min-width: 112px;
+  aspect-ratio: 1 / 1;
+  width: auto;
   height: auto;
+  min-width: 112px;
+  min-height: 112px;
   align-self: stretch;
+  background: #fff;
 }
 
 .seo-overview-hero .seo-model-visual__image {
   object-fit: contain;
+  background: #fff;
 }
 
-.seo-direct-answer--overview {
+.seo-top-summary-card .seo-direct-answer--embedded.seo-direct-answer--overview {
   width: 100%;
   max-width: none;
-  padding: var(--pg-space-3) var(--pg-space-4) var(--pg-space-4);
+  padding: var(--pg-space-3) var(--seo-summary-inset) var(--pg-space-4);
   font-size: 1rem;
   line-height: 1.7;
   color: var(--pg-color-gray-700);
+}
+
+.seo-top-summary-card > .seo-overview-hero + .seo-ai-summary {
+  margin-top: 0;
+  padding-top: var(--pg-space-5);
+  border-top: 0;
+}
+
+.seo-top-summary-card > .seo-overview-hero + .seo-ai-summary::before {
+  content: '';
+  display: block;
+  height: 1px;
+  margin: calc(-1 * var(--pg-space-5)) 0 var(--pg-space-5);
+  background: var(--pg-color-border-secondary);
+}
+
+.seo-top-summary-card > .seo-overview-hero + .seo-ai-summary .seo-verdict-card--embedded {
+  width: 100%;
 }
 
 /* PartGenie webapp — 规格书 file row (Figma 1892:43059) */
@@ -1270,6 +1294,10 @@ a.seo-datasheet-file__name:hover {
   border-bottom: 0;
 }
 
+.seo-card > .seo-card__title:first-child {
+  margin-bottom: calc(var(--pg-space-4) + 12px);
+}
+
 .seo-spec-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -1354,8 +1382,13 @@ a.seo-datasheet-file__name:hover {
 
 .seo-verdict-columns {
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--pg-space-5);
+}
+
+.seo-verdict-block {
+  min-width: 0;
 }
 
 .seo-verdict-block__title {
@@ -1401,14 +1434,14 @@ a.seo-datasheet-file__name:hover {
   margin-top: var(--pg-space-5);
   padding-top: var(--pg-space-4);
   border-top: 1px solid var(--pg-color-border-secondary);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--pg-space-8);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pg-space-5);
+  align-items: start;
 }
 
-.seo-verdict-footer > div:last-child {
-  max-width: min(100%, 420px);
+.seo-verdict-footer > div {
+  min-width: 0;
 }
 
 .seo-verdict-footer__label {

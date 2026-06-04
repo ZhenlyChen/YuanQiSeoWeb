@@ -3,11 +3,7 @@ import { AlternativeList } from '@/components/seo/alternative-list'
 import { ComponentSectionNav } from '@/components/seo/component-section-nav'
 import { buildComponentSectionNavItems } from '@/lib/component-section-nav-items'
 import { DecisionInsightsTabs } from '@/components/seo/decision-insights-tabs'
-import { DatasheetFileCard } from '@/components/seo/datasheet-file-card'
 import { KeySpecsSnapshot } from '@/components/seo/key-specs-snapshot'
-import { SectionTitle } from '@/components/seo/section-title'
-import { UICard } from '@/components/ui/ui-card'
-import { datasheetAiUrl } from '@/lib/tool-urls'
 import { PageHeader } from '@/components/seo/page-header'
 import { PageLayout } from '@/components/seo/page-layout'
 import { QaBlocks } from '@/components/seo/qa-blocks'
@@ -85,6 +81,7 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
                 verdict={page.aiVerdict}
                 sourcingContext="Multiple alternatives available"
                 hideHeading
+                hideFooter
               />
             </section>
             <div id="specifications" className="seo-page-section">
@@ -93,24 +90,10 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
                 applicationTags={page.applications.goodFit}
                 mpn={page.mpn}
                 slug={page.slug}
-                includeDatasheet={false}
+                datasheetUrls={page.media.datasheetUrls}
+                datasheetSizeBytes={page.media.datasheetSizeBytes}
               />
             </div>
-            {hasDatasheet ? (
-              <div id="datasheet" className="seo-page-section">
-                <section className="seo-section">
-                  <UICard className="seo-card">
-                    <SectionTitle title="Datasheet" />
-                    <DatasheetFileCard
-                      mpn={page.mpn}
-                      datasheetUrls={page.media.datasheetUrls}
-                      datasheetSizeBytes={page.media.datasheetSizeBytes}
-                      aiHref={datasheetAiUrl(page.mpn, page.slug)}
-                    />
-                  </UICard>
-                </section>
-              </div>
-            ) : null}
             <div id="alternatives" className="seo-page-section">
             <AlternativeList
               items={page.alternatives}

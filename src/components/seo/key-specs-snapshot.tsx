@@ -21,7 +21,7 @@ export function KeySpecsSnapshot({
   slug?: string
   datasheetUrls?: string[]
   datasheetSizeBytes?: number
-  /** When false, render datasheet in a separate page section (component page nav). */
+  /** When false, omit the datasheet block from this card. */
   includeDatasheet?: boolean
 }) {
   const tags = normalizeApplicationTags(applicationTags)
@@ -55,16 +55,18 @@ export function KeySpecsSnapshot({
             </div>
           </>
         ) : null}
-        {includeDatasheet && mpn && slug ? (
+        {includeDatasheet && mpn && slug && datasheetUrls?.length ? (
           <>
             <hr className="seo-spec-divider" />
-            <SectionTitle title="Datasheet" />
-            <DatasheetFileCard
-              mpn={mpn}
-              datasheetUrls={datasheetUrls}
-              datasheetSizeBytes={datasheetSizeBytes}
-              aiHref={datasheetAiUrl(mpn, slug)}
-            />
+            <div id="datasheet" className="seo-page-section-anchor">
+              <SectionTitle title="Datasheet" />
+              <DatasheetFileCard
+                mpn={mpn}
+                datasheetUrls={datasheetUrls}
+                datasheetSizeBytes={datasheetSizeBytes}
+                aiHref={datasheetAiUrl(mpn, slug)}
+              />
+            </div>
           </>
         ) : null}
       </UICard>

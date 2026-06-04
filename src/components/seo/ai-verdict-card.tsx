@@ -30,10 +30,13 @@ export function AiVerdictCard({
   verdict,
   sourcingContext,
   hideHeading = false,
+  hideFooter = false,
 }: {
   verdict: AiVerdict
   sourcingContext?: string
   hideHeading?: boolean
+  /** Temporarily hide replacement difficulty / sourcing risk row. */
+  hideFooter?: boolean
 }) {
   return (
     <section className="seo-section seo-ai-summary">
@@ -74,16 +77,18 @@ export function AiVerdictCard({
             </ul>
           </div>
         </div>
-        <footer className="seo-verdict-footer">
-          <div>
-            <span className="seo-verdict-footer__label">Replacement difficulty</span>
-            <strong>{difficultyLabel(verdict.replacementDifficulty)}</strong>
-          </div>
-          <div>
-            <span className="seo-verdict-footer__label">Sourcing risk</span>
-            <strong>{sourcingLabel(verdict.sourcingRisk, sourcingContext)}</strong>
-          </div>
-        </footer>
+        {hideFooter ? null : (
+          <footer className="seo-verdict-footer">
+            <div>
+              <span className="seo-verdict-footer__label">Replacement difficulty</span>
+              <strong>{difficultyLabel(verdict.replacementDifficulty)}</strong>
+            </div>
+            <div>
+              <span className="seo-verdict-footer__label">Sourcing risk</span>
+              <strong>{sourcingLabel(verdict.sourcingRisk, sourcingContext)}</strong>
+            </div>
+          </footer>
+        )}
       </div>
     </section>
   )
