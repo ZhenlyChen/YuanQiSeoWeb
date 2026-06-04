@@ -13,6 +13,7 @@ export function KeySpecsSnapshot({
   slug,
   datasheetUrls,
   datasheetSizeBytes,
+  includeDatasheet = true,
 }: {
   specs: KeySpec[]
   applicationTags?: ApplicationTagInput[]
@@ -20,6 +21,8 @@ export function KeySpecsSnapshot({
   slug?: string
   datasheetUrls?: string[]
   datasheetSizeBytes?: number
+  /** When false, render datasheet in a separate page section (component page nav). */
+  includeDatasheet?: boolean
 }) {
   const tags = normalizeApplicationTags(applicationTags)
 
@@ -52,7 +55,7 @@ export function KeySpecsSnapshot({
             </div>
           </>
         ) : null}
-        {mpn && slug ? (
+        {includeDatasheet && mpn && slug ? (
           <>
             <hr className="seo-spec-divider" />
             <SectionTitle title="Datasheet" />

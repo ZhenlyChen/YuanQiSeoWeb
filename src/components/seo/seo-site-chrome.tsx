@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { FloatingCtaDock } from '@/components/seo/floating-cta-dock'
 import { partFinderUrl, signInUrl, signUpUrl } from '@/lib/tool-urls'
 
 export type SeoPageContext = {
@@ -34,7 +33,6 @@ export function SeoSiteChrome({
         </div>
       </header>
       {children}
-      <FloatingCtaDock pageContext={pageContext} />
       <footer className="seo-site-footer">
         <div className="seo-site-footer__inner">
           <p>

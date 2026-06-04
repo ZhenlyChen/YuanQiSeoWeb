@@ -1,6 +1,35 @@
 const APP_ORIGIN = 'https://app.partgenie.ai'
+const MARKETING_ORIGIN = 'https://www.partgenie.ai'
 
-function withUtm(path: string, slug: string, campaign: string, extra: Record<string, string> = {}): string {
+/** Public marketing tool landings (Webflow). */
+export const MARKETING_TOOL_PAGES = {
+  componentFinder: `${MARKETING_ORIGIN}/ai-component-finder`,
+  alternativeFinder: `${MARKETING_ORIGIN}/alternative-finder`,
+  datasheetAi: `${MARKETING_ORIGIN}/datasheet-ai`,
+  bomAnalyzer: `${MARKETING_ORIGIN}/ai-bom-analyzer`,
+} as const
+
+const MARKETING_TOOL_PATH_BY_CAMPAIGN = {
+  component_finder: '/ai-component-finder',
+  alternative_finder: '/alternative-finder',
+  datasheet_ai: '/datasheet-ai',
+  bom_analyzer: '/ai-bom-analyzer',
+} as const
+
+const APP_TOOL_PATH_BY_CAMPAIGN = {
+  component_finder: '/app/chat',
+  alternative_finder: '/app/chat',
+  datasheet_ai: '/app/chat',
+  bom_analyzer: '/app/chat',
+} as const
+
+function withUtm(
+  origin: string,
+  path: string,
+  slug: string,
+  campaign: string,
+  extra: Record<string, string> = {},
+): string {
   const params = new URLSearchParams({
     utm_source: 'seo',
     utm_medium: 'pseo',
@@ -8,11 +37,36 @@ function withUtm(path: string, slug: string, campaign: string, extra: Record<str
     utm_content: slug,
     ...extra,
   })
-  return `${APP_ORIGIN}${path}?${params.toString()}`
+  return `${origin}${path}?${params.toString()}`
+}
+
+function marketingToolUrl(
+  campaign: keyof typeof MARKETING_TOOL_PATH_BY_CAMPAIGN,
+  slug: string,
+  extra: Record<string, string> = {},
+): string {
+  return withUtm(
+    MARKETING_ORIGIN,
+    MARKETING_TOOL_PATH_BY_CAMPAIGN[campaign],
+    slug,
+    campaign,
+    { ref_part: slug, ...extra },
+  )
+}
+
+function appToolUrl(
+  campaign: keyof typeof APP_TOOL_PATH_BY_CAMPAIGN,
+  slug: string,
+  extra: Record<string, string> = {},
+): string {
+  return withUtm(APP_ORIGIN, APP_TOOL_PATH_BY_CAMPAIGN[campaign], slug, campaign, {
+    ref_part: slug,
+    ...extra,
+  })
 }
 
 export function partFinderUrl(slug: string): string {
-  return withUtm('/', slug, 'part_finder', { ref_part: slug })
+  return marketingToolUrl('component_finder', slug)
 }
 
 /**
@@ -20,34 +74,64 @@ export function partFinderUrl(slug: string): string {
  * Pair with a GET form field `q`; app route `/app/chat` reads `q`, `login`, and UTM.
  */
 export function seoChatDeepLinkUrl(slug: string, campaign = 'floating_chat'): string {
-  return withUtm('/app/chat', slug, campaign, { ref_part: slug, login: 'true' })
+  return withUtm(APP_ORIGIN, '/app/chat', slug, campaign, { ref_part: slug })
 }
 
-export function alternativeFinderUrl(slug: string): string {
-  return withUtm('/', slug, 'alternative_finder', { ref_part: slug })
+/** AI component finder — marketing landing (upload / Try PartGenie → app chat). */
+export function openPartUrl(slug: string, mpn?: string): string {
+  return marketingToolUrl('component_finder', slug, mpn ? { mpn } : {})
 }
 
-export function bomAnalyzerUrl(slug: string): string {
-  return withUtm('/', slug, 'bom_analyzer', { ref_part: slug })
+export function alternativeFinderUrl(slug: string, mpn?: string): string {
+  return marketingToolUrl('alternative_finder', slug, mpn ? { mpn } : {})
+}
+
+export function bomAnalyzerUrl(slug: string, mpn?: string): string {
+  return marketingToolUrl('bom_analyzer', slug, mpn ? { mpn } : {})
 }
 
 export function datasheetAiUrl(mpn: string, slug?: string): string {
   const partSlug = slug ?? mpn.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-  return withUtm('/', partSlug, 'datasheet_ai', { ref_part: partSlug, mpn })
+  return marketingToolUrl('datasheet_ai', partSlug, { mpn, ref_part: partSlug })
+}
+
+/** Direct app entry (e.g. app.partgenie.ai/ai-component-finder redirects). */
+export function appComponentFinderUrl(slug: string, mpn?: string): string {
+  const extra: Record<string, string> = {}
+  if (mpn) {
+    extra.mpn = mpn
+    extra.q = mpn
+  }
+  return appToolUrl('component_finder', slug, extra)
+}
+
+export function appAlternativeFinderUrl(slug: string, mpn: string): string {
+  return appToolUrl('alternative_finder', slug, {
+    mpn,
+    q: `Find alternatives for ${mpn}`,
+  })
+}
+
+export function appDatasheetAiUrl(slug: string, mpn?: string): string {
+  const extra: Record<string, string> = { login: 'true' }
+  if (mpn) extra.mpn = mpn
+  return appToolUrl('datasheet_ai', slug, extra)
+}
+
+export function appBomAnalyzerUrl(slug: string, mpn?: string): string {
+  const extra: Record<string, string> = { login: 'true' }
+  if (mpn) extra.mpn = mpn
+  return appToolUrl('bom_analyzer', slug, extra)
 }
 
 export function rfqUrl(slug: string): string {
-  return withUtm('/', slug, 'rfq', { ref_part: slug })
-}
-
-export function openPartUrl(slug: string): string {
-  return withUtm('/', slug, 'part_page', { ref_part: slug })
+  return withUtm(APP_ORIGIN, '/', slug, 'rfq', { ref_part: slug })
 }
 
 export function signInUrl(slug: string): string {
-  return withUtm('/login', slug, 'sign_in', { ref_part: slug })
+  return withUtm(APP_ORIGIN, '/login', slug, 'sign_in', { ref_part: slug })
 }
 
 export function signUpUrl(slug: string): string {
-  return withUtm('/signup', slug, 'get_started', { ref_part: slug })
+  return withUtm(APP_ORIGIN, '/signup', slug, 'get_started', { ref_part: slug })
 }

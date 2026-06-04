@@ -10,13 +10,14 @@ export function FloatingCtaDock({ pageContext }: { pageContext?: SeoPageContext 
   const defaultQuery = mpn ? `${mpn} alternatives and replacement risk` : undefined
 
   return (
-    <form
-      className="seo-floating-chat"
-      action={seoChatDeepLinkUrl(slug)}
-      method="get"
-      role="search"
-      aria-label="Ask in PartGenie"
-    >
+    <div className="seo-floating-chat-dock">
+      <form
+        className="seo-floating-chat"
+        action={seoChatDeepLinkUrl(slug)}
+        method="get"
+        role="search"
+        aria-label="Ask in PartGenie"
+      >
       <label htmlFor="seo-floating-chat-input" className="seo-sr-only">
         Ask in PartGenie
       </label>
@@ -46,6 +47,7 @@ export function FloatingCtaDock({ pageContext }: { pageContext?: SeoPageContext 
           <polygon points="22 2 15 22 11 13 2 9 22 2" />
         </svg>
       </button>
-    </form>
+      </form>
+    </div>
   )
 }

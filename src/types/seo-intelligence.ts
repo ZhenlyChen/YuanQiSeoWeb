@@ -152,6 +152,8 @@ export type ComponentIntelligencePage = {
   categoryLabel: string
   categorySlug: string
   package: string
+  /** Keyword chips under the part title in Overview (e.g. package, core, use-case). */
+  overviewTags?: string[]
   subtitle: PageSubtitle
   meta: SeoMeta
   breadcrumbs: BreadcrumbItem[]

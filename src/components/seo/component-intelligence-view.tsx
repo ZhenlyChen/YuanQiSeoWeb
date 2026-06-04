@@ -3,7 +3,11 @@ import { AlternativeList } from '@/components/seo/alternative-list'
 import { ComponentSectionNav } from '@/components/seo/component-section-nav'
 import { buildComponentSectionNavItems } from '@/lib/component-section-nav-items'
 import { DecisionInsightsTabs } from '@/components/seo/decision-insights-tabs'
+import { DatasheetFileCard } from '@/components/seo/datasheet-file-card'
 import { KeySpecsSnapshot } from '@/components/seo/key-specs-snapshot'
+import { SectionTitle } from '@/components/seo/section-title'
+import { UICard } from '@/components/ui/ui-card'
+import { datasheetAiUrl } from '@/lib/tool-urls'
 import { PageHeader } from '@/components/seo/page-header'
 import { PageLayout } from '@/components/seo/page-layout'
 import { QaBlocks } from '@/components/seo/qa-blocks'
@@ -28,10 +32,11 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
     ...page.compareLinks,
     ...page.relatedAnswers,
   ]
+  const hasDatasheet = Boolean(page.media.datasheetUrls?.length)
   const sectionNavItems = buildComponentSectionNavItems({
     alternativesCount: page.alternatives.length,
-    compareHref: page.compareLinks[0]?.href,
     hasApplications: page.applications.goodFit.length > 0,
+    hasDatasheet,
   })
 
   return (
@@ -45,23 +50,37 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
           <>
             <section id="overview" className="seo-page-section seo-top-summary-card">
               <AiSummaryHeading />
-              <div className="seo-model-visual seo-model-visual--embedded">
-                <div className="seo-model-visual__image-wrap">
-                  <img src={partImageForMpn(page.mpn)} alt={`${page.mpn} package`} className="seo-model-visual__image" />
-                </div>
-                <div className="seo-model-visual__header">
-                  <p className="seo-model-visual__name">{page.mpn}</p>
-                  <p className="seo-model-visual__desc">{page.categoryLabel}</p>
-                  <div className="seo-model-visual__tags">
-                    <span className="seo-app-tag">Package: {page.package}</span>
-                    <span className="seo-app-tag">{page.manufacturer}</span>
+              <div className="seo-overview-hero">
+                <div className="seo-model-visual seo-model-visual--embedded">
+                  <div className="seo-model-visual__image-wrap">
+                    <img
+                      src={partImageForMpn(page.mpn)}
+                      alt={`${page.mpn} package`}
+                      className="seo-model-visual__image"
+                    />
+                  </div>
+                  <div className="seo-model-visual__header">
+                    <p className="seo-model-visual__name">{page.mpn}</p>
+                    <p className="seo-model-visual__desc">{page.categoryLabel}</p>
+                    <div className="seo-model-visual__tags">
+                      {(page.overviewTags?.length
+                        ? page.overviewTags
+                        : [`Package: ${page.package}`, page.manufacturer]
+                      ).map((tag) => (
+                        <span key={tag} className="seo-app-tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <p className="seo-direct-answer seo-direct-answer--embedded" id="short-answer">
-                {page.shortAnswer}
-              </p>
+                <p
+                  className="seo-direct-answer seo-direct-answer--embedded seo-direct-answer--overview"
+                  id="short-answer">
+                  {page.shortAnswer}
+                </p>
+              </div>
               <AiVerdictCard
                 verdict={page.aiVerdict}
                 sourcingContext="Multiple alternatives available"
@@ -74,10 +93,24 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
                 applicationTags={page.applications.goodFit}
                 mpn={page.mpn}
                 slug={page.slug}
-                datasheetUrls={page.media.datasheetUrls}
-                datasheetSizeBytes={page.media.datasheetSizeBytes}
+                includeDatasheet={false}
               />
             </div>
+            {hasDatasheet ? (
+              <div id="datasheet" className="seo-page-section">
+                <section className="seo-section">
+                  <UICard className="seo-card">
+                    <SectionTitle title="Datasheet" />
+                    <DatasheetFileCard
+                      mpn={page.mpn}
+                      datasheetUrls={page.media.datasheetUrls}
+                      datasheetSizeBytes={page.media.datasheetSizeBytes}
+                      aiHref={datasheetAiUrl(page.mpn, page.slug)}
+                    />
+                  </UICard>
+                </section>
+              </div>
+            ) : null}
             <div id="alternatives" className="seo-page-section">
             <AlternativeList
               items={page.alternatives}

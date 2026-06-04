@@ -7,12 +7,12 @@ export type ComponentSectionNavItem = {
 
 export function buildComponentSectionNavItems({
   alternativesCount,
-  compareHref,
   hasApplications = true,
+  hasDatasheet = true,
 }: {
   alternativesCount: number
-  compareHref?: string
   hasApplications?: boolean
+  hasDatasheet?: boolean
 }): ComponentSectionNavItem[] {
   const items: ComponentSectionNavItem[] = [
     { id: 'overview', label: 'Overview' },
@@ -21,14 +21,14 @@ export function buildComponentSectionNavItems({
   if (hasApplications) {
     items.push({ id: 'applications', label: 'Applications' })
   }
+  if (hasDatasheet) {
+    items.push({ id: 'datasheet', label: 'Datasheet' })
+  }
   items.push({
     id: 'alternatives',
     label: 'Alternatives',
     badge: alternativesCount > 0 ? alternativesCount : undefined,
   })
-  if (compareHref) {
-    items.push({ id: 'compare', label: 'Compare', href: compareHref })
-  }
   items.push({ id: 'design', label: 'Design' }, { id: 'resources', label: 'Resources' })
   return items
 }

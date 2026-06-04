@@ -176,17 +176,6 @@ export function AlternativeList({
       <div className="seo-alt-section-head__title-wrap">
         <SectionTitle title={title} />
         {items.length > 0 ? <span className="seo-alt-section-head__count">{items.length}</span> : null}
-        <button
-          type="button"
-          className="seo-alt-section-head__info"
-          aria-label="Alternatives are ranked by pin compatibility, electrical fit, and lifecycle risk."
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <circle cx="8" cy="8" r="6.25" stroke="#98A2B3" strokeWidth="1.25" />
-            <path d="M8 7.2V11" stroke="#98A2B3" strokeWidth="1.25" strokeLinecap="round" />
-            <circle cx="8" cy="5.1" r="0.75" fill="#98A2B3" />
-          </svg>
-        </button>
       </div>
       {headAction ? <div className="seo-alt-section-head__actions">{headAction}</div> : null}
     </div>

@@ -4,8 +4,6 @@ import {
   datasheetAiUrl,
   openPartUrl,
 } from '@/lib/tool-urls'
-import { SEO_PUBLIC_BOUNDARY } from '@/lib/seo-copy'
-
 export type ComponentToolCtaLink = {
   href: string
   /** Full label for inline CTA rows (e.g. ToolCtaStrip). */
@@ -13,7 +11,7 @@ export type ComponentToolCtaLink = {
   /** Short label for sidebar tool grid cards. */
   shortLabel: string
   badge?: string
-  icon: 'stars02' | 'list' | 'hash02' | 'file06'
+  icon: 'chip' | 'list' | 'hash02' | 'file06'
 }
 
 export function buildComponentToolCtaLinks(
@@ -23,22 +21,22 @@ export function buildComponentToolCtaLinks(
 ): ComponentToolCtaLink[] {
   return [
     {
-      href: openPartUrl(slug),
-      label: SEO_PUBLIC_BOUNDARY.primaryCta(mpn),
-      shortLabel: 'Analyze in PartGenie',
-      icon: 'stars02',
+      href: openPartUrl(slug, mpn),
+      label: 'AI component finder',
+      shortLabel: 'AI component finder',
+      icon: 'chip',
     },
     {
-      href: alternativeFinderUrl(slug),
-      label: 'Find alternatives',
-      shortLabel: 'Find alternatives',
+      href: alternativeFinderUrl(slug, mpn),
+      label: 'AI alternative finder',
+      shortLabel: 'AI alternative finder',
       badge: alternativesCount > 0 ? `${alternativesCount} options` : undefined,
       icon: 'list',
     },
     {
-      href: bomAnalyzerUrl(slug),
+      href: bomAnalyzerUrl(slug, mpn),
       label: `Analyze ${mpn} in your BOM`,
-      shortLabel: 'BOM analyze',
+      shortLabel: 'BOM analyzer',
       icon: 'hash02',
     },
     {

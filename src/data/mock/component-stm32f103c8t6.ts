@@ -14,6 +14,16 @@ export const mockComponentStm32: ComponentIntelligencePage = {
   categoryLabel: '32-bit ARM Cortex-M3 Microcontroller',
   categorySlug: 'mcu',
   package: 'LQFP-48',
+  overviewTags: [
+    'Package: LQFP-48',
+    'STMicroelectronics',
+    'Cortex-M3',
+    '72 MHz',
+    '64 KB Flash',
+    'Arm MCU',
+    'Industrial I/O',
+    'Pin-compatible alternates',
+  ],
   meta: componentSeoMeta({
     mpn: MPN,
     manufacturer: 'STMicroelectronics',
