@@ -21,8 +21,8 @@ export function QueryAnswerView({ page }: { page: QueryAnswerPage }) {
         main={
           <>
             <section className="seo-section">
-              <h2 className="seo-section__title">Direct answer</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">Direct answer</h2>
                 <p style={{ margin: 0, lineHeight: 1.65, color: 'var(--pg-color-text-secondary)' }}>
                   {page.directAnswer}
                 </p>
@@ -30,8 +30,8 @@ export function QueryAnswerView({ page }: { page: QueryAnswerPage }) {
             </section>
 
             <section className="seo-section">
-              <h2 className="seo-section__title">Recommended components</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">Recommended components</h2>
                 {page.recommendedComponents.map((part) => (
                   <div key={part.mpn} className="seo-alt-row">
                     <div className="seo-alt-row__main">
@@ -50,8 +50,8 @@ export function QueryAnswerView({ page }: { page: QueryAnswerPage }) {
             </section>
 
             <section className="seo-section">
-              <h2 className="seo-section__title">Selection criteria</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">Selection criteria</h2>
                 <ul className="seo-criteria-list">
                   {page.selectionCriteria.map((item, i) => (
                     <li key={item}>
@@ -68,8 +68,8 @@ export function QueryAnswerView({ page }: { page: QueryAnswerPage }) {
             </section>
 
             <section className="seo-section">
-              <h2 className="seo-section__title">Tradeoffs</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">Tradeoffs</h2>
                 {page.tradeoffs.map((t) => (
                   <div key={t.title} className="seo-pitfall">
                     <strong>{t.title}</strong>
@@ -80,8 +80,8 @@ export function QueryAnswerView({ page }: { page: QueryAnswerPage }) {
             </section>
 
             <section className="seo-section">
-              <h2 className="seo-section__title">Suggested BOM</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">Suggested BOM</h2>
                 <table className="seo-table">
                   <thead>
                     <tr>
@@ -104,8 +104,8 @@ export function QueryAnswerView({ page }: { page: QueryAnswerPage }) {
             </section>
 
             <section className="seo-section">
-              <h2 className="seo-section__title">When to avoid</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">When to avoid</h2>
                 <ul>
                   {page.whenToAvoid.map((item) => (
                     <li key={item}>{item}</li>

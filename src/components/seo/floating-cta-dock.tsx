@@ -1,4 +1,4 @@
-import { partFinderUrl } from '@/lib/tool-urls'
+import { seoChatDeepLinkUrl } from '@/lib/tool-urls'
 import type { SeoPageContext } from '@/components/seo/seo-site-chrome'
 
 export function FloatingCtaDock({ pageContext }: { pageContext?: SeoPageContext }) {
@@ -10,7 +10,13 @@ export function FloatingCtaDock({ pageContext }: { pageContext?: SeoPageContext 
   const defaultQuery = mpn ? `${mpn} alternatives and replacement risk` : undefined
 
   return (
-    <form className="seo-floating-chat" action={partFinderUrl(slug)} role="search" aria-label="Ask in PartGenie">
+    <form
+      className="seo-floating-chat"
+      action={seoChatDeepLinkUrl(slug)}
+      method="get"
+      role="search"
+      aria-label="Ask in PartGenie"
+    >
       <label htmlFor="seo-floating-chat-input" className="seo-sr-only">
         Ask in PartGenie
       </label>

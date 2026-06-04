@@ -24,6 +24,9 @@
 
   --pg-space-1: 4px;
   --pg-space-2: 8px;
+  --seo-utility-tag-border: #e4e7ec;
+  --seo-utility-tag-bg: #f9fafb;
+  --seo-utility-tag-radius: 6px;
   --pg-space-3: 12px;
   --pg-space-4: 16px;
   --pg-space-5: 20px;
@@ -35,4 +38,7 @@
 
   --pg-content-max: 1200px;
   --pg-section-gap: 48px;
+  --seo-layout-column-gap: 48px;
+  --seo-main-max-width: 1280px;
+  --seo-layout-sidebar-width: 340px;
 }

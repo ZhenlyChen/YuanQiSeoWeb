@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { AlternativeItem } from '@/types/seo-intelligence'
 import { SectionTitle } from '@/components/seo/section-title'
 import { UIBadge } from '@/components/ui/ui-badge'
+import { UICard } from '@/components/ui/ui-card'
 import { UIButton } from '@/components/ui/ui-button'
 import { partImageForMpn } from '@/lib/part-images'
 
@@ -33,15 +34,16 @@ export function AlternativeRichList({
 }) {
   return (
     <section className="seo-section">
-      <div className="seo-section__head">
-        <SectionTitle title={title} icon="alternatives" />
-        {viewAllHref ? (
-          <Link href={viewAllHref} className="seo-section__link">
-            View all alternatives →
-          </Link>
-        ) : null}
-      </div>
-      <div className="seo-alt-cards">
+      <UICard className="seo-card">
+        <div className="seo-card__head">
+          <SectionTitle title={title} icon="alternatives" />
+          {viewAllHref ? (
+            <Link href={viewAllHref} className="seo-section__link">
+              View all alternatives →
+            </Link>
+          ) : null}
+        </div>
+        <div className="seo-alt-cards">
         {items.map((alt) => (
           <article key={alt.mpn} className="seo-alt-card">
             <header className="seo-alt-card__header">
@@ -98,7 +100,8 @@ export function AlternativeRichList({
             </div>
           </article>
         ))}
-      </div>
+        </div>
+      </UICard>
     </section>
   )
 }

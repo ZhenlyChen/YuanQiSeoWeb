@@ -2,35 +2,31 @@ import type { KeySpec } from '@/types/seo-intelligence'
 
 import { SectionTitle } from '@/components/seo/section-title'
 import { UICard } from '@/components/ui/ui-card'
-import { SEO_PUBLIC_BOUNDARY } from '@/lib/seo-copy'
-import { openPartUrl } from '@/lib/tool-urls'
-
-function ApplicationTagIcon() {
-  return (
-    <svg viewBox="0 0 16 16" aria-hidden="true">
-      <rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="9" y="2.5" width="4.5" height="4.5" rx="1" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="2.5" y="9" width="4.5" height="4.5" rx="1" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="9" y="9" width="4.5" height="4.5" rx="1" fill="none" stroke="currentColor" strokeWidth="1.2" />
-    </svg>
-  )
-}
+import { normalizeApplicationTags, type ApplicationTagInput } from '@/lib/application-tags'
+import { DatasheetFileCard } from '@/components/seo/datasheet-file-card'
+import { datasheetAiUrl } from '@/lib/tool-urls'
 
 export function KeySpecsSnapshot({
   specs,
   applicationTags = [],
   mpn,
   slug,
+  datasheetUrls,
+  datasheetSizeBytes,
 }: {
   specs: KeySpec[]
-  applicationTags?: string[]
+  applicationTags?: ApplicationTagInput[]
   mpn?: string
   slug?: string
+  datasheetUrls?: string[]
+  datasheetSizeBytes?: number
 }) {
+  const tags = normalizeApplicationTags(applicationTags)
+
   return (
     <section className="seo-section">
-      <SectionTitle title="Key specifications" icon="specs" />
       <UICard className="seo-card">
+        <SectionTitle title="Key specifications" icon="specs" />
         <dl className="seo-spec-grid">
           {specs.map((spec) => (
             <div key={spec.label} className="seo-spec-item">
@@ -39,26 +35,34 @@ export function KeySpecsSnapshot({
             </div>
           ))}
         </dl>
-        {applicationTags.length > 0 ? (
+        {tags.length > 0 ? (
           <>
             <hr className="seo-spec-divider" />
-            <div className="seo-perplexity-tags" role="list" aria-label="Application fit">
-              {applicationTags.map((tag) => (
-                <span key={tag} className="seo-perplexity-tag" role="listitem">
-                  <ApplicationTagIcon />
-                  {tag}
+            <SectionTitle title="Application" />
+            <div
+              id="applications"
+              className="seo-application-tags seo-page-section-anchor"
+              role="list"
+              aria-label="Application fit">
+              {tags.map((tag) => (
+                <span key={tag.label} className="seo-application-tag" role="listitem">
+                  {tag.label}
                 </span>
               ))}
             </div>
           </>
         ) : null}
         {mpn && slug ? (
-          <p className="seo-spec-footer">
-            {SEO_PUBLIC_BOUNDARY.specsFooter(mpn)}{' '}
-            <a href={openPartUrl(slug)} className="seo-section__link">
-              {SEO_PUBLIC_BOUNDARY.specsFooterCta} ↗
-            </a>
-          </p>
+          <>
+            <hr className="seo-spec-divider" />
+            <SectionTitle title="Datasheet" />
+            <DatasheetFileCard
+              mpn={mpn}
+              datasheetUrls={datasheetUrls}
+              datasheetSizeBytes={datasheetSizeBytes}
+              aiHref={datasheetAiUrl(mpn, slug)}
+            />
+          </>
         ) : null}
       </UICard>
     </section>

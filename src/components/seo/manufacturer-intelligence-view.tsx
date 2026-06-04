@@ -22,8 +22,8 @@ export function ManufacturerIntelligenceView({ page }: { page: ManufacturerIntel
         main={
           <>
             <section className="seo-section">
-              <h2 className="seo-section__title">Popular product families</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">Popular product families</h2>
                 {page.popularFamilies.map((family) => (
                   <div key={family.name} className="seo-pitfall">
                     <strong>{family.name}</strong>
@@ -40,8 +40,8 @@ export function ManufacturerIntelligenceView({ page }: { page: ManufacturerIntel
             />
 
             <section className="seo-section">
-              <h2 className="seo-section__title">Supply chain / lifecycle notes</h2>
               <div className="seo-card">
+                <h2 className="seo-card__title">Supply chain / lifecycle notes</h2>
                 <ul>
                   {page.supplyNotes.map((note) => (
                     <li key={note}>{note}</li>

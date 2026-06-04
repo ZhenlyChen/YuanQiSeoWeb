@@ -1,3 +1,5 @@
+import type { ApplicationTagInput } from '@/lib/application-tags'
+
 export type DecisionLabel = 'exact' | 'pin-compatible' | 'functional' | 'partial'
 export type ReplacementDifficulty = 'low' | 'medium' | 'high'
 export type SourcingRisk = 'low' | 'medium' | 'high'
@@ -73,7 +75,7 @@ export type EntityLink = { label: string; href: string }
 export type CommonPitfall = { title: string; detail: string }
 
 export type ApplicationBlock = {
-  goodFit: string[]
+  goodFit: ApplicationTagInput[]
   notRecommended: string[]
 }
 
@@ -119,6 +121,8 @@ export type ComponentMechanicalFields = {
 
 export type ComponentMediaFields = {
   datasheetUrls: string[]
+  /** Display size for datasheet file row (bytes). */
+  datasheetSizeBytes?: number
   productUrls?: string[]
   imgUrls?: string[]
 }

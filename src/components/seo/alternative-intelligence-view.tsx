@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { AlternativesViewToggle } from '@/components/seo/alternatives-view-toggle'
 import { AlternativeRichList } from '@/components/seo/alternative-rich-list'
 import { CompatibilityMatrix } from '@/components/seo/compatibility-matrix'
 import { PageHeader } from '@/components/seo/page-header'
@@ -8,27 +9,6 @@ import { SectionTitle } from '@/components/seo/section-title'
 import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
 import { openPartUrl } from '@/lib/tool-urls'
 import type { AlternativeIntelligencePage } from '@/types/seo-intelligence'
-
-function ViewToggle({ slug, active }: { slug: string; active: 'list' | 'graph' }) {
-  return (
-    <div className="seo-view-toggle" role="group" aria-label="View mode">
-      <Link
-        href={`/alternatives/${slug}`}
-        className={`seo-view-toggle__btn ${active === 'list' ? 'seo-view-toggle__btn--active' : ''}`}
-        aria-current={active === 'list' ? 'page' : undefined}
-      >
-        List
-      </Link>
-      <Link
-        href={`/alternatives/${slug}?view=graph`}
-        className={`seo-view-toggle__btn ${active === 'graph' ? 'seo-view-toggle__btn--active' : ''}`}
-        aria-current={active === 'graph' ? 'page' : undefined}
-      >
-        Graph
-      </Link>
-    </div>
-  )
-}
 
 export function AlternativeIntelligenceView({
   page,
@@ -43,7 +23,7 @@ export function AlternativeIntelligenceView({
         <PageHeader
           h1={page.meta.h1}
           subtitle={page.subtitle}
-          actions={<ViewToggle slug={page.slug} active="graph" />}
+          actions={<AlternativesViewToggle slug={page.slug} active="graph" />}
         />
         <p className="seo-direct-answer seo-direct-answer--gradient">{page.shortAnswer}</p>
         <div className="seo-card seo-graph-teaser">
@@ -67,7 +47,7 @@ export function AlternativeIntelligenceView({
       <PageHeader
         h1={page.meta.h1}
         subtitle={page.subtitle}
-        actions={<ViewToggle slug={page.slug} active="list" />}
+        actions={<AlternativesViewToggle slug={page.slug} active="list" />}
       />
       <p className="seo-direct-answer seo-direct-answer--gradient seo-direct-answer--main-width">{page.shortAnswer}</p>
 
@@ -75,8 +55,9 @@ export function AlternativeIntelligenceView({
         main={
           <>
             <section className="seo-section">
-              <SectionTitle title="Quick replacement view" icon="verdict" />
-              <div className="seo-dual-grid">
+              <div className="seo-card">
+                <SectionTitle title="Quick replacement view" icon="verdict" />
+                <div className="seo-dual-grid">
                 <div className="seo-card">
                   <h3 className="seo-subheading">Can it be replaced directly?</h3>
                   <p>
@@ -106,6 +87,7 @@ export function AlternativeIntelligenceView({
                     ))}
                   </div>
                 </div>
+                </div>
               </div>
             </section>
 
@@ -116,8 +98,8 @@ export function AlternativeIntelligenceView({
             <CompatibilityMatrix rows={page.compatibilityMatrix} />
 
             <section className="seo-section">
-              <SectionTitle title="Feature comparison snapshot" icon="specs" />
               <div className="seo-card">
+                <SectionTitle title="Feature comparison snapshot" icon="specs" />
                 <div className="seo-table-wrap">
                   <table className="seo-table seo-table--enhanced">
                     <thead>
@@ -146,8 +128,8 @@ export function AlternativeIntelligenceView({
             </section>
 
             <section className="seo-section">
-              <SectionTitle title="Application compatibility" icon="fit" />
               <div className="seo-card">
+                <SectionTitle title="Application compatibility" icon="fit" />
                 <table className="seo-table">
                   <tbody>
                     {page.applicationFit.map((row) => (
@@ -162,8 +144,8 @@ export function AlternativeIntelligenceView({
             </section>
 
             <section className="seo-section">
-              <SectionTitle title="Authorized / regional alternatives" icon="sourcing" />
               <div className="seo-card">
+                <SectionTitle title="Authorized / regional alternatives" icon="sourcing" />
                 <ul>
                   {page.regionalNotes.map((note) => (
                     <li key={note}>{note}</li>

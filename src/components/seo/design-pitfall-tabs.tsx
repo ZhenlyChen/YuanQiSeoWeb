@@ -17,8 +17,9 @@ export function DesignPitfallTabs({
 
   return (
     <section className="seo-section">
-      <SectionTitle title="Design and risk insights" icon={activeTab === 'design' ? 'design' : 'risk'} />
-      <div className="seo-content-tabs" role="tablist" aria-label="Design and pitfall tabs">
+      <div className="seo-card">
+        <SectionTitle title="Design and risk insights" icon={activeTab === 'design' ? 'design' : 'risk'} />
+        <div className="seo-content-tabs" role="tablist" aria-label="Design and pitfall tabs">
         <button
           type="button"
           role="tab"
@@ -37,8 +38,8 @@ export function DesignPitfallTabs({
         >
           Common pitfalls
         </button>
-      </div>
-      <div className="seo-card">
+        </div>
+        <div className="seo-card__panel">
         {activeTab === 'design' ? (
           <ul className="seo-compact-list">
             {designConsiderations.map((item) => (
@@ -53,6 +54,7 @@ export function DesignPitfallTabs({
             </div>
           ))
         )}
+        </div>
       </div>
     </section>
   )

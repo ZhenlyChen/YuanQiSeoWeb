@@ -16,8 +16,8 @@ export function CompareVerdict({
 }) {
   return (
     <section className="seo-section">
-      <SectionTitle title="Quick verdict" icon="verdict" />
       <UICard className="seo-card">
+        <SectionTitle title="Quick verdict" icon="verdict" />
         <div className="seo-compare-verdict">
           <div className="seo-compare-verdict__col">
             <h3>Choose {partALabel} if</h3>

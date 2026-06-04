@@ -47,7 +47,6 @@ export default async function PartPage({ params, searchParams }: PageProps) {
       <SeoPageShell
         breadcrumbs={mockPage.breadcrumbs}
         faq={mockPage.faq}
-        cpuHeroText="PartGenie"
         pageContext={{ slug: mockPage.slug, mpn: mockPage.mpn }}
       >
         <ComponentIntelligenceView page={mockPage} />

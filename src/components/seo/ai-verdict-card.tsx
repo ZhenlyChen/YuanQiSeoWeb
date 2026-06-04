@@ -1,5 +1,5 @@
+import { Stars02Icon } from '@/components/seo/stars-02-icon'
 import type { AiVerdict, ReplacementDifficulty, SourcingRisk } from '@/types/seo-intelligence'
-import { UICard } from '@/components/ui/ui-card'
 
 function difficultyLabel(level: ReplacementDifficulty): string {
   if (level === 'low') return 'Low'
@@ -12,15 +12,37 @@ function sourcingLabel(level: SourcingRisk, context?: string): string {
   return context ? `${base} — ${context}` : base
 }
 
-export function AiVerdictCard({ verdict, sourcingContext }: { verdict: AiVerdict; sourcingContext?: string }) {
+/** Untitled UI status dot (Avatar online indicator / feed dot, Figma 6277:264606). */
+function VerdictStatusDot({ variant }: { variant: 'good' | 'avoid' | 'check' }) {
+  return <span className={`seo-verdict-dot seo-verdict-dot--${variant}`} aria-hidden="true" />
+}
+
+export function AiSummaryHeading() {
   return (
-    <section className="seo-section">
-      <h2 className="seo-section__title">AI verdict</h2>
-      <UICard className="seo-card seo-verdict-card">
+    <h2 className="seo-card__title seo-ai-summary__title seo-ai-summary__title--lead">
+      <Stars02Icon className="seo-ai-summary__icon" />
+      AI summary
+    </h2>
+  )
+}
+
+export function AiVerdictCard({
+  verdict,
+  sourcingContext,
+  hideHeading = false,
+}: {
+  verdict: AiVerdict
+  sourcingContext?: string
+  hideHeading?: boolean
+}) {
+  return (
+    <section className="seo-section seo-ai-summary">
+      {hideHeading ? null : <AiSummaryHeading />}
+      <div className="seo-verdict-card seo-verdict-card--embedded">
         <div className="seo-verdict-columns">
           <div className="seo-verdict-block seo-verdict-block--good">
             <h3 className="seo-verdict-block__title">
-              <span className="seo-verdict-icon seo-verdict-icon--good" aria-hidden="true" />
+              <VerdictStatusDot variant="good" />
               Best for
             </h3>
             <ul>
@@ -31,7 +53,7 @@ export function AiVerdictCard({ verdict, sourcingContext }: { verdict: AiVerdict
           </div>
           <div className="seo-verdict-block seo-verdict-block--avoid">
             <h3 className="seo-verdict-block__title">
-              <span className="seo-verdict-icon seo-verdict-icon--avoid" aria-hidden="true" />
+              <VerdictStatusDot variant="avoid" />
               Avoid if
             </h3>
             <ul>
@@ -42,7 +64,7 @@ export function AiVerdictCard({ verdict, sourcingContext }: { verdict: AiVerdict
           </div>
           <div className="seo-verdict-block seo-verdict-block--check">
             <h3 className="seo-verdict-block__title">
-              <span className="seo-verdict-icon seo-verdict-icon--check" aria-hidden="true" />
+              <VerdictStatusDot variant="check" />
               Check before use
             </h3>
             <ul>
@@ -62,7 +84,7 @@ export function AiVerdictCard({ verdict, sourcingContext }: { verdict: AiVerdict
             <strong>{sourcingLabel(verdict.sourcingRisk, sourcingContext)}</strong>
           </div>
         </footer>
-      </UICard>
+      </div>
     </section>
   )
 }

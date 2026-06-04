@@ -23,8 +23,9 @@ export function DesignFitTabs({
 
   return (
     <section className="seo-section">
-      <SectionTitle title="Design fit at a glance" icon="fit" />
-      <div className="seo-content-tabs" role="tablist" aria-label="Design fit tabs">
+      <div className="seo-card">
+        <SectionTitle title="Design fit at a glance" icon="fit" />
+        <div className="seo-content-tabs" role="tablist" aria-label="Design fit tabs">
         <button
           type="button"
           role="tab"
@@ -52,8 +53,8 @@ export function DesignFitTabs({
         >
           Not recommended
         </button>
-      </div>
-      <div className="seo-card">
+        </div>
+        <div className="seo-card__panel">
         {activeTab === 'tags' ? (
           <div className="seo-app-tag-grid">
             {applicationTagLayers.map((tag) => (
@@ -76,6 +77,7 @@ export function DesignFitTabs({
             ))}
           </ul>
         )}
+        </div>
       </div>
     </section>
   )

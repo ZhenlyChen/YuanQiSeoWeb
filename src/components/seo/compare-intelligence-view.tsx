@@ -78,8 +78,9 @@ export function CompareIntelligenceView({ page }: { page: CompareIntelligencePag
             <p className="seo-direct-answer seo-direct-answer--gradient">{page.shortAnswer}</p>
 
             <section className="seo-section">
-              <SectionTitle title="Parameter comparison overview" icon="specs" />
-              <div className="seo-compare-kpis">
+              <div className="seo-card">
+                <SectionTitle title="Parameter comparison overview" icon="specs" />
+                <div className="seo-compare-kpis">
                 <div className="seo-kpi-card">
                   <p className="seo-kpi-card__label">{page.partA.mpn}</p>
                   <p className="seo-kpi-card__value">{winsA}</p>
@@ -129,6 +130,7 @@ export function CompareIntelligenceView({ page }: { page: CompareIntelligencePag
                   <strong>{context}</strong>
                 </div>
               </div>
+              </div>
             </section>
 
             <CompareVerdict
@@ -146,8 +148,8 @@ export function CompareIntelligenceView({ page }: { page: CompareIntelligencePag
             ) : null}
 
             <section className="seo-section">
-              <SectionTitle title="Specifications comparison" icon="specs" />
               <div className="seo-card">
+                <SectionTitle title="Specifications comparison" icon="specs" />
                 <div className="seo-table-wrap">
                   <table className="seo-table seo-table--enhanced">
                     <thead>
@@ -180,8 +182,9 @@ export function CompareIntelligenceView({ page }: { page: CompareIntelligencePag
             </section>
 
             <section className="seo-section">
-              <SectionTitle title="Compatibility and lifecycle" icon="compat" />
-              <div className="seo-dual-grid">
+              <div className="seo-card">
+                <SectionTitle title="Compatibility and lifecycle" icon="compat" />
+                <div className="seo-dual-grid">
                 <div className="seo-card">
                   <h3 className="seo-subheading">Pin / package compatibility</h3>
                   <ul className="seo-compact-list">
@@ -198,12 +201,14 @@ export function CompareIntelligenceView({ page }: { page: CompareIntelligencePag
                     ))}
                   </ul>
                 </div>
+                </div>
               </div>
             </section>
 
             <section className="seo-section">
-              <SectionTitle title="Application fit and tradeoffs" icon="fit" />
-              <div className="seo-dual-grid">
+              <div className="seo-card">
+                <SectionTitle title="Application fit and tradeoffs" icon="fit" />
+                <div className="seo-dual-grid">
                 <div className="seo-card">
                   <h3 className="seo-subheading">Application fit</h3>
                   <div className="seo-table-wrap">
@@ -240,6 +245,7 @@ export function CompareIntelligenceView({ page }: { page: CompareIntelligencePag
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
+                </div>
                 </div>
               </div>
             </section>

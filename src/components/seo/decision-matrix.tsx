@@ -4,8 +4,8 @@ import { UICard } from '@/components/ui/ui-card'
 export function DecisionMatrix({ rows, title = 'Decision matrix' }: { rows: DecisionMatrixRow[]; title?: string }) {
   return (
     <section className="seo-section">
-      <h2 className="seo-section__title">{title}</h2>
       <UICard className="seo-card">
+        <h2 className="seo-card__title">{title}</h2>
         <table className="seo-table">
           <thead>
             <tr>

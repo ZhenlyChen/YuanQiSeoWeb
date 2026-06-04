@@ -1,33 +1,76 @@
 'use client'
 
 import { useState } from 'react'
+import { SectionTitle } from '@/components/seo/section-title'
+import { SeoContentModal } from '@/components/seo/seo-content-modal'
+import { UntitledUiLineIcon } from '@/components/seo/untitled-ui-line-icon'
 import type { CommonPitfall } from '@/types/seo-intelligence'
 
-type ActiveTab = 'design' | 'risk'
+type InsightModal = 'design' | 'risk' | null
 
-function TabIcon({ tab }: { tab: ActiveTab }) {
-  if (tab === 'design') {
-    return (
-      <svg viewBox="0 0 20 20" aria-hidden="true" className="seo-content-tabs__icon">
-        <path
-          d="M3.75 4.5a1.75 1.75 0 0 1 1.75-1.75h9a1.75 1.75 0 0 1 1.75 1.75v11a1.75 1.75 0 0 1-1.75 1.75h-9a1.75 1.75 0 0 1-1.75-1.75zm2 .25v10.5h8.5V4.75zm1.5 1.5h5v1.5h-5zm0 2.75h5.5v1.5h-5.5z"
-          fill="currentColor"
-          fillRule="evenodd"
-          clipRule="evenodd"
-        />
-      </svg>
-    )
-  }
+const UNTITLED_PATHS = {
+  file06:
+    'M14 2.27V6.4c0 .56 0 .84.109 1.054a1 1 0 0 0 .437.437c.214.11.494.11 1.054.11h4.13M16 13H8m8 4H8m2-8H8m6-7H8.8c-1.68 0-2.52 0-3.162.327a3 3 0 0 0-1.311 1.311C4 4.28 4 5.12 4 6.8v10.4c0 1.68 0 2.52.327 3.162a3 3 0 0 0 1.311 1.311C6.28 22 7.12 22 8.8 22h6.4c1.68 0 2.52 0 3.162-.327a3 3 0 0 0 1.311-1.311C20 19.72 20 18.88 20 17.2V8l-6-6Z',
+  alertCircle: 'M12 8v4m0 4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z',
+} as const
 
+function InsightCtaCard({
+  title,
+  subtitle,
+  iconPath,
+  onClick,
+}: {
+  title: string
+  subtitle: string
+  iconPath: string
+  onClick: () => void
+}) {
   return (
-    <svg viewBox="0 0 20 20" aria-hidden="true" className="seo-content-tabs__icon">
-      <path
-        d="M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15m0 4.25a1 1 0 1 1 0 2 1 1 0 0 1 0-2m-1.25 4.5a1 1 0 0 1 1-1h.5a1 1 0 0 1 1 1V14h-2.5z"
-        fill="currentColor"
-        fillRule="evenodd"
-        clipRule="evenodd"
-      />
-    </svg>
+    <button type="button" className="seo-insight-cta" onClick={onClick}>
+      <span className="seo-insight-cta__icon" aria-hidden="true">
+        <UntitledUiLineIcon path={iconPath} size={24} />
+      </span>
+      <span className="seo-insight-cta__copy">
+        <span className="seo-insight-cta__title">{title}</span>
+        <span className="seo-insight-cta__subtitle">{subtitle}</span>
+      </span>
+    </button>
+  )
+}
+
+function DesignModalContent({ items }: { items: string[] }) {
+  return (
+    <ul className="seo-compact-list">
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  )
+}
+
+function RiskModalContent({
+  notRecommended,
+  commonPitfalls,
+}: {
+  notRecommended: string[]
+  commonPitfalls: CommonPitfall[]
+}) {
+  return (
+    <>
+      <h4 className="seo-content-modal__subheading">Not recommended for</h4>
+      <ul className="seo-compact-list">
+        {notRecommended.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      <h4 className="seo-content-modal__subheading">Common pitfalls</h4>
+      {commonPitfalls.map((pitfall) => (
+        <div key={pitfall.title} className="seo-pitfall">
+          <strong>{pitfall.title}</strong>
+          <p>{pitfall.detail}</p>
+        </div>
+      ))}
+    </>
   )
 }
 
@@ -40,57 +83,53 @@ export function DecisionInsightsTabs({
   notRecommended: string[]
   commonPitfalls: CommonPitfall[]
 }) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('design')
+  const [openModal, setOpenModal] = useState<InsightModal>(null)
+
+  const designCount = designConsiderations.length
+  const riskCount = notRecommended.length + commonPitfalls.length
 
   return (
-    <section className="seo-section seo-insights-tabs">
-      <div className="seo-content-tabs seo-content-tabs--untitled" role="tablist" aria-label="Decision insight tabs">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'design'}
-          className={`seo-content-tabs__btn ${activeTab === 'design' ? 'seo-content-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('design')}
-        >
-          <TabIcon tab="design" />
-          Design considerations
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'risk'}
-          className={`seo-content-tabs__btn ${activeTab === 'risk' ? 'seo-content-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('risk')}
-        >
-          <TabIcon tab="risk" />
-          Risk & pitfalls
-        </button>
-      </div>
+    <section className="seo-section seo-section--flat seo-insights-tabs">
+      <div className="seo-section-block">
+        <SectionTitle title="Design and risk insights" icon="risk" />
+        <div className="seo-insight-cta-grid">
+          <InsightCtaCard
+            title="Design considerations"
+            subtitle={
+              designCount > 0
+                ? `${designCount} layout and firmware note${designCount === 1 ? '' : 's'}`
+                : 'No design notes yet'
+            }
+            iconPath={UNTITLED_PATHS.file06}
+            onClick={() => setOpenModal('design')}
+          />
+          <InsightCtaCard
+            title="Risk & pitfalls"
+            subtitle={
+              riskCount > 0
+                ? `${riskCount} risk and pitfall item${riskCount === 1 ? '' : 's'}`
+                : 'No risk notes yet'
+            }
+            iconPath={UNTITLED_PATHS.alertCircle}
+            onClick={() => setOpenModal('risk')}
+          />
+        </div>
 
-      <div className="seo-card seo-insights-tabs__panel">
-        {activeTab === 'design' ? (
-          <ul className="seo-compact-list">
-            {designConsiderations.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        ) : (
-          <>
-            <h3 className="seo-subheading">Not recommended for</h3>
-            <ul className="seo-compact-list">
-              {notRecommended.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <h3 className="seo-subheading">Common pitfalls</h3>
-            {commonPitfalls.map((pitfall) => (
-              <div key={pitfall.title} className="seo-pitfall">
-                <strong>{pitfall.title}</strong>
-                <p>{pitfall.detail}</p>
-              </div>
-            ))}
-          </>
-        )}
+        <SeoContentModal
+          open={openModal === 'design'}
+          title="Design considerations"
+          onClose={() => setOpenModal(null)}
+        >
+          <DesignModalContent items={designConsiderations} />
+        </SeoContentModal>
+
+        <SeoContentModal
+          open={openModal === 'risk'}
+          title="Risk & pitfalls"
+          onClose={() => setOpenModal(null)}
+        >
+          <RiskModalContent notRecommended={notRecommended} commonPitfalls={commonPitfalls} />
+        </SeoContentModal>
       </div>
     </section>
   )

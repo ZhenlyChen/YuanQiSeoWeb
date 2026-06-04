@@ -5,8 +5,8 @@ import { UICard } from '@/components/ui/ui-card'
 export function CompatibilityMatrix({ rows }: { rows: CompatibilityRow[] }) {
   return (
     <section className="seo-section">
-      <SectionTitle title="Compatibility matrix" icon="compat" />
       <UICard className="seo-card">
+        <SectionTitle title="Compatibility matrix" icon="compat" />
         <table className="seo-table">
           <thead>
             <tr>

@@ -15,6 +15,14 @@ export function partFinderUrl(slug: string): string {
   return withUtm('/', slug, 'part_finder', { ref_part: slug })
 }
 
+/**
+ * Base URL for SEO → app chat deep links (Webflow pattern).
+ * Pair with a GET form field `q`; app route `/app/chat` reads `q`, `login`, and UTM.
+ */
+export function seoChatDeepLinkUrl(slug: string, campaign = 'floating_chat'): string {
+  return withUtm('/app/chat', slug, campaign, { ref_part: slug, login: 'true' })
+}
+
 export function alternativeFinderUrl(slug: string): string {
   return withUtm('/', slug, 'alternative_finder', { ref_part: slug })
 }

@@ -1,12 +1,12 @@
-import { AiVerdictCard } from '@/components/seo/ai-verdict-card'
+import { AiSummaryHeading, AiVerdictCard } from '@/components/seo/ai-verdict-card'
 import { AlternativeList } from '@/components/seo/alternative-list'
-import { ContextualLinksBar } from '@/components/seo/contextual-links-bar'
+import { ComponentSectionNav } from '@/components/seo/component-section-nav'
+import { buildComponentSectionNavItems } from '@/lib/component-section-nav-items'
 import { DecisionInsightsTabs } from '@/components/seo/decision-insights-tabs'
 import { KeySpecsSnapshot } from '@/components/seo/key-specs-snapshot'
 import { PageHeader } from '@/components/seo/page-header'
 import { PageLayout } from '@/components/seo/page-layout'
 import { QaBlocks } from '@/components/seo/qa-blocks'
-import { SidebarBomNotes } from '@/components/seo/sidebar-bom-notes'
 import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
 import { SidebarSourcingHelp } from '@/components/seo/sidebar-sourcing-help'
 import { SidebarToolGrid, buildComponentToolGrid } from '@/components/seo/sidebar-tool-grid'
@@ -15,7 +15,6 @@ import { signUpUrl } from '@/lib/tool-urls'
 import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
 
 export function ComponentIntelligenceView({ page }: { page: ComponentIntelligencePage }) {
-  const compareHref = page.compareLinks[0]?.href ?? `/alternatives/${page.slug}`
   const keySpecsWithCompliance = [
     ...page.keySpecs,
     ...(page.compliance?.rohs ? [{ label: 'RoHS', value: page.compliance.rohs }] : []),
@@ -29,20 +28,28 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
     ...page.compareLinks,
     ...page.relatedAnswers,
   ]
+  const sectionNavItems = buildComponentSectionNavItems({
+    alternativesCount: page.alternatives.length,
+    compareHref: page.compareLinks[0]?.href,
+    hasApplications: page.applications.goodFit.length > 0,
+  })
 
   return (
     <>
       <PageHeader h1={page.meta.h1} h1SecondLine={page.meta.h1SecondLine} />
 
-      <PageLayout
+      <div className="seo-page-body">
+        <ComponentSectionNav items={sectionNavItems} />
+        <PageLayout
         main={
           <>
-            <section className="seo-top-summary-card">
+            <section id="overview" className="seo-page-section seo-top-summary-card">
+              <AiSummaryHeading />
               <div className="seo-model-visual seo-model-visual--embedded">
                 <div className="seo-model-visual__image-wrap">
                   <img src={partImageForMpn(page.mpn)} alt={`${page.mpn} package`} className="seo-model-visual__image" />
                 </div>
-                <div className="seo-model-visual__meta">
+                <div className="seo-model-visual__header">
                   <p className="seo-model-visual__name">{page.mpn}</p>
                   <p className="seo-model-visual__desc">{page.categoryLabel}</p>
                   <div className="seo-model-visual__tags">
@@ -55,57 +62,56 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
               <p className="seo-direct-answer seo-direct-answer--embedded" id="short-answer">
                 {page.shortAnswer}
               </p>
-
-              <ContextualLinksBar
-                slug={page.slug}
-                mpn={page.mpn}
-                compareHref={compareHref}
-                categoryHref={page.relatedCategory.href}
-                categoryLabel={page.relatedCategory.label}
-                manufacturerHref={page.relatedManufacturer.href}
-                manufacturerLabel={page.manufacturer}
+              <AiVerdictCard
+                verdict={page.aiVerdict}
+                sourcingContext="Multiple alternatives available"
+                hideHeading
               />
             </section>
-
-            <AiVerdictCard
-              verdict={page.aiVerdict}
-              sourcingContext="Multiple alternatives available"
-            />
-            <KeySpecsSnapshot
-              specs={keySpecsWithCompliance}
-              applicationTags={page.applications.goodFit}
-              mpn={page.mpn}
-              slug={page.slug}
-            />
+            <div id="specifications" className="seo-page-section">
+              <KeySpecsSnapshot
+                specs={keySpecsWithCompliance}
+                applicationTags={page.applications.goodFit}
+                mpn={page.mpn}
+                slug={page.slug}
+                datasheetUrls={page.media.datasheetUrls}
+                datasheetSizeBytes={page.media.datasheetSizeBytes}
+              />
+            </div>
+            <div id="alternatives" className="seo-page-section">
             <AlternativeList
               items={page.alternatives}
               title="Alternative components"
-              viewAllHref={`/alternatives/${page.slug}`}
-              layout="card"
+              showViewToggle
               gated
               slug={page.slug}
               mpn={page.mpn}
               gatedCtaHref={signUpUrl(page.slug)}
             />
+            </div>
 
-            <DecisionInsightsTabs
-              designConsiderations={page.designConsiderations}
-              notRecommended={page.applications.notRecommended}
-              commonPitfalls={page.commonPitfalls}
-            />
+            <div id="design" className="seo-page-section">
+              <DecisionInsightsTabs
+                designConsiderations={page.designConsiderations}
+                notRecommended={page.applications.notRecommended}
+                commonPitfalls={page.commonPitfalls}
+              />
+            </div>
 
-            <QaBlocks items={page.faq} />
+            <div id="resources" className="seo-page-section">
+              <QaBlocks items={page.faq} />
+            </div>
           </>
         }
         sidebar={
           <>
             <SidebarToolGrid tools={buildComponentToolGrid(page)} />
-            <SidebarBomNotes notes={page.bomSourcing} />
             <SidebarSourcingHelp slug={page.slug} />
             <SidebarRelatedLinks links={relatedLinks} />
           </>
         }
-      />
+        />
+      </div>
     </>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useId, useState } from 'react'
+import { SectionTitle } from '@/components/seo/section-title'
 import type { FaqItem } from '@/types/seo-intelligence'
 
 export function QaBlocks({ items, title = 'Questions & answers' }: { items: FaqItem[]; title?: string }) {
@@ -8,9 +9,10 @@ export function QaBlocks({ items, title = 'Questions & answers' }: { items: FaqI
   const idPrefix = useId()
 
   return (
-    <section className="seo-section seo-faq-section">
-      <h2 className="seo-section__title">{title}</h2>
-      <div className="seo-faq">
+    <section className="seo-section seo-section--flat seo-faq-section">
+      <div className="seo-section-block">
+        <SectionTitle title={title} />
+        <div className="seo-faq">
         {items.map((item, index) => {
           const isOpen = openIndex === index
           const panelId = `${idPrefix}-faq-panel-${index}`
@@ -44,6 +46,7 @@ export function QaBlocks({ items, title = 'Questions & answers' }: { items: FaqI
             </article>
           )
         })}
+        </div>
       </div>
     </section>
   )
