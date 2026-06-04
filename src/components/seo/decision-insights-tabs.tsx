@@ -3,27 +3,9 @@
 import { useState } from 'react'
 import type { CommonPitfall } from '@/types/seo-intelligence'
 
-type ApplicationTagLayer = {
-  scenarioType: string
-  constraintCondition: string
-}
-
-type ActiveTab = 'application' | 'design' | 'risk'
+type ActiveTab = 'design' | 'risk'
 
 function TabIcon({ tab }: { tab: ActiveTab }) {
-  if (tab === 'application') {
-    return (
-      <svg viewBox="0 0 20 20" aria-hidden="true" className="seo-content-tabs__icon">
-        <path
-          d="M4.5 5.5h11v2h-11zm0 3.5h11v2h-11zm0 3.5h7v2h-7z"
-          fill="currentColor"
-          fillRule="evenodd"
-          clipRule="evenodd"
-        />
-      </svg>
-    )
-  }
-
   if (tab === 'design') {
     return (
       <svg viewBox="0 0 20 20" aria-hidden="true" className="seo-content-tabs__icon">
@@ -50,31 +32,19 @@ function TabIcon({ tab }: { tab: ActiveTab }) {
 }
 
 export function DecisionInsightsTabs({
-  applicationTagLayers,
   designConsiderations,
   notRecommended,
   commonPitfalls,
 }: {
-  applicationTagLayers: ApplicationTagLayer[]
   designConsiderations: string[]
   notRecommended: string[]
   commonPitfalls: CommonPitfall[]
 }) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('application')
+  const [activeTab, setActiveTab] = useState<ActiveTab>('design')
 
   return (
     <section className="seo-section seo-insights-tabs">
       <div className="seo-content-tabs seo-content-tabs--untitled" role="tablist" aria-label="Decision insight tabs">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'application'}
-          className={`seo-content-tabs__btn ${activeTab === 'application' ? 'seo-content-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('application')}
-        >
-          <TabIcon tab="application" />
-          Application tags
-        </button>
         <button
           type="button"
           role="tab"
@@ -98,16 +68,7 @@ export function DecisionInsightsTabs({
       </div>
 
       <div className="seo-card seo-insights-tabs__panel">
-        {activeTab === 'application' ? (
-          <div className="seo-app-tag-grid">
-            {applicationTagLayers.map((tag) => (
-              <div key={`${tag.scenarioType}-${tag.constraintCondition}`} className="seo-app-tag-stack">
-                <span className="seo-app-tag seo-app-tag--scenario">{tag.scenarioType}</span>
-                <span className="seo-app-tag seo-app-tag--constraint">{tag.constraintCondition}</span>
-              </div>
-            ))}
-          </div>
-        ) : activeTab === 'design' ? (
+        {activeTab === 'design' ? (
           <ul className="seo-compact-list">
             {designConsiderations.map((item) => (
               <li key={item}>{item}</li>

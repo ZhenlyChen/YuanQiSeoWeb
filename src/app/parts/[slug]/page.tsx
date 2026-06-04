@@ -44,7 +44,12 @@ export default async function PartPage({ params, searchParams }: PageProps) {
     const mockPage = getMockComponentPage(slug)
     if (!mockPage) notFound()
     return (
-      <SeoPageShell breadcrumbs={mockPage.breadcrumbs} faq={mockPage.faq}>
+      <SeoPageShell
+        breadcrumbs={mockPage.breadcrumbs}
+        faq={mockPage.faq}
+        cpuHeroText="PartGenie"
+        pageContext={{ slug: mockPage.slug, mpn: mockPage.mpn }}
+      >
         <ComponentIntelligenceView page={mockPage} />
       </SeoPageShell>
     )
@@ -65,7 +70,11 @@ export default async function PartPage({ params, searchParams }: PageProps) {
       showPreviewBanner={Boolean(sp.preview)}
     >
       <article className="seo-card seo-hero">
-        <h1 className="seo-page-header__h1">{code} Component Intelligence</h1>
+        <h1 className="seo-page-header__h1">
+          <span className="seo-page-header__h1-line">{code} AI Analysis:</span>
+          <br />
+          <span className="seo-page-header__h1-line">Specs, Applications & Alternatives</span>
+        </h1>
         {summary ? <p className="seo-section__lead">{summary}</p> : null}
         <p className="seo-section__lead" style={{ marginTop: 'var(--pg-space-4)' }}>
           Full template available on design-preview slug{' '}

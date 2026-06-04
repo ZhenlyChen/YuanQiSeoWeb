@@ -14,7 +14,7 @@ export function buildPageMetadata(meta: SeoMeta): Metadata {
       url: canonical,
       title: meta.title,
       description: meta.description,
-      images: [{ url: SEO_DEFAULT_OG_IMAGE, alt: meta.h1 }],
+      images: [{ url: SEO_DEFAULT_OG_IMAGE, alt: meta.h1SecondLine ? `${meta.h1} ${meta.h1SecondLine}` : meta.h1 }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -34,9 +34,10 @@ export function componentSeoMeta(input: {
 }): SeoMeta {
   const { mpn, manufacturer, category, slug } = input
   return {
-    title: `${mpn} Component Intelligence: Specs, Uses, Alternatives & Risks | PartGenie`,
-    description: `Review ${mpn} specs, applications, design considerations, replacement risks, and alternative components from ${manufacturer}. Compare pin-compatible options and analyze ${mpn} in your BOM with PartGenie.`,
-    h1: `${mpn} Component Intelligence`,
+    title: `${mpn} AI Component Analysis: Specs, Uses, Alternatives & Risks | PartGenie`,
+    description: `AI-powered review of ${mpn} specs, applications, design considerations, replacement risks, and alternative components from ${manufacturer}. Compare pin-compatible options and analyze ${mpn} in your BOM with PartGenie.`,
+    h1: `${mpn} AI Analysis:`,
+    h1SecondLine: 'Specs, Applications & Alternatives',
     canonicalPath: `/parts/${slug}`,
     keywords: [
       mpn,
@@ -44,8 +45,10 @@ export function componentSeoMeta(input: {
       `${mpn} replacement`,
       `${mpn} specs`,
       `${mpn} cross reference`,
+      `${mpn} AI analysis`,
       manufacturer,
       category,
+      'AI component analysis',
       'component intelligence',
       'pin-compatible replacement',
       'BOM analysis',

@@ -6,6 +6,8 @@ export type SeoMeta = {
   title: string
   description: string
   h1: string
+  /** Optional second line for hero H1 display (full title still uses h1 + this for meta alt). */
+  h1SecondLine?: string
   canonicalPath: string
   keywords: string[]
 }

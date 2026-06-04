@@ -1,18 +1,16 @@
- 'use client'
+'use client'
 
 import { useId, useState } from 'react'
 import type { FaqItem } from '@/types/seo-intelligence'
-import { SectionTitle } from '@/components/seo/section-title'
-import { UICard } from '@/components/ui/ui-card'
 
-export function QaBlocks({ items, title = 'Engineering Q&A' }: { items: FaqItem[]; title?: string }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+export function QaBlocks({ items, title = 'Questions & answers' }: { items: FaqItem[]; title?: string }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
   const idPrefix = useId()
 
   return (
-    <section className="seo-section">
-      <SectionTitle title={title} icon="faq" />
-      <UICard className="seo-card seo-faq">
+    <section className="seo-section seo-faq-section">
+      <h2 className="seo-section__title">{title}</h2>
+      <div className="seo-faq">
         {items.map((item, index) => {
           const isOpen = openIndex === index
           const panelId = `${idPrefix}-faq-panel-${index}`
@@ -28,18 +26,25 @@ export function QaBlocks({ items, title = 'Engineering Q&A' }: { items: FaqItem[
               >
                 <span className="seo-faq__question">{item.question}</span>
                 <span className="seo-faq__icon" aria-hidden="true">
-                  {isOpen ? '−' : '+'}
+                  <span className={`seo-faq__icon-mark seo-faq__icon-mark--plus${isOpen ? ' is-hidden' : ''}`}>+</span>
+                  <span className={`seo-faq__icon-mark seo-faq__icon-mark--close${isOpen ? '' : ' is-hidden'}`}>×</span>
                 </span>
               </button>
-              {isOpen ? (
-                <div id={panelId} className="seo-faq__panel">
+              <div
+                id={panelId}
+                className="seo-faq__panel"
+                role="region"
+                aria-hidden={!isOpen}
+                inert={!isOpen ? true : undefined}
+              >
+                <div className="seo-faq__panel-inner">
                   <p>{item.answer}</p>
                 </div>
-              ) : null}
+              </div>
             </article>
           )
         })}
-      </UICard>
+      </div>
     </section>
   )
 }

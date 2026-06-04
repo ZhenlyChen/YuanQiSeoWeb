@@ -1,9 +1,21 @@
 import Link from 'next/link'
 import { FloatingCtaDock } from '@/components/seo/floating-cta-dock'
-import { partFinderUrl } from '@/lib/tool-urls'
+import { partFinderUrl, signInUrl, signUpUrl } from '@/lib/tool-urls'
 
-export function SeoSiteChrome({ children }: { children: React.ReactNode }) {
-  const ctaSlug = 'seo-header'
+export type SeoPageContext = {
+  slug: string
+  mpn: string
+}
+
+export function SeoSiteChrome({
+  children,
+  pageContext,
+}: {
+  children: React.ReactNode
+  pageContext?: SeoPageContext
+}) {
+  const ctaSlug = pageContext?.slug ?? 'seo-header'
+
   return (
     <div className="seo-page">
       <header className="seo-site-header">
@@ -13,17 +25,16 @@ export function SeoSiteChrome({ children }: { children: React.ReactNode }) {
           </Link>
           <nav className="seo-site-header__nav" aria-label="Primary">
             <a href={partFinderUrl(ctaSlug)}>Finder</a>
-            <Link href="/dev/seo-previews">Guides</Link>
-            <button type="button" className="seo-menu-btn" aria-label="Open menu">
-              <span />
-              <span />
-              <span />
-            </button>
+            <Link href="/answers/best-mcu-for-wearable-device">Guides</Link>
+            <a href={signInUrl(ctaSlug)}>Log in</a>
+            <a href={signUpUrl(ctaSlug)} className="seo-site-header__cta">
+              Get started
+            </a>
           </nav>
         </div>
       </header>
       {children}
-      <FloatingCtaDock />
+      <FloatingCtaDock pageContext={pageContext} />
       <footer className="seo-site-footer">
         <div className="seo-site-footer__inner">
           <p>

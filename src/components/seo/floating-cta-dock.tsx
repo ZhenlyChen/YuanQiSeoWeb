@@ -1,8 +1,16 @@
 import { partFinderUrl } from '@/lib/tool-urls'
+import type { SeoPageContext } from '@/components/seo/seo-site-chrome'
 
-export function FloatingCtaDock() {
+export function FloatingCtaDock({ pageContext }: { pageContext?: SeoPageContext }) {
+  const slug = pageContext?.slug ?? 'floating_chat'
+  const mpn = pageContext?.mpn
+  const placeholder = mpn
+    ? `Ask about ${mpn} alternatives, compare options, or design fit`
+    : 'Try "BQ24195L alternative" or ask a design question'
+  const defaultQuery = mpn ? `${mpn} alternatives and replacement risk` : undefined
+
   return (
-    <form className="seo-floating-chat" action={partFinderUrl('floating_chat')} role="search" aria-label="Ask in PartGenie">
+    <form className="seo-floating-chat" action={partFinderUrl(slug)} role="search" aria-label="Ask in PartGenie">
       <label htmlFor="seo-floating-chat-input" className="seo-sr-only">
         Ask in PartGenie
       </label>
@@ -12,7 +20,8 @@ export function FloatingCtaDock() {
           name="q"
           type="search"
           className="seo-floating-chat__input"
-          placeholder='Try "BQ24195L alternative" or ask a design question'
+          placeholder={placeholder}
+          defaultValue={defaultQuery}
         />
       </div>
       <button type="submit" className="seo-floating-chat__submit" aria-label="Send query">

@@ -3,10 +3,12 @@ import type { PageSubtitle } from '@/types/seo-intelligence'
 
 export function PageHeader({
   h1,
+  h1SecondLine,
   subtitle,
   actions,
 }: {
   h1: string
+  h1SecondLine?: string
   subtitle?: PageSubtitle
   actions?: React.ReactNode
 }) {
@@ -14,7 +16,15 @@ export function PageHeader({
     <header className="seo-page-header">
       <div className="seo-page-header__inner">
         <div className={`seo-page-header__text${subtitle ? '' : ' seo-page-header__text--title-only'}`}>
-          <h1 className="seo-page-header__h1">{h1}</h1>
+          <h1 className="seo-page-header__h1">
+            <span className="seo-page-header__h1-line">{h1}</span>
+            {h1SecondLine ? (
+              <>
+                <br />
+                <span className="seo-page-header__h1-line">{h1SecondLine}</span>
+              </>
+            ) : null}
+          </h1>
           {subtitle ? (
             <p className="seo-page-header__subtitle">
               {subtitle.manufacturerHref ? (

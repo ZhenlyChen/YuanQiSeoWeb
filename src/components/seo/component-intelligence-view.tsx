@@ -1,5 +1,6 @@
-import Link from 'next/link'
 import { AiVerdictCard } from '@/components/seo/ai-verdict-card'
+import { AlternativeList } from '@/components/seo/alternative-list'
+import { ContextualLinksBar } from '@/components/seo/contextual-links-bar'
 import { DecisionInsightsTabs } from '@/components/seo/decision-insights-tabs'
 import { KeySpecsSnapshot } from '@/components/seo/key-specs-snapshot'
 import { PageHeader } from '@/components/seo/page-header'
@@ -8,38 +9,13 @@ import { QaBlocks } from '@/components/seo/qa-blocks'
 import { SidebarBomNotes } from '@/components/seo/sidebar-bom-notes'
 import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
 import { SidebarSourcingHelp } from '@/components/seo/sidebar-sourcing-help'
-import { AlternativeList } from '@/components/seo/alternative-list'
+import { SidebarToolGrid, buildComponentToolGrid } from '@/components/seo/sidebar-tool-grid'
 import { partImageForMpn } from '@/lib/part-images'
-import { openPartUrl } from '@/lib/tool-urls'
+import { signUpUrl } from '@/lib/tool-urls'
 import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
 
-type ApplicationTagLayer = {
-  scenarioType: string
-  constraintCondition: string
-}
-
-function buildApplicationTagLayers(items: string[]): ApplicationTagLayer[] {
-  return items.slice(0, 6).map((item) => {
-    const cleaned = item.replace(/\.$/, '')
-    const splitMatch = cleaned.match(/^(.*?)(?:\s+(with|requiring|under|for)\s+)(.+)$/i)
-
-    if (!splitMatch) {
-      return {
-        scenarioType: cleaned,
-        constraintCondition: 'standard cost and reliability constraints',
-      }
-    }
-
-    const [, scenarioType, connector, tail] = splitMatch
-    const constraintCondition =
-      connector.toLowerCase() === 'for' ? `${connector.toLowerCase()} ${tail}` : `${connector.toLowerCase()} ${tail}`
-
-    return { scenarioType: scenarioType.trim(), constraintCondition: constraintCondition.trim() }
-  })
-}
-
 export function ComponentIntelligenceView({ page }: { page: ComponentIntelligencePage }) {
-  const applicationTagLayers = buildApplicationTagLayers(page.applications.goodFit)
+  const compareHref = page.compareLinks[0]?.href ?? `/alternatives/${page.slug}`
   const keySpecsWithCompliance = [
     ...page.keySpecs,
     ...(page.compliance?.rohs ? [{ label: 'RoHS', value: page.compliance.rohs }] : []),
@@ -50,12 +26,13 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
     page.relatedManufacturer,
     page.relatedCategory,
     { label: `${page.mpn} alternatives`, href: `/alternatives/${page.slug}` },
+    ...page.compareLinks,
     ...page.relatedAnswers,
   ]
 
   return (
     <>
-      <PageHeader h1={page.meta.h1} />
+      <PageHeader h1={page.meta.h1} h1SecondLine={page.meta.h1SecondLine} />
 
       <PageLayout
         main={
@@ -78,24 +55,40 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
               <p className="seo-direct-answer seo-direct-answer--embedded" id="short-answer">
                 {page.shortAnswer}
               </p>
+
+              <ContextualLinksBar
+                slug={page.slug}
+                mpn={page.mpn}
+                compareHref={compareHref}
+                categoryHref={page.relatedCategory.href}
+                categoryLabel={page.relatedCategory.label}
+                manufacturerHref={page.relatedManufacturer.href}
+                manufacturerLabel={page.manufacturer}
+              />
             </section>
 
             <AiVerdictCard
               verdict={page.aiVerdict}
               sourcingContext="Multiple alternatives available"
             />
-            <KeySpecsSnapshot specs={keySpecsWithCompliance} mpn={page.mpn} slug={page.slug} />
+            <KeySpecsSnapshot
+              specs={keySpecsWithCompliance}
+              applicationTags={page.applications.goodFit}
+              mpn={page.mpn}
+              slug={page.slug}
+            />
             <AlternativeList
               items={page.alternatives}
               title="Alternative components"
               viewAllHref={`/alternatives/${page.slug}`}
               layout="card"
               gated
-              gatedCtaHref={openPartUrl(page.slug)}
+              slug={page.slug}
+              mpn={page.mpn}
+              gatedCtaHref={signUpUrl(page.slug)}
             />
 
             <DecisionInsightsTabs
-              applicationTagLayers={applicationTagLayers}
               designConsiderations={page.designConsiderations}
               notRecommended={page.applications.notRecommended}
               commonPitfalls={page.commonPitfalls}
@@ -106,6 +99,7 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
         }
         sidebar={
           <>
+            <SidebarToolGrid tools={buildComponentToolGrid(page)} />
             <SidebarBomNotes notes={page.bomSourcing} />
             <SidebarSourcingHelp slug={page.slug} />
             <SidebarRelatedLinks links={relatedLinks} />
