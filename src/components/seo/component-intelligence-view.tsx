@@ -11,6 +11,7 @@ import { QaBlocks } from '@/components/seo/qa-blocks'
 import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
 import { SidebarSourcingHelp } from '@/components/seo/sidebar-sourcing-help'
 import { SidebarToolGrid, buildComponentToolGrid } from '@/components/seo/sidebar-tool-grid'
+import { TypewriterText } from '@/components/seo/typewriter-text'
 import { partImageForMpn } from '@/lib/part-images'
 import { signUpUrl } from '@/lib/tool-urls'
 import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
@@ -63,11 +64,11 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
                   </div>
                 </div>
 
-                <p
+                <TypewriterText
+                  id="short-answer"
+                  text={page.shortAnswer}
                   className="seo-direct-answer seo-direct-answer--embedded seo-direct-answer--overview"
-                  id="short-answer">
-                  {page.shortAnswer}
-                </p>
+                />
               </div>
               <AiVerdictCard
                 verdict={page.aiVerdict}

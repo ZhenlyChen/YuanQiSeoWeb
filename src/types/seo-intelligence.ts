@@ -308,6 +308,10 @@ export type CompareIntelligencePage = {
 export type ManufacturerCatalogCategory = {
   label: string
   partCount: number
+  /** Raw L1 segment for app brand drawer deep link (`categoryL1` query param). */
+  categoryL1?: string
+  /** Raw L2 segment for app brand drawer deep link (`categoryL2` query param). */
+  categoryL2?: string
 }
 
 export type SupplyChainInsightGroup = {

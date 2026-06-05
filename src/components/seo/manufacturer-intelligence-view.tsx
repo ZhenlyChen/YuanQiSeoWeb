@@ -7,6 +7,7 @@ import { buildManufacturerSectionNavItems } from '@/lib/manufacturer-section-nav
 import { ComparableManufacturersList } from '@/components/seo/comparable-manufacturers-list'
 import { ManufacturerCatalogTable } from '@/components/seo/manufacturer-catalog-table'
 import { ManufacturerSupplyInsights } from '@/components/seo/manufacturer-supply-insights'
+import { TypewriterText } from '@/components/seo/typewriter-text'
 import { buildManufacturerToolGrid, SidebarToolGrid } from '@/components/seo/sidebar-tool-grid'
 import type { ManufacturerIntelligencePage } from '@/types/seo-intelligence'
 
@@ -28,7 +29,7 @@ export function ManufacturerIntelligenceView({ page }: { page: ManufacturerIntel
                   <Stars02Icon className="seo-ai-summary__icon" />
                   {page.name} at a Glance
                 </h2>
-                <p className="seo-direct-answer__body">{page.shortAnswer}</p>
+                <TypewriterText text={page.shortAnswer} className="seo-direct-answer__body" />
               </div>
 
               <div id="parts" className="seo-page-section seo-page-section-anchor">

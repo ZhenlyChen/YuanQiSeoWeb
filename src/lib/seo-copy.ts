@@ -32,6 +32,10 @@ export const SEO_PUBLIC_BOUNDARY = {
   topPartsGateDescription:
     'Sign in to unlock live search trends beyond the top 3 ranked parts.',
   topPartsGateCta: 'Start now for free',
+  catalogGateTitle: 'Browse the full manufacturer catalog',
+  catalogGateDescription:
+    'Sign in to unlock all product categories, filters, and rankings in PartGenie.',
+  catalogGateCta: 'Start now for free',
   specsFooter: (mpn: string) =>
     `Full datasheet fields, test conditions, and source confidence for ${mpn} are available in PartGenie after sign-in.`,
   specsFooterCta: 'View full analysis',

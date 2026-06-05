@@ -189,22 +189,52 @@ export function sourcingHelpAppUrl(slug: string, mpn: string): string {
   })
 }
 
-/** SEO sidebar: logged-in users open brand catalog drawer in app. */
-export function manufacturerCatalogAppUrl(slug: string, manufacturerId: string): string {
-  return withUtm(APP_ORIGIN, '/app/chat', slug, 'manufacturer_catalog', {
-    ref_part: slug,
+export type ManufacturerCatalogLinkOptions = {
+  categoryL1?: string
+  categoryL2?: string
+}
+
+function manufacturerCatalogExtra(
+  manufacturerId: string,
+  options: ManufacturerCatalogLinkOptions = {},
+): Record<string, string> {
+  const extra: Record<string, string> = {
     intent: 'brand',
     manufacturerId,
+  }
+  const categoryL1 = options.categoryL1?.trim()
+  const categoryL2 = options.categoryL2?.trim()
+  if (categoryL1) {
+    extra.categoryL1 = categoryL1
+  }
+  if (categoryL2) {
+    extra.categoryL2 = categoryL2
+  }
+  return extra
+}
+
+/** SEO sidebar: logged-in users open brand catalog drawer in app. */
+export function manufacturerCatalogAppUrl(
+  slug: string,
+  manufacturerId: string,
+  options: ManufacturerCatalogLinkOptions = {},
+): string {
+  return withUtm(APP_ORIGIN, '/app/chat', slug, 'manufacturer_catalog', {
+    ref_part: slug,
+    ...manufacturerCatalogExtra(manufacturerId, options),
   })
 }
 
 /** SEO catalog CTA: logged-out users sign in, then brand drawer opens. */
-export function manufacturerCatalogSignInUrl(slug: string, manufacturerId: string): string {
+export function manufacturerCatalogSignInUrl(
+  slug: string,
+  manufacturerId: string,
+  options: ManufacturerCatalogLinkOptions = {},
+): string {
   return withUtm(APP_ORIGIN, '/app/chat', slug, 'manufacturer_catalog', {
     ref_part: slug,
     login: 'true',
-    intent: 'brand',
-    manufacturerId,
+    ...manufacturerCatalogExtra(manufacturerId, options),
   })
 }
 

@@ -9,6 +9,7 @@ import { QuickReplacementView } from '@/components/seo/quick-replacement-view'
 import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
 import { SidebarSourcingHelp } from '@/components/seo/sidebar-sourcing-help'
 import { buildSidebarToolCards, SidebarToolGrid } from '@/components/seo/sidebar-tool-grid'
+import { TypewriterText } from '@/components/seo/typewriter-text'
 import { signUpUrl } from '@/lib/tool-urls'
 import type { AlternativeIntelligencePage } from '@/types/seo-intelligence'
 
@@ -27,7 +28,10 @@ export function AlternativeIntelligenceView({ page }: { page: AlternativeIntelli
       <PageLayout
         main={
           <>
-            <p className="seo-direct-answer seo-direct-answer--gradient">{page.shortAnswer}</p>
+            <TypewriterText
+              text={page.shortAnswer}
+              className="seo-direct-answer seo-direct-answer--gradient"
+            />
             <QuickReplacementView verdict={page.replacementVerdict} riskAnalysis={page.riskAnalysis} />
 
             <AlternativeRichList

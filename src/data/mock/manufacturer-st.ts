@@ -19,12 +19,65 @@ export const mockManufacturerSt: ManufacturerIntelligencePage = {
   summary:
     'This hub highlights curated ST families and high-intent parts — not a full manufacturer catalog. Use PartGenie to compare replacements, review lifecycle risk, and analyze ST parts inside your BOM.',
   catalogCategories: [
-    { label: 'MCU', partCount: 8420 },
-    { label: 'Power discrete', partCount: 3100 },
-    { label: 'MEMS sensors', partCount: 890 },
-    { label: 'Automotive IC', partCount: 1240 },
-    { label: 'Analog & mixed-signal', partCount: 4510 },
-    { label: 'Motor drivers', partCount: 680 },
+    {
+      label: 'MCU',
+      partCount: 8420,
+      categoryL1: 'Integrated Circuits (ICs)',
+      categoryL2: 'Embedded',
+    },
+    {
+      label: 'Power discrete',
+      partCount: 3100,
+      categoryL1: 'Discrete Semiconductor Products',
+      categoryL2: 'Transistors',
+    },
+    {
+      label: 'MEMS sensors',
+      partCount: 890,
+      categoryL1: 'Sensors, Transducers',
+      categoryL2: 'Motion Sensors',
+    },
+    {
+      label: 'Automotive IC',
+      partCount: 1240,
+      categoryL1: 'Integrated Circuits (ICs)',
+      categoryL2: 'Specialized ICs',
+    },
+    {
+      label: 'Analog & mixed-signal',
+      partCount: 4510,
+      categoryL1: 'Integrated Circuits (ICs)',
+      categoryL2: 'Linear',
+    },
+    {
+      label: 'Motor drivers',
+      partCount: 680,
+      categoryL1: 'Integrated Circuits (ICs)',
+      categoryL2: 'Power Management (PMIC)',
+    },
+    {
+      label: 'RF & connectivity',
+      partCount: 520,
+      categoryL1: 'RF and Wireless',
+    },
+    {
+      label: 'EEPROM & memory',
+      partCount: 410,
+      categoryL1: 'Integrated Circuits (ICs)',
+      categoryL2: 'Memory',
+    },
+    {
+      label: 'Timing & clocks',
+      partCount: 290,
+      categoryL1: 'Integrated Circuits (ICs)',
+      categoryL2: 'Clock/Timing',
+    },
+    {
+      label: 'Interface transceivers',
+      partCount: 360,
+      categoryL1: 'Integrated Circuits (ICs)',
+      categoryL2: 'Interface',
+    },
   ],
   mostSearchedParts: [
     { mpn: 'STM32F103C8T6', category: 'MCU', href: '/parts/stm32f103c8t6', interest: 100, changePercent: 28 },
