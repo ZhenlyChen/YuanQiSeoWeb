@@ -50,11 +50,21 @@ function TopSearchedPartRow({
   )
 }
 
-function TopSearchedPartsTableBody({ items }: { items: TopSearchedPartItem[] }) {
+function TopSearchedPartsTableBody({
+  items,
+  startRank = 1,
+}: {
+  items: TopSearchedPartItem[]
+  startRank?: number
+}) {
   return (
     <>
       {items.map((item, index) => (
-        <TopSearchedPartRow key={`${item.href}-${item.mpn}`} item={item} rank={index + 1} />
+        <TopSearchedPartRow
+          key={`${item.href}-${item.mpn}`}
+          item={item}
+          rank={startRank + index}
+        />
       ))}
     </>
   )
@@ -125,9 +135,8 @@ export function TopSearchedPartsTable({
             </table>
             <div className="seo-top-parts-blurred" aria-hidden="true">
               <table className="seo-top-parts__table">
-                {tableHead}
                 <tbody>
-                  <TopSearchedPartsTableBody items={locked} />
+                  <TopSearchedPartsTableBody items={locked} startRank={FREE_VISIBLE + 1} />
                 </tbody>
               </table>
             </div>
