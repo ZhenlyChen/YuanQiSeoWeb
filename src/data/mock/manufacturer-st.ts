@@ -5,6 +5,10 @@ export const mockManufacturerSt: ManufacturerIntelligencePage = {
   pageType: 'manufacturer',
   slug: 'stmicroelectronics',
   name: 'STMicroelectronics',
+  shortName: 'ST',
+  manufacturerId: 'MFG_003343',
+  representativeMpn: 'STM32F103C8T6',
+  logoUrl: '/manufacturers/stmicroelectronics.svg',
   meta: manufacturerSeoMeta({ name: 'STMicroelectronics', slug: 'stmicroelectronics' }),
   breadcrumbs: [
     { label: 'Manufacturers', href: '/manufacturers/stmicroelectronics' },
@@ -14,45 +18,98 @@ export const mockManufacturerSt: ManufacturerIntelligencePage = {
     'STMicroelectronics is a major supplier of MCUs, power discretes, MEMS, and automotive-grade ICs. Engineers choose ST for ecosystem depth and long product lifecycles, but should still map pin-compatible and functional alternatives for BOM resilience.',
   summary:
     'This hub highlights curated ST families and high-intent parts — not a full manufacturer catalog. Use PartGenie to compare replacements, review lifecycle risk, and analyze ST parts inside your BOM.',
-  popularFamilies: [
-    { name: 'STM32 MCUs', description: 'Cortex-M portfolio from ultra-low-power to high-performance' },
-    { name: 'STPOWER', description: 'MOSFETs, IGBTs, and rectifiers for power conversion' },
-    { name: 'MEMS sensors', description: 'Accelerometers, IMUs, and environmental sensing' },
+  catalogCategories: [
+    { label: 'MCU', partCount: 8420 },
+    { label: 'Power discrete', partCount: 3100 },
+    { label: 'MEMS sensors', partCount: 890 },
+    { label: 'Automotive IC', partCount: 1240 },
+    { label: 'Analog & mixed-signal', partCount: 4510 },
+    { label: 'Motor drivers', partCount: 680 },
   ],
   mostSearchedParts: [
-    { label: 'STM32F103C8T6 component intelligence', href: '/parts/stm32f103c8t6' },
-    { label: 'STM32F407VGT6 component intelligence', href: '/parts/stm32f103c8t6' },
-    { label: 'STM32H743VIT6 component intelligence', href: '/parts/stm32f103c8t6' },
-    { label: 'LIS3DH accelerometer intelligence', href: '/parts/stm32f103c8t6' },
+    { mpn: 'STM32F103C8T6', category: 'MCU', href: '/parts/stm32f103c8t6', interest: 100, changePercent: 28 },
+    { mpn: 'STM32F407VGT6', category: 'MCU', href: '/parts/stm32f407vgt6', interest: 74, changePercent: 15 },
+    { mpn: 'STM32H743VIT6', category: 'MCU', href: '/parts/stm32h743vit6', interest: 58, changePercent: 42 },
+    { mpn: 'LIS3DH', category: 'Accelerometer', href: '/parts/lis3dh', interest: 41, changePercent: -12 },
+    { mpn: 'STM32G071KBU6', category: 'MCU', href: '/parts/stm32g071kbu6', interest: 33, changePercent: 8 },
+    { mpn: 'STPS745G', category: 'Rectifier', href: '/parts/stps745g', interest: 26, changePercent: -5 },
+    { mpn: 'LIS3DHTR', category: 'Accelerometer', href: '/parts/lis3dhtr', interest: 19, changePercent: 3 },
+    { mpn: 'STM32F030F4P6', category: 'MCU', href: '/parts/stm32f030f4p6', interest: 17, changePercent: 6 },
+    { mpn: 'VL53L0X', category: 'Time-of-flight sensor', href: '/parts/vl53l0x', interest: 14, changePercent: -3 },
+    { mpn: 'L298N', category: 'Motor driver', href: '/parts/l298n', interest: 12, changePercent: 11 },
   ],
   popularAlternatives: [
     { label: 'Alternatives to STM32F103C8T6', href: '/alternatives/stm32f103c8t6' },
     { label: 'Compare STM32F103C8T6 vs GD32F103C8T6', href: '/compare/stm32f103c8t6-vs-gd32f103c8t6' },
   ],
   comparableManufacturers: [
-    { label: 'GigaDevice (GD32)', href: '/manufacturers/stmicroelectronics' },
-    { label: 'Microchip', href: '/manufacturers/stmicroelectronics' },
-    { label: 'NXP Semiconductors', href: '/manufacturers/stmicroelectronics' },
+    {
+      label: 'GigaDevice',
+      shortName: 'GD',
+      subtitle: 'GD32 · MCU',
+      slug: 'gigadevice',
+      href: '/manufacturers/gigadevice',
+    },
+    {
+      label: 'Microchip',
+      shortName: 'M',
+      subtitle: 'PIC · MCU & analog',
+      slug: 'microchip',
+      href: '/manufacturers/microchip',
+    },
+    {
+      label: 'NXP Semiconductors',
+      shortName: 'NXP',
+      subtitle: 'MCU · Automotive',
+      slug: 'nxp',
+      href: '/manufacturers/nxp',
+    },
   ],
-  categoryBreakdown: [
-    { label: 'MCU component finder', href: '/categories/mcu/finder' },
-    { label: 'Power discrete finder', href: '/categories/mosfet/finder' },
-    { label: 'MEMS sensor finder', href: '/categories/sensor/finder' },
+  supplyInsights: [
+    {
+      title: 'Lifecycle & alternates',
+      summary: 'Legacy BOM continuity and approved swaps',
+      icon: 'lifecycle',
+      notes: [
+        'STM32 legacy parts remain in many BOMs — maintain approved alternates with documented match types.',
+      ],
+    },
+    {
+      title: 'Purchasing pitfalls',
+      summary: 'Grade suffixes and orderable part numbers',
+      icon: 'alertCircle',
+      notes: [
+        'Automotive and industrial grades use distinct orderable suffixes; purchasing swaps are a common pitfall.',
+      ],
+    },
+    {
+      title: 'Sourcing channels',
+      summary: 'Franchised distributor guidance',
+      icon: 'globe',
+      notes: ['Franchised distributors remain the lowest-risk channel for critical programs.'],
+    },
   ],
-  supplyNotes: [
-    'STM32 legacy parts remain in many BOMs — maintain approved alternates with documented match types.',
-    'Automotive and industrial grades use distinct orderable suffixes; purchasing swaps are a common pitfall.',
-    'Franchised distributors remain the lowest-risk channel for critical programs.',
-  ],
-  curatedCatalog: [
-    { label: 'STM32F103C8T6', href: '/parts/stm32f103c8t6' },
-    { label: 'STM32F103CBT6', href: '/parts/stm32f103c8t6' },
-    { label: 'STM32G071KBU6', href: '/parts/stm32f103c8t6' },
-    { label: 'STM32H743VIT6', href: '/parts/stm32f103c8t6' },
-    { label: 'STM32L476RG', href: '/parts/stm32f103c8t6' },
-    { label: 'STPS745G', href: '/parts/stm32f103c8t6' },
-    { label: 'STL100N8F7', href: '/parts/stm32f103c8t6' },
-    { label: 'LIS3DHTR', href: '/parts/stm32f103c8t6' },
+  queryIntelligence: [
+    {
+      question: 'Can STM32F103 be replaced by GD32F103?',
+      answerHref: '/compare/stm32f103c8t6-vs-gd32f103c8t6',
+    },
+    {
+      question: 'Which STM32 is best for low power?',
+      answerHref: '/answers/best-mcu-for-wearable-device',
+    },
+    {
+      question: 'What is an alternative to L298N?',
+      chatQuery: 'What is an alternative to L298N?',
+    },
+    {
+      question: 'Can I use STM32 for motor control?',
+      chatQuery: 'Can I use STM32 for motor control?',
+    },
+    {
+      question: 'Which STM32 package is easiest to source?',
+      chatQuery: 'Which STM32 package is easiest to source?',
+    },
   ],
   faq: [
     {

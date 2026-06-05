@@ -20,7 +20,15 @@ export default async function ComparePage({ params }: PageProps) {
   if (!page) notFound()
 
   return (
-    <SeoPageShell breadcrumbs={page.breadcrumbs} faq={page.faq}>
+    <SeoPageShell
+      breadcrumbs={page.breadcrumbs}
+      faq={page.faq}
+      pageContext={{
+        slug: page.slug,
+        mpn: `${page.partA.mpn} vs ${page.partB.mpn}`,
+        kind: 'compare',
+      }}
+    >
       <CompareIntelligenceView page={page} />
     </SeoPageShell>
   )

@@ -189,6 +189,25 @@ export function sourcingHelpAppUrl(slug: string, mpn: string): string {
   })
 }
 
+/** SEO sidebar: logged-in users open brand catalog drawer in app. */
+export function manufacturerCatalogAppUrl(slug: string, manufacturerId: string): string {
+  return withUtm(APP_ORIGIN, '/app/chat', slug, 'manufacturer_catalog', {
+    ref_part: slug,
+    intent: 'brand',
+    manufacturerId,
+  })
+}
+
+/** SEO catalog CTA: logged-out users sign in, then brand drawer opens. */
+export function manufacturerCatalogSignInUrl(slug: string, manufacturerId: string): string {
+  return withUtm(APP_ORIGIN, '/app/chat', slug, 'manufacturer_catalog', {
+    ref_part: slug,
+    login: 'true',
+    intent: 'brand',
+    manufacturerId,
+  })
+}
+
 export function signInUrl(slug: string): string {
   return withUtm(APP_ORIGIN, '/app/chat', slug, 'sign_in', { ref_part: slug, login: 'true' })
 }

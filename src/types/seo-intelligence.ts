@@ -40,6 +40,13 @@ export type DecisionMatrixRow = {
 
 export type FaqItem = { question: string; answer: string }
 
+/** Real-user query chip on manufacturer hubs — links to /answers/* or app chat. */
+export type ManufacturerQueryItem = {
+  question: string
+  answerHref?: string
+  chatQuery?: string
+}
+
 export type KeySpec = { label: string; value: string }
 
 export type CompatibilityFactorStatus = 'match' | 'partial' | 'mismatch'
@@ -71,6 +78,29 @@ export type CompareLink = {
 }
 
 export type EntityLink = { label: string; href: string }
+
+/** Row for manufacturer "most searched parts" — Part + category from PartGenie intelligence. */
+export type TopSearchedPartItem = {
+  mpn: string
+  href: string
+  category: string
+  imageUrl?: string
+  /** Relative search interest 0–100 (sort order). */
+  interest: number
+  changePercent?: number
+}
+
+/** Sidebar manufacturer row — logo/monogram + optional subtitle (Perplexity-style peek list). */
+export type ManufacturerPeekLink = {
+  label: string
+  href: string
+  slug?: string
+  logoUrl?: string
+  /** Short line under name, e.g. "GD32 · MCU". */
+  subtitle?: string
+  /** Monogram fallback when logo is missing. */
+  shortName?: string
+}
 
 export type CommonPitfall = { title: string; detail: string }
 
@@ -274,21 +304,38 @@ export type CompareIntelligencePage = {
   faq: FaqItem[]
 }
 
+/** Category row for manufacturer catalog preview (merged families + catalog). */
+export type ManufacturerCatalogCategory = {
+  label: string
+  partCount: number
+}
+
+export type SupplyChainInsightGroup = {
+  title: string
+  summary: string
+  notes: string[]
+  icon: 'lifecycle' | 'alertCircle' | 'globe'
+}
+
 export type ManufacturerIntelligencePage = {
   pageType: 'manufacturer'
   slug: string
   name: string
+  shortName?: string
+  /** Backend manufacturer ID — opens brand drawer in app via intent=brand deep link. */
+  manufacturerId?: string
+  representativeMpn?: string
+  logoUrl?: string
   meta: SeoMeta
   breadcrumbs: BreadcrumbItem[]
   shortAnswer: string
   summary: string
-  popularFamilies: { name: string; description: string }[]
-  mostSearchedParts: EntityLink[]
+  catalogCategories: ManufacturerCatalogCategory[]
+  mostSearchedParts: TopSearchedPartItem[]
   popularAlternatives: EntityLink[]
-  comparableManufacturers: EntityLink[]
-  categoryBreakdown: EntityLink[]
-  supplyNotes: string[]
-  curatedCatalog: EntityLink[]
+  comparableManufacturers: ManufacturerPeekLink[]
+  supplyInsights: SupplyChainInsightGroup[]
+  queryIntelligence?: ManufacturerQueryItem[]
   faq: FaqItem[]
 }
 

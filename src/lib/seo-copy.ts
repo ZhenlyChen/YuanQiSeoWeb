@@ -28,6 +28,10 @@ export const SEO_PUBLIC_BOUNDARY = {
     'One-click compare and datasheet verification',
   ],
   gateCta: 'Create free account',
+  topPartsGateTitle: 'See the full trending parts list',
+  topPartsGateDescription:
+    'Sign in to unlock live search trends beyond the top 3 ranked parts.',
+  topPartsGateCta: 'Start now for free',
   specsFooter: (mpn: string) =>
     `Full datasheet fields, test conditions, and source confidence for ${mpn} are available in PartGenie after sign-in.`,
   specsFooterCta: 'View full analysis',

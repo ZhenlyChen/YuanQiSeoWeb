@@ -1,4 +1,5 @@
-import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
+import { buildManufacturerRelatedTools } from '@/lib/manufacturer-tool-links'
+import type { ComponentIntelligencePage, ManufacturerIntelligencePage } from '@/types/seo-intelligence'
 import { ComponentToolIcon } from '@/components/seo/untitled-ui-line-icon'
 import {
   buildComponentToolCtaLinks,
@@ -38,6 +39,14 @@ export function buildSidebarToolCards(slug: string, mpn: string): SidebarToolCar
 
 export function buildComponentToolGrid(page: ComponentIntelligencePage): SidebarToolCard[] {
   return buildSidebarToolCards(page.slug, page.mpn)
+}
+
+export function buildManufacturerToolGrid(page: ManufacturerIntelligencePage): SidebarToolCard[] {
+  return buildManufacturerRelatedTools(page).map((tool) => ({
+    label: tool.label,
+    href: tool.href,
+    icon: tool.icon,
+  }))
 }
 
 export function SidebarToolGrid({ tools }: { tools: SidebarToolCard[] }) {

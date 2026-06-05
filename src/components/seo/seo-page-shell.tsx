@@ -11,19 +11,23 @@ export function SeoPageShell({
   children,
   showPreviewBanner = false,
   pageContext,
+  banner,
+  hideBreadcrumbs = false,
 }: {
   breadcrumbs: BreadcrumbItem[]
   faq?: FaqItem[]
   children: React.ReactNode
   showPreviewBanner?: boolean
   pageContext?: SeoPageContext
+  banner?: React.ReactNode
+  hideBreadcrumbs?: boolean
 }) {
   return (
-    <SeoSiteChrome pageContext={pageContext}>
+    <SeoSiteChrome pageContext={pageContext} banner={banner}>
       <main className="seo-page__main">
         <div className="seo-page__body">
           {showPreviewBanner ? <PreviewBanner /> : null}
-          <Breadcrumbs items={breadcrumbs} />
+          {hideBreadcrumbs ? null : <Breadcrumbs items={breadcrumbs} />}
           {children}
         </div>
         <FloatingCtaDock pageContext={pageContext} />

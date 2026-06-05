@@ -1,72 +1,67 @@
-import { PageHeader } from '@/components/seo/page-header'
+import { Stars02Icon } from '@/components/seo/stars-02-icon'
+import { ComponentSectionNav } from '@/components/seo/component-section-nav'
 import { PageLayout } from '@/components/seo/page-layout'
-import { EntityLinkList } from '@/components/seo/entity-link-list'
+import { TopSearchedPartsTable } from '@/components/seo/top-searched-parts-table'
 import { QaBlocks } from '@/components/seo/qa-blocks'
-import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
+import { buildManufacturerSectionNavItems } from '@/lib/manufacturer-section-nav-items'
+import { ComparableManufacturersList } from '@/components/seo/comparable-manufacturers-list'
+import { ManufacturerCatalogTable } from '@/components/seo/manufacturer-catalog-table'
+import { ManufacturerSupplyInsights } from '@/components/seo/manufacturer-supply-insights'
+import { buildManufacturerToolGrid, SidebarToolGrid } from '@/components/seo/sidebar-tool-grid'
 import type { ManufacturerIntelligencePage } from '@/types/seo-intelligence'
 
 export function ManufacturerIntelligenceView({ page }: { page: ManufacturerIntelligencePage }) {
+  const catalogManufacturerId = page.manufacturerId?.trim()
+
   return (
-    <>
-      <PageHeader
-        h1={page.meta.h1}
-        subtitle={{
-          manufacturer: page.name,
-          category: 'Manufacturer intelligence hub',
-        }}
-      />
-      <p className="seo-direct-answer seo-direct-answer--gradient seo-direct-answer--main-width">{page.shortAnswer}</p>
-      <p className="seo-section__lead">{page.summary}</p>
-
-      <PageLayout
-        main={
-          <>
-            <section className="seo-section">
-              <div className="seo-card">
-                <h2 className="seo-card__title">Popular product families</h2>
-                {page.popularFamilies.map((family) => (
-                  <div key={family.name} className="seo-pitfall">
-                    <strong>{family.name}</strong>
-                    <p>{family.description}</p>
-                  </div>
-                ))}
+    <div className="seo-page-body seo-page-body--manufacturer">
+      <ComponentSectionNav items={buildManufacturerSectionNavItems()} />
+      <div className="seo-page-split seo-page-split--manufacturer">
+        <PageLayout
+          main={
+            <>
+              <div
+                id="overview"
+                className="seo-page-section seo-page-section-anchor seo-direct-answer seo-direct-answer--gradient seo-direct-answer--manufacturer"
+              >
+                <h2 className="seo-card__title seo-ai-summary__title">
+                  <Stars02Icon className="seo-ai-summary__icon" />
+                  {page.name} at a Glance
+                </h2>
+                <p className="seo-direct-answer__body">{page.shortAnswer}</p>
               </div>
-            </section>
 
-            <EntityLinkList
-              links={page.mostSearchedParts}
-              title="Most searched parts"
-              intro="Curated high-intent parts — not a full manufacturer catalog."
-            />
-
-            <section className="seo-section">
-              <div className="seo-card">
-                <h2 className="seo-card__title">Supply chain / lifecycle notes</h2>
-                <ul>
-                  {page.supplyNotes.map((note) => (
-                    <li key={note}>{note}</li>
-                  ))}
-                </ul>
+              <div id="parts" className="seo-page-section seo-page-section-anchor">
+                <TopSearchedPartsTable slug={page.slug} items={page.mostSearchedParts} />
               </div>
-            </section>
 
-            <EntityLinkList
-              links={page.curatedCatalog}
-              title="Curated product catalog"
-              intro="Representative parts only (≤20). Full graph and rankings stay in the app."
-            />
+              {catalogManufacturerId ? (
+                <div id="catalog" className="seo-page-section seo-page-section-anchor">
+                  <ManufacturerCatalogTable
+                    slug={page.slug}
+                    manufacturerId={catalogManufacturerId}
+                    categories={page.catalogCategories}
+                  />
+                </div>
+              ) : null}
 
-            <QaBlocks items={page.faq} />
-          </>
-        }
-        sidebar={
-          <>
-            <SidebarRelatedLinks links={page.popularAlternatives} title="Popular alternatives" />
-            <SidebarRelatedLinks links={page.comparableManufacturers} title="Comparable manufacturers" />
-            <SidebarRelatedLinks links={page.categoryBreakdown} title="Category breakdown" />
-          </>
-        }
-      />
-    </>
+              <section id="supply" className="seo-page-section seo-page-section-anchor">
+                <ManufacturerSupplyInsights groups={page.supplyInsights} />
+              </section>
+
+              <div id="resources" className="seo-page-section seo-page-section-anchor">
+                <QaBlocks items={page.faq} />
+              </div>
+            </>
+          }
+          sidebar={
+            <>
+              <SidebarToolGrid tools={buildManufacturerToolGrid(page)} />
+              <ComparableManufacturersList items={page.comparableManufacturers} />
+            </>
+          }
+        />
+      </div>
+    </div>
   )
 }

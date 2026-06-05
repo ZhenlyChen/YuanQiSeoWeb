@@ -5,16 +5,17 @@ import {
   SEO_FLOATING_CHAT_FILL_EVENT,
   type SeoFloatingChatFillDetail,
 } from '@/lib/seo-floating-chat'
+import {
+  getFloatingChatInitialQuery,
+  getFloatingChatPlaceholder,
+} from '@/lib/seo-floating-chat-placeholder'
 import { seoChatDeepLinkUrl } from '@/lib/tool-urls'
 import type { SeoPageContext } from '@/components/seo/seo-site-chrome'
 
 export function FloatingCtaDock({ pageContext }: { pageContext?: SeoPageContext }) {
   const slug = pageContext?.slug ?? 'floating_chat'
-  const mpn = pageContext?.mpn
-  const placeholder = mpn
-    ? `Ask about ${mpn} alternatives, compare options, or design fit`
-    : 'Try "BQ24195L alternative" or ask a design question'
-  const initialQuery = mpn ? `${mpn} alternatives and replacement risk` : ''
+  const placeholder = getFloatingChatPlaceholder(pageContext)
+  const initialQuery = getFloatingChatInitialQuery(pageContext)
 
   const [query, setQuery] = useState(initialQuery)
   const [primed, setPrimed] = useState(false)

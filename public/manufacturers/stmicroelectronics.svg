@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="STMicroelectronics">
+  <rect width="120" height="120" rx="10" fill="#002F87"/>
+  <text
+    x="60"
+    y="74"
+    text-anchor="middle"
+    fill="#ffffff"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="46"
+    font-weight="700"
+    letter-spacing="-1"
+  >ST</text>
+</svg>
