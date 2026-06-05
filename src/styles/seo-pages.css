@@ -5691,7 +5691,7 @@ a.seo-datasheet-file__name:hover {
 
 .seo-mfg-dir-hero {
   position: relative;
-  padding: var(--pg-space-12) var(--pg-space-4) var(--pg-space-8);
+  padding: var(--pg-space-16) var(--pg-space-4) var(--pg-space-8);
   background-color: var(--seo-pampas-lighter);
   background-image: radial-gradient(circle, rgb(208 213 221 / 55%) 1px, transparent 1px);
   background-size: 22px 22px;
