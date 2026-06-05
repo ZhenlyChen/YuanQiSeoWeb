@@ -1,4 +1,5 @@
 import { AiSummaryHeading, AiVerdictCard } from '@/components/seo/ai-verdict-card'
+import { OverviewTags, resolveOverviewTags } from '@/components/seo/overview-tags'
 import { AlternativeList } from '@/components/seo/alternative-list'
 import { ComponentSectionNav } from '@/components/seo/component-section-nav'
 import { buildComponentSectionNavItems } from '@/lib/component-section-nav-items'
@@ -15,12 +16,6 @@ import { signUpUrl } from '@/lib/tool-urls'
 import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
 
 export function ComponentIntelligenceView({ page }: { page: ComponentIntelligencePage }) {
-  const keySpecsWithCompliance = [
-    ...page.keySpecs,
-    ...(page.compliance?.rohs ? [{ label: 'RoHS', value: page.compliance.rohs }] : []),
-    ...(page.compliance?.reach ? [{ label: 'REACH', value: page.compliance.reach }] : []),
-    ...(page.compliance?.msl ? [{ label: 'MSL', value: page.compliance.msl }] : []),
-  ]
   const relatedLinks = [
     page.relatedManufacturer,
     page.relatedCategory,
@@ -58,16 +53,13 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
                   <div className="seo-model-visual__header">
                     <p className="seo-model-visual__name">{page.mpn}</p>
                     <p className="seo-model-visual__desc">{page.categoryLabel}</p>
-                    <div className="seo-model-visual__tags">
-                      {(page.overviewTags?.length
-                        ? page.overviewTags
-                        : [`Package: ${page.package}`, page.manufacturer]
-                      ).map((tag) => (
-                        <span key={tag} className="seo-app-tag">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                    <OverviewTags
+                      tags={resolveOverviewTags(page.overviewTags, {
+                        package: page.package,
+                        manufacturer: page.manufacturer,
+                      })}
+                      className="seo-model-visual__tags"
+                    />
                   </div>
                 </div>
 
@@ -86,7 +78,8 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
             </section>
             <div id="specifications" className="seo-page-section">
               <KeySpecsSnapshot
-                specs={keySpecsWithCompliance}
+                specs={page.keySpecs}
+                compliance={page.compliance}
                 applicationTags={page.applications.goodFit}
                 mpn={page.mpn}
                 slug={page.slug}

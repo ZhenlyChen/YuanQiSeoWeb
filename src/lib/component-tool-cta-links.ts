@@ -10,15 +10,10 @@ export type ComponentToolCtaLink = {
   label: string
   /** Short label for sidebar tool grid cards. */
   shortLabel: string
-  badge?: string
   icon: 'chip' | 'list' | 'hash02' | 'file06'
 }
 
-export function buildComponentToolCtaLinks(
-  slug: string,
-  mpn: string,
-  alternativesCount = 0,
-): ComponentToolCtaLink[] {
+export function buildComponentToolCtaLinks(slug: string, mpn: string): ComponentToolCtaLink[] {
   return [
     {
       href: openPartUrl(slug, mpn),
@@ -30,7 +25,6 @@ export function buildComponentToolCtaLinks(
       href: alternativeFinderUrl(slug, mpn),
       label: 'AI alternative finder',
       shortLabel: 'AI alternative finder',
-      badge: alternativesCount > 0 ? `${alternativesCount} options` : undefined,
       icon: 'list',
     },
     {

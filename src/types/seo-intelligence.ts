@@ -220,6 +220,7 @@ export type AlternativeIntelligencePage = {
   manufacturer: string
   category: string
   subtitle: PageSubtitle
+  overviewTags?: string[]
   meta: SeoMeta
   breadcrumbs: BreadcrumbItem[]
   shortAnswer: string

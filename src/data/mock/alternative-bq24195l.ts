@@ -21,6 +21,15 @@ export const mockAlternativeBq24195l: AlternativeIntelligencePage = {
     category: 'Li-Ion Battery Charger IC',
     package: 'VQFN-24',
   },
+  overviewTags: [
+    'Package: VQFN-24',
+    'Texas Instruments',
+    'Li-Ion charger',
+    'Switch-mode',
+    'I2C programmable',
+    'Power-path',
+    'Battery charging',
+  ],
   breadcrumbs: [
     { label: MPN, href: '/parts/bq24195l' },
     { label: 'Alternatives' },

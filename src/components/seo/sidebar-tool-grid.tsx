@@ -8,7 +8,6 @@ import {
 export type SidebarToolCard = {
   label: string
   href: string
-  badge?: string
   icon: ComponentToolCtaLink['icon']
 }
 
@@ -19,7 +18,6 @@ function ToolCard({ tool }: { tool: SidebarToolCard }) {
         <ComponentToolIcon name={tool.icon} size={24} />
       </span>
       <span className="seo-tool-grid__label">{tool.label}</span>
-      {tool.badge ? <span className="seo-tool-grid__badge">{tool.badge}</span> : null}
     </>
   )
 
@@ -30,13 +28,16 @@ function ToolCard({ tool }: { tool: SidebarToolCard }) {
   )
 }
 
-export function buildComponentToolGrid(page: ComponentIntelligencePage): SidebarToolCard[] {
-  return buildComponentToolCtaLinks(page.slug, page.mpn, page.alternatives.length).map((link) => ({
+export function buildSidebarToolCards(slug: string, mpn: string): SidebarToolCard[] {
+  return buildComponentToolCtaLinks(slug, mpn).map((link) => ({
     label: link.shortLabel,
     href: link.href,
-    badge: link.badge,
     icon: link.icon,
   }))
+}
+
+export function buildComponentToolGrid(page: ComponentIntelligencePage): SidebarToolCard[] {
+  return buildSidebarToolCards(page.slug, page.mpn)
 }
 
 export function SidebarToolGrid({ tools }: { tools: SidebarToolCard[] }) {

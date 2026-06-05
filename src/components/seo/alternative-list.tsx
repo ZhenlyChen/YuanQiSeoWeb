@@ -9,6 +9,7 @@ import { alternativeMatchLabel } from '@/lib/alternative-match-labels'
 import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { SEO_PUBLIC_BOUNDARY } from '@/lib/seo-copy'
 import { partImageForMpn } from '@/lib/part-images'
+import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
 import { signUpUrl } from '@/lib/tool-urls'
 
 function AlternativeListRow({ alt }: { alt: AlternativeItem }) {
@@ -29,9 +30,37 @@ function AlternativeListRow({ alt }: { alt: AlternativeItem }) {
   )
 }
 
-function AlternativesGatedTable({ items }: { items: AlternativeItem[] }) {
+function AlternativeTableRow({ alt }: { alt: AlternativeItem }) {
   return (
-    <div className="seo-alt-view seo-alt-table-wrap">
+    <tr>
+      <td className="seo-alt-table__cell-part">
+        <div className="seo-alt-table__part">
+          <div className="seo-alt-thumb">
+            <img src={partImageForMpn(alt.mpn)} alt="" />
+          </div>
+          <div className="seo-alt-table__part-text">
+            <Link href={alt.href} className="seo-alt-table__mpn">
+              {alt.mpn}
+            </Link>
+            <span className="seo-alt-row__mfg">{alt.manufacturer}</span>
+          </div>
+        </div>
+      </td>
+      <td className="seo-alt-table__cell-details">
+        <p className="seo-alt-table__reason">{alt.reason}</p>
+      </td>
+      <td className="seo-alt-table__cell-match">
+        <span className="seo-alt-row__badge">{alternativeMatchLabel(alt.matchType)}</span>
+      </td>
+    </tr>
+  )
+}
+
+function AlternativesGatedTable({ items }: { items: AlternativeItem[] }) {
+  const [preview, ...rest] = items
+
+  return (
+    <div className="seo-alt-view seo-alt-table-wrap seo-alt-table-wrap--gated">
       <table className="seo-alt-table seo-table--webapp">
         <thead>
           <tr>
@@ -43,36 +72,25 @@ function AlternativesGatedTable({ items }: { items: AlternativeItem[] }) {
           </tr>
         </thead>
         <tbody>
-          {items.map((alt) => (
-            <tr key={alt.mpn}>
-              <td className="seo-alt-table__cell-part">
-                <div className="seo-alt-table__part">
-                  <div className="seo-alt-thumb">
-                    <img src={partImageForMpn(alt.mpn)} alt="" />
-                  </div>
-                  <div className="seo-alt-table__part-text">
-                    <Link href={alt.href} className="seo-alt-table__mpn">
-                      {alt.mpn}
-                    </Link>
-                    <span className="seo-alt-row__mfg">{alt.manufacturer}</span>
-                  </div>
-                </div>
-              </td>
-              <td className="seo-alt-table__cell-details">
-                <p className="seo-alt-table__reason">{alt.reason}</p>
-              </td>
-              <td className="seo-alt-table__cell-match">
-                <span className="seo-alt-row__badge">{alternativeMatchLabel(alt.matchType)}</span>
-              </td>
-            </tr>
-          ))}
+          <AlternativeTableRow alt={preview} />
         </tbody>
       </table>
+      {rest.length > 0 ? (
+        <div className="seo-alt-table-blurred-rows" aria-hidden="true">
+          <table className="seo-alt-table seo-table--webapp">
+            <tbody>
+              {rest.map((alt) => (
+                <AlternativeTableRow key={alt.mpn} alt={alt} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
     </div>
   )
 }
 
-function AlternativesGraphPlaceholder({
+export function AlternativesGraphPlaceholder({
   items,
   centerMpn,
   blurred = false,
@@ -87,7 +105,8 @@ function AlternativesGraphPlaceholder({
   return (
     <div
       className={`seo-alt-view seo-alt-graph-placeholder${blurred ? ' seo-alt-graph-placeholder--blurred' : ''}`}
-      aria-hidden="true"
+      aria-label="Alternatives graph preview"
+      role="img"
     >
       <div className="seo-alt-graph-placeholder__canvas">
         <svg className="seo-alt-graph-placeholder__lines" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -122,7 +141,6 @@ export function AlternativeList({
   items,
   title = 'Alternative components',
   emptyMessage,
-  viewAllHref,
   showViewToggle = false,
   gated = false,
   gatedCtaHref,
@@ -135,8 +153,6 @@ export function AlternativeList({
   items: AlternativeItem[]
   title?: string
   emptyMessage?: string
-  /** @deprecated Use showViewToggle instead */
-  viewAllHref?: string
   showViewToggle?: boolean
   /** @deprecated List view is always used; card layout removed */
   layout?: 'list' | 'card'
@@ -149,19 +165,17 @@ export function AlternativeList({
   mpn?: string
 }) {
   const [viewMode, setViewMode] = useState<'list' | 'graph'>('list')
+  const { isLoggedIn, isReady } = useSeoNavUser()
+  const showGated = gated && (!isReady || !isLoggedIn)
   const resolvedGateHref = gatedCtaHref ?? (slug ? signUpUrl(slug) : undefined)
   const useToggle = showViewToggle
   const showGraph = useToggle && viewMode === 'graph'
 
   const headAction = useToggle ? (
     <AlternativesViewToggle active={viewMode} onChange={setViewMode} />
-  ) : viewAllHref ? (
-    <Link href={viewAllHref} className="seo-section__link">
-      View all alternatives →
-    </Link>
   ) : null
 
-  const gateOverlay = gated ? (
+  const gateOverlay = showGated ? (
     <AlternativesGateModal
       alternativesCount={items.length}
       ctaHref={resolvedGateHref}
@@ -181,7 +195,9 @@ export function AlternativeList({
     </div>
   )
 
-  const gatedWrapClass = `seo-alt-gated-wrap${gated ? ' seo-alt-gated-wrap--active' : ''}`
+  const gatedWrapClass = `seo-alt-gated-wrap seo-alt-gated-wrap--active${
+    showGraph ? ' seo-alt-gated-wrap--graph' : ''
+  }`
   const altRowCount = Math.max(items.length, 1)
   const altViewWrapStyle = {
     ['--seo-alt-rows' as string]: String(altRowCount),
@@ -197,28 +213,37 @@ export function AlternativeList({
       ) : (
         <div className="seo-section-block">
           {cardHead}
-          <div
-            className={gatedWrapClass}
-            style={altViewWrapStyle}
-            data-alt-rows={altRowCount}
-            aria-live="polite"
-            aria-label={showGraph ? 'Alternatives graph view' : 'Alternatives list view'}
-          >
-            {showGraph ? (
-              <AlternativesGraphPlaceholder items={items} centerMpn={mpn} blurred={gated} />
-            ) : gated ? (
-              <div className="seo-alt-list--blurred">
+          {showGated ? (
+            <div
+              className={gatedWrapClass}
+              style={altViewWrapStyle}
+              data-alt-rows={altRowCount}
+              aria-live="polite"
+              aria-label={showGraph ? 'Alternatives graph view' : 'Alternatives list view'}
+            >
+              {showGraph ? (
+                <AlternativesGraphPlaceholder items={items} centerMpn={mpn} blurred />
+              ) : (
                 <AlternativesGatedTable items={items} />
-              </div>
-            ) : (
-              <div className="seo-alt-view seo-alt-list" aria-label={`${items.length} alternative components`}>
-                {items.map((alt) => (
-                  <AlternativeListRow key={alt.mpn} alt={alt} />
-                ))}
-              </div>
-            )}
-            {gateOverlay}
-          </div>
+              )}
+              {gateOverlay}
+            </div>
+          ) : (
+            <div
+              aria-live="polite"
+              aria-label={showGraph ? 'Alternatives graph view' : 'Alternatives list view'}
+            >
+              {showGraph ? (
+                <AlternativesGraphPlaceholder items={items} centerMpn={mpn} />
+              ) : (
+                <div className="seo-alt-view seo-alt-list" aria-label={`${items.length} alternative components`}>
+                  {items.map((alt) => (
+                    <AlternativeListRow key={alt.mpn} alt={alt} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </section>

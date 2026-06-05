@@ -21,14 +21,25 @@ export function SeoNavUserActions({
     return (
       <div
         className={[
-          'seo-nav-user-actions__placeholder',
-          block ? 'seo-nav-user-actions__placeholder--block' : null,
+          'seo-nav-user-actions',
+          'seo-nav-user-actions--loading',
+          block ? 'seo-nav-user-actions--block' : null,
           className,
         ]
           .filter(Boolean)
           .join(' ')}
         aria-hidden="true"
-      />
+      >
+        <div className="seo-nav-user-actions__placeholder seo-nav-user-actions__placeholder--avatar" />
+        <div
+          className={[
+            'seo-nav-user-actions__placeholder seo-nav-user-actions__placeholder--dashboard',
+            block ? 'seo-nav-user-actions__placeholder--dashboard-block' : null,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        />
+      </div>
     )
   }
 
@@ -56,7 +67,15 @@ export function SeoNavUserActions({
             <span className="seo-nav-user-actions__avatar-initial">{user.initial}</span>
           )}
         </a>
-        <a href={dashboardHref} className="seo-nav-user-actions__dashboard">
+        <a
+          href={dashboardHref}
+          className={[
+            'seo-nav-user-actions__dashboard',
+            block ? 'seo-nav-user-actions__dashboard--block' : null,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
           Dashboard
         </a>
       </div>

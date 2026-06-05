@@ -17,11 +17,11 @@ function VerdictStatusDot({ variant }: { variant: 'good' | 'avoid' | 'check' }) 
   return <span className={`seo-verdict-dot seo-verdict-dot--${variant}`} aria-hidden="true" />
 }
 
-export function AiSummaryHeading() {
+export function AiSummaryHeading({ title = 'AI summary' }: { title?: string }) {
   return (
     <h2 className="seo-card__title seo-ai-summary__title seo-ai-summary__title--lead">
       <Stars02Icon className="seo-ai-summary__icon" />
-      AI summary
+      {title}
     </h2>
   )
 }

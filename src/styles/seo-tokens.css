@@ -15,6 +15,15 @@
   --pg-color-gray-700: #344054;
   --pg-color-gray-900: #101828;
 
+  /* Primitives — Neutral (Figma design system) */
+  --pg-neutral-lightest: #f2f2f2;
+  --pg-neutral-lighter: #dadada;
+  --pg-neutral-light: #b6b6b6;
+  --pg-neutral: #858585;
+  --pg-neutral-dark: #545454;
+  --pg-neutral-darker: #242424;
+  --pg-neutral-darkest: #0c0c0c;
+
   --pg-color-success-bg: #dcfae6;
   --pg-color-success-text: #067647;
   --pg-color-warning-bg: #fef0c7;

@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { InsightCtaCard } from '@/components/seo/insight-cta-card'
 import { SectionTitle } from '@/components/seo/section-title'
 import { SeoContentModal } from '@/components/seo/seo-content-modal'
-import { UntitledUiLineIcon } from '@/components/seo/untitled-ui-line-icon'
 import type { CommonPitfall } from '@/types/seo-intelligence'
 
 type InsightModal = 'design' | 'risk' | null
@@ -13,30 +13,6 @@ const UNTITLED_PATHS = {
     'M14 2.27V6.4c0 .56 0 .84.109 1.054a1 1 0 0 0 .437.437c.214.11.494.11 1.054.11h4.13M16 13H8m8 4H8m2-8H8m6-7H8.8c-1.68 0-2.52 0-3.162.327a3 3 0 0 0-1.311 1.311C4 4.28 4 5.12 4 6.8v10.4c0 1.68 0 2.52.327 3.162a3 3 0 0 0 1.311 1.311C6.28 22 7.12 22 8.8 22h6.4c1.68 0 2.52 0 3.162-.327a3 3 0 0 0 1.311-1.311C20 19.72 20 18.88 20 17.2V8l-6-6Z',
   alertCircle: 'M12 8v4m0 4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z',
 } as const
-
-function InsightCtaCard({
-  title,
-  subtitle,
-  iconPath,
-  onClick,
-}: {
-  title: string
-  subtitle: string
-  iconPath: string
-  onClick: () => void
-}) {
-  return (
-    <button type="button" className="seo-insight-cta" onClick={onClick}>
-      <span className="seo-insight-cta__icon" aria-hidden="true">
-        <UntitledUiLineIcon path={iconPath} size={24} />
-      </span>
-      <span className="seo-insight-cta__copy">
-        <span className="seo-insight-cta__title">{title}</span>
-        <span className="seo-insight-cta__subtitle">{subtitle}</span>
-      </span>
-    </button>
-  )
-}
 
 function DesignModalContent({ items }: { items: string[] }) {
   return (

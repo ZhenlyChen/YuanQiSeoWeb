@@ -7,7 +7,6 @@ import { buildPageMetadata } from '@/lib/seo-meta'
 
 type PageProps = {
   params: Promise<{ mpn: string }>
-  searchParams: Promise<{ view?: string }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -17,17 +16,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildPageMetadata(page.meta)
 }
 
-export default async function AlternativePage({ params, searchParams }: PageProps) {
+export default async function AlternativePage({ params }: PageProps) {
   const { mpn } = await params
-  const sp = await searchParams
   const page = getMockAlternativePage(mpn)
   if (!page) notFound()
 
-  const view = sp.view === 'graph' ? 'graph' : 'list'
-
   return (
     <SeoPageShell breadcrumbs={page.breadcrumbs} faq={page.faq}>
-      <AlternativeIntelligenceView page={page} view={view} />
+      <AlternativeIntelligenceView page={page} />
     </SeoPageShell>
   )
 }

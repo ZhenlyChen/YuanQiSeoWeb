@@ -40,6 +40,7 @@ export function getMockAlternativePage(mpn: string): AlternativeIntelligencePage
         category: '32-bit ARM Cortex-M3 Microcontroller',
         package: 'LQFP-48',
       },
+      overviewTags: mockComponentStm32.overviewTags,
       breadcrumbs: [
         { label: 'STM32F103C8T6', href: '/parts/stm32f103c8t6' },
         { label: 'Alternatives' },

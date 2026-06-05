@@ -8,7 +8,6 @@ function linksForVariant(
   slug: string,
   mpn: string,
   variant: 'component' | 'alternative' | 'compare' | 'manufacturer' | 'answer',
-  alternativesCount = 0,
 ): CtaLink[] {
   switch (variant) {
     case 'answer':
@@ -34,7 +33,7 @@ function linksForVariant(
         { href: datasheetAiUrl(mpn, slug), label: 'Ask Datasheet AI' },
       ]
     case 'component':
-      return buildComponentToolCtaLinks(slug, mpn, alternativesCount).map(({ href, label }) => ({
+      return buildComponentToolCtaLinks(slug, mpn).map(({ href, label }) => ({
         href,
         label,
       }))
@@ -45,14 +44,12 @@ export function ToolCtaStrip({
   slug,
   mpn,
   variant = 'component',
-  alternativesCount = 0,
 }: {
   slug: string
   mpn: string
   variant?: 'component' | 'alternative' | 'compare' | 'manufacturer' | 'answer'
-  alternativesCount?: number
 }) {
-  const links = linksForVariant(slug, mpn, variant, alternativesCount)
+  const links = linksForVariant(slug, mpn, variant)
 
   return (
     <section className="seo-section">

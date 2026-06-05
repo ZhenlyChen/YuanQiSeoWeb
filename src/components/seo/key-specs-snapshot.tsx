@@ -1,4 +1,4 @@
-import type { KeySpec } from '@/types/seo-intelligence'
+import type { ComponentComplianceFields, KeySpec } from '@/types/seo-intelligence'
 
 import { SectionTitle } from '@/components/seo/section-title'
 import { UICard } from '@/components/ui/ui-card'
@@ -6,8 +6,25 @@ import { normalizeApplicationTags, type ApplicationTagInput } from '@/lib/applic
 import { DatasheetFileCard } from '@/components/seo/datasheet-file-card'
 import { datasheetAiUrl } from '@/lib/tool-urls'
 
+function buildComplianceSpecs(compliance?: ComponentComplianceFields): KeySpec[] {
+  if (!compliance) return []
+
+  const entries: Array<[string, string | undefined]> = [
+    ['RoHS', compliance.rohs],
+    ['REACH', compliance.reach],
+    ['MSL', compliance.msl],
+    ['ECCN', compliance.eccn],
+    ['HTSUS', compliance.htsus],
+  ]
+
+  return entries
+    .filter((entry): entry is [string, string] => Boolean(entry[1]))
+    .map(([label, value]) => ({ label, value }))
+}
+
 export function KeySpecsSnapshot({
   specs,
+  compliance,
   applicationTags = [],
   mpn,
   slug,
@@ -16,6 +33,7 @@ export function KeySpecsSnapshot({
   includeDatasheet = true,
 }: {
   specs: KeySpec[]
+  compliance?: ComponentComplianceFields
   applicationTags?: ApplicationTagInput[]
   mpn?: string
   slug?: string
@@ -25,6 +43,7 @@ export function KeySpecsSnapshot({
   includeDatasheet?: boolean
 }) {
   const tags = normalizeApplicationTags(applicationTags)
+  const complianceSpecs = buildComplianceSpecs(compliance)
 
   return (
     <section className="seo-section">
@@ -38,6 +57,20 @@ export function KeySpecsSnapshot({
             </div>
           ))}
         </dl>
+        {complianceSpecs.length > 0 ? (
+          <>
+            <hr className="seo-spec-divider" />
+            <SectionTitle title="Compliance & Environment" />
+            <dl className="seo-spec-grid">
+              {complianceSpecs.map((spec) => (
+                <div key={spec.label} className="seo-spec-item">
+                  <dt>{spec.label}</dt>
+                  <dd>{spec.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </>
+        ) : null}
         {tags.length > 0 ? (
           <>
             <hr className="seo-spec-divider" />
