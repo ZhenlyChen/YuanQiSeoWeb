@@ -34,6 +34,25 @@ export function faqJsonLd(faq: FaqItem[]): object | null {
   }
 }
 
+export function itemListJsonLd(input: {
+  name: string
+  items: { name: string; url: string }[]
+}): object | null {
+  if (!input.items.length) return null
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: input.name,
+    numberOfItems: input.items.length,
+    itemListElement: input.items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      url: item.url,
+    })),
+  }
+}
+
 export function jsonLdScript(data: object | object[]): string {
   const payload = Array.isArray(data) ? data : [data]
   return JSON.stringify(payload.length === 1 ? payload[0] : payload)

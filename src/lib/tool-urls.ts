@@ -250,3 +250,8 @@ export function signUpUrl(slug: string): string {
 export function dashboardUrl(): string {
   return `${APP_ORIGIN}/app/chat`
 }
+
+/** Hero search on manufacturer directory → app chat with manufacturer_directory campaign. */
+export function manufacturerDirectorySearchActionUrl(): string {
+  return seoChatDeepLinkUrl('manufacturer-directory', 'manufacturer_directory')
+}

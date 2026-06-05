@@ -57,6 +57,7 @@ export function buildNavLinks(slug: string): {
       { label: 'PartGenie vs. Alldatasheet', href: `${MARKETING_ORIGIN}/compare/vs-alldatasheet` },
     ],
     resources: [
+      { label: 'Manufacturers', href: '/manufacturers' },
       { label: 'Help center', href: HELP_CENTER_PAGES.home },
       { label: 'Changelog', href: HELP_CENTER_PAGES.changelog },
     ],

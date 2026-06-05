@@ -343,6 +343,52 @@ export type ManufacturerIntelligencePage = {
   faq: FaqItem[]
 }
 
+export type ManufacturerDirectoryCategoryRef = {
+  slug: string
+  label: string
+}
+
+export type ManufacturerDirectoryItem = {
+  slug: string
+  name: string
+  shortName?: string
+  aliases?: string[]
+  logoUrl?: string
+  manufacturerId?: string
+  subtitle?: string
+  knownFor?: string
+  popularPaths?: string
+  peekSummary?: string
+  primaryCategoryL1: ManufacturerDirectoryCategoryRef[]
+  letter: string
+  href: string
+  published: boolean
+  sortRank?: number
+}
+
+export type ManufacturerDirectoryFacet = {
+  slug: string
+  label: string
+  count: number
+}
+
+export type ManufacturerDirectoryPage = {
+  pageType: 'manufacturer_directory'
+  meta: SeoMeta
+  items: ManufacturerDirectoryItem[]
+  categoryFacets: ManufacturerDirectoryFacet[]
+  totalInDatabase: number
+}
+
+export type ManufacturerDirectoryViewMode = 'browse' | 'letter'
+
+export type ManufacturerDirectoryActiveFacet = {
+  tab: 'all' | 'category' | 'letter'
+  categoryL1?: string
+  categoryLabel?: string
+  letter?: string
+}
+
 export type RecommendedPart = {
   mpn: string
   manufacturer: string

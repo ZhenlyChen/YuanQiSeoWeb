@@ -3,6 +3,10 @@ import { mockAnswerWearableMcu } from '@/data/mock/answer-wearable-mcu'
 import { mockCompareStm32Gd32 } from '@/data/mock/compare-stm32'
 import { mockComponentStm32 } from '@/data/mock/component-stm32f103c8t6'
 import { mockManufacturerSt } from '@/data/mock/manufacturer-st'
+import { mockManufacturerGigadevice } from '@/data/mock/manufacturer-gigadevice'
+import { mockManufacturerMicrochip } from '@/data/mock/manufacturer-microchip'
+import { mockManufacturerNxp } from '@/data/mock/manufacturer-nxp'
+import { getMockManufacturerDirectoryPage } from '@/data/mock/manufacturer-directory'
 import { alternativeSeoMeta } from '@/lib/seo-meta'
 import type {
   AlternativeIntelligencePage,
@@ -96,7 +100,14 @@ export function getMockComparePage(slug: string): CompareIntelligencePage | null
 export function getMockManufacturerPage(slug: string): ManufacturerIntelligencePage | null {
   const key = slug.toLowerCase()
   if (key === 'stmicroelectronics') return mockManufacturerSt
+  if (key === 'gigadevice') return mockManufacturerGigadevice
+  if (key === 'microchip') return mockManufacturerMicrochip
+  if (key === 'nxp') return mockManufacturerNxp
   return null
+}
+
+export function getMockManufacturerDirectory() {
+  return getMockManufacturerDirectoryPage()
 }
 
 export function getMockAnswerPage(slug: string): QueryAnswerPage | null {
@@ -125,6 +136,11 @@ export const MOCK_PREVIEW_PAGES = [
     type: 'Compare',
     href: '/compare/stm32f103c8t6-vs-gd32f103c8t6',
     description: 'STM32 vs GD32 — verdict-first comparison',
+  },
+  {
+    type: 'Manufacturer Directory',
+    href: '/manufacturers',
+    description: 'Browse manufacturers by category and A–Z — hub links to intelligence pages',
   },
   {
     type: 'Manufacturer',

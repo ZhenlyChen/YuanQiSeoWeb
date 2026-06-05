@@ -11,7 +11,7 @@ export const mockManufacturerSt: ManufacturerIntelligencePage = {
   logoUrl: '/manufacturers/stmicroelectronics.svg',
   meta: manufacturerSeoMeta({ name: 'STMicroelectronics', slug: 'stmicroelectronics' }),
   breadcrumbs: [
-    { label: 'Manufacturers', href: '/manufacturers/stmicroelectronics' },
+    { label: 'Manufacturers', href: '/manufacturers' },
     { label: 'STMicroelectronics' },
   ],
   shortAnswer:

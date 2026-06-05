@@ -12,6 +12,7 @@ export function SeoPageShell({
   showPreviewBanner = false,
   pageContext,
   banner,
+  itemList,
   hideBreadcrumbs = false,
 }: {
   breadcrumbs: BreadcrumbItem[]
@@ -21,6 +22,7 @@ export function SeoPageShell({
   pageContext?: SeoPageContext
   banner?: React.ReactNode
   hideBreadcrumbs?: boolean
+  itemList?: { name: string; items: { name: string; url: string }[] }
 }) {
   return (
     <SeoSiteChrome pageContext={pageContext} banner={banner}>
@@ -30,9 +32,11 @@ export function SeoPageShell({
           {hideBreadcrumbs ? null : <Breadcrumbs items={breadcrumbs} />}
           {children}
         </div>
-        <FloatingCtaDock pageContext={pageContext} />
+        {pageContext?.slug !== 'manufacturer-directory' ? (
+          <FloatingCtaDock pageContext={pageContext} />
+        ) : null}
       </main>
-      <JsonLdBlock breadcrumbs={breadcrumbs} faq={faq} />
+      <JsonLdBlock breadcrumbs={breadcrumbs} faq={faq} itemList={itemList} />
     </SeoSiteChrome>
   )
 }

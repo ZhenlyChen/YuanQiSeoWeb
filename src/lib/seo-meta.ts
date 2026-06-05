@@ -173,3 +173,58 @@ export function categoryFinderSeoMeta(input: {
     ],
   }
 }
+
+export function manufacturerDirectorySeoMeta(): SeoMeta {
+  return {
+    title: 'Electronic Component Manufacturers Directory | PartGenie',
+    description:
+      'Browse by category and A–Z — or chat to ask about any manufacturer. Intelligence hubs for alternatives, supply context, and BOM-ready analysis, not a traditional catalog.',
+    h1: 'Manufacturer intelligence directory',
+    canonicalPath: '/manufacturers',
+    keywords: [
+      'electronics manufacturers',
+      'semiconductor manufacturers',
+      'component manufacturer directory',
+      'manufacturer intelligence',
+      'alternatives',
+      'supply chain',
+    ],
+  }
+}
+
+export function manufacturerDirectoryCategorySeoMeta(input: {
+  categoryLabel: string
+  slug: string
+}): SeoMeta {
+  const { categoryLabel, slug } = input
+  return {
+    title: `${categoryLabel} Manufacturers Directory | PartGenie`,
+    description: `Explore ${categoryLabel.toLowerCase()} manufacturers with curated intelligence hubs, popular families, alternatives context, and sourcing considerations.`,
+    h1: `${categoryLabel} manufacturers`,
+    canonicalPath: `/manufacturers/category/${slug}`,
+    keywords: [
+      `${categoryLabel} manufacturers`,
+      `${categoryLabel} semiconductor suppliers`,
+      'manufacturer directory',
+      'component intelligence',
+    ],
+  }
+}
+
+export function manufacturerDirectoryLetterSeoMeta(input: {
+  letter: string
+}): SeoMeta {
+  const display = input.letter === '0-9' || input.letter === '#' ? '0–9' : input.letter.toUpperCase()
+  return {
+    title: `Manufacturers Starting with ${display} | PartGenie`,
+    description: `Browse electronics manufacturers whose names start with ${display}. Explore intelligence hubs for alternatives, supply insights, and BOM analysis.`,
+    h1: `Manufacturers starting with ${display}`,
+    canonicalPath: `/manufacturers/letter/${encodeURIComponent(input.letter === '#' ? '0-9' : input.letter.toLowerCase())}`,
+    keywords: [
+      `manufacturers ${display}`,
+      'manufacturer directory',
+      'semiconductor suppliers',
+      'component intelligence',
+    ],
+  }
+}
