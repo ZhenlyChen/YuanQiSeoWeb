@@ -1460,6 +1460,7 @@
   margin: 0;
   font-family: var(--seo-heading-font);
   font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 500;
   line-height: 1.12;
   letter-spacing: -0.03em;
   color: var(--seo-text-primary);
