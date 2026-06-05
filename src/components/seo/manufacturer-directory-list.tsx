@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { ArrowUpRightIcon } from '@/components/seo/arrow-up-right-icon'
 import { resolveManufacturerLogo } from '@/lib/manufacturer-logos'
 import { manufacturerDirectorySearchActionUrl } from '@/lib/tool-urls'
@@ -10,6 +11,45 @@ function monogramFor(item: ManufacturerDirectoryItem): string {
   const fromShort = item.shortName?.trim().charAt(0)
   if (fromShort) return fromShort.toUpperCase()
   return item.name.trim().charAt(0).toUpperCase() || 'M'
+}
+
+function ManufacturerDirectoryLogo({
+  item,
+  logo,
+}: {
+  item: ManufacturerDirectoryItem
+  logo?: string
+}) {
+  const [failed, setFailed] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    setFailed(false)
+    setLoaded(false)
+  }, [logo])
+
+  const monogram = (
+    <span className="seo-mfg-dir-card__monogram">{monogramFor(item)}</span>
+  )
+
+  if (!logo || failed) {
+    return monogram
+  }
+
+  return (
+    <>
+      {!loaded ? monogram : null}
+      <img
+        src={logo}
+        alt=""
+        className="seo-mfg-dir-card__logo"
+        hidden={!loaded}
+        referrerPolicy="no-referrer"
+        onLoad={() => setLoaded(true)}
+        onError={() => setFailed(true)}
+      />
+    </>
+  )
 }
 
 function knownForTags(raw: string): string[] {
@@ -30,11 +70,7 @@ function ManufacturerDirectoryCard({ item }: { item: ManufacturerDirectoryItem }
       <div className="seo-mfg-dir-card__content">
         <div className="seo-mfg-dir-card__head">
           <span className="seo-mfg-dir-card__logo-wrap" aria-hidden="true">
-            {logo ? (
-              <img src={logo} alt="" className="seo-mfg-dir-card__logo" />
-            ) : (
-              <span className="seo-mfg-dir-card__monogram">{monogramFor(item)}</span>
-            )}
+            <ManufacturerDirectoryLogo item={item} logo={logo} />
           </span>
           <span className="seo-mfg-dir-card__name">{item.name}</span>
         </div>

@@ -5848,7 +5848,7 @@ a.seo-datasheet-file__name:hover {
 .seo-mfg-dir-layout {
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
-  gap: var(--pg-space-6);
+  gap: var(--seo-layout-column-gap);
   padding: var(--pg-space-6) var(--pg-space-4) var(--pg-space-6);
 }
 
@@ -6073,6 +6073,48 @@ a.seo-datasheet-file__name:hover {
   height: 12px;
   flex-shrink: 0;
   color: #667085;
+}
+
+.seo-mfg-dir-pagination {
+  margin-top: var(--pg-space-6);
+  padding-top: var(--pg-space-5);
+}
+
+.seo-mfg-dir-pagination__summary {
+  margin: 0;
+  color: #667085;
+  font-size: 0.875rem;
+}
+
+.seo-mfg-dir-pagination__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.seo-mfg-dir-pagination__status {
+  color: #344054;
+  font-size: 0.875rem;
+}
+
+.seo-mfg-dir-pagination__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #fff;
+  color: #344054;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.seo-mfg-dir-pagination__button--disabled {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .seo-mfg-dir-grid-wrap {

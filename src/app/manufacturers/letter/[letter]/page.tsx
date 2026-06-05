@@ -6,7 +6,7 @@ import { buildPageMetadata, manufacturerDirectoryLetterSeoMeta } from '@/lib/seo
 
 type PageProps = {
   params: Promise<{ letter: string }>
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; sort?: string }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -16,10 +16,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ManufacturersLetterPage({ params, searchParams }: PageProps) {
   const { letter } = await params
-  const { category } = await searchParams
+  const { category, sort: sortParam } = await searchParams
   const categoryL1 = category?.trim() || undefined
-  const { page, activeFacet, pageTitle, breadcrumbs, itemList } =
-    buildDirectoryLetterProps(letter, categoryL1)
+  const { page, activeFacet, pageTitle, breadcrumbs, itemList, sort } =
+    await buildDirectoryLetterProps(letter, categoryL1, { sort: sortParam })
 
   return (
     <SeoPageShell
@@ -34,6 +34,7 @@ export default async function ManufacturersLetterPage({ params, searchParams }: 
         totalInDatabase={page.totalInDatabase}
         activeFacet={activeFacet}
         pageTitle={pageTitle}
+        sort={sort}
       />
     </SeoPageShell>
   )

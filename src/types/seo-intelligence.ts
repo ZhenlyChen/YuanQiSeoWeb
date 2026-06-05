@@ -378,6 +378,9 @@ export type ManufacturerDirectoryPage = {
   items: ManufacturerDirectoryItem[]
   categoryFacets: ManufacturerDirectoryFacet[]
   totalInDatabase: number
+  total?: number
+  page?: number
+  pageSize?: number
 }
 
 export type ManufacturerDirectoryViewMode = 'browse' | 'letter'
