@@ -55,7 +55,7 @@ export function AlternativeIntelligenceView({ page }: { page: AlternativeIntelli
         sidebar={
           <>
             <SidebarToolGrid tools={buildSidebarToolCards(page.slug, page.mpn)} />
-            <SidebarSourcingHelp slug={page.slug} />
+            <SidebarSourcingHelp slug={page.slug} mpn={page.mpn} />
             <SidebarRelatedLinks
               links={[
                 { label: `${page.mpn} component intelligence`, href: page.originalPartHref },

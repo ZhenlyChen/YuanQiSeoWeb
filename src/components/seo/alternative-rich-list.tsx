@@ -12,6 +12,7 @@ import { UIButton } from '@/components/ui/ui-button'
 import { SEO_PUBLIC_BOUNDARY } from '@/lib/seo-copy'
 import { partImageForMpn } from '@/lib/part-images'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
+import { buildCompareChatQuery, fillSeoFloatingChat } from '@/lib/seo-floating-chat'
 import { signUpUrl } from '@/lib/tool-urls'
 
 const GATED_BACKDROP_MIN_ROWS = 4
@@ -34,7 +35,20 @@ function FactorIcon({ status }: { status: 'match' | 'partial' | 'mismatch' }) {
   return <span className="seo-factor-icon seo-factor-icon--mismatch">✕</span>
 }
 
-function AlternativeRichListItem({ alt }: { alt: AlternativeItem }) {
+function AlternativeRichListItem({
+  alt,
+  sourceMpn,
+}: {
+  alt: AlternativeItem
+  sourceMpn?: string
+}) {
+  const canCompare = Boolean(sourceMpn && sourceMpn !== alt.mpn)
+
+  function handleCompareClick() {
+    if (!sourceMpn) return
+    fillSeoFloatingChat(buildCompareChatQuery(sourceMpn, alt.mpn))
+  }
+
   return (
     <article className="seo-alt-rich-item">
       <header className="seo-alt-rich-item__header">
@@ -80,10 +94,14 @@ function AlternativeRichListItem({ alt }: { alt: AlternativeItem }) {
         </div>
       ) : null}
       <div className="seo-alt-rich-item__actions">
-        {alt.compareHref ? (
-          <UIButton href={alt.compareHref} variant="primary" size="sm">
+        {canCompare ? (
+          <button
+            type="button"
+            className="ui-button ui-button--primary ui-button--sm"
+            onClick={handleCompareClick}
+          >
             Compare specs
-          </UIButton>
+          </button>
         ) : null}
         <UIButton href={alt.href} variant="secondary" size="sm">
           View details
@@ -121,16 +139,22 @@ function AlternativeRichListSkeletonItem() {
   )
 }
 
-function AlternativesGatedRichList({ items }: { items: AlternativeItem[] }) {
+function AlternativesGatedRichList({
+  items,
+  sourceMpn,
+}: {
+  items: AlternativeItem[]
+  sourceMpn?: string
+}) {
   const [preview, ...rest] = items
   const skeletonCount = Math.max(0, GATED_BLURRED_MIN_ROWS - rest.length)
 
   return (
     <div className="seo-alt-view seo-alt-rich-list-wrap seo-alt-rich-list-wrap--gated">
-      <AlternativeRichListItem alt={preview} />
+      <AlternativeRichListItem alt={preview} sourceMpn={sourceMpn} />
       <div className="seo-alt-rich-list-blurred" aria-hidden="true">
         {rest.map((alt) => (
-          <AlternativeRichListItem key={alt.mpn} alt={alt} />
+          <AlternativeRichListItem key={alt.mpn} alt={alt} sourceMpn={sourceMpn} />
         ))}
         {Array.from({ length: skeletonCount }, (_, index) => (
           <AlternativeRichListSkeletonItem key={`skeleton-${index}`} />
@@ -219,7 +243,7 @@ export function AlternativeRichList({
             {showGraph ? (
               <AlternativesGraphPlaceholder items={items} centerMpn={mpn} blurred />
             ) : (
-              <AlternativesGatedRichList items={items} />
+              <AlternativesGatedRichList items={items} sourceMpn={mpn} />
             )}
             {gateOverlay}
           </div>
@@ -236,7 +260,7 @@ export function AlternativeRichList({
                 aria-label={`${items.length} recommended alternatives`}
               >
                 {items.map((alt) => (
-                  <AlternativeRichListItem key={alt.mpn} alt={alt} />
+                  <AlternativeRichListItem key={alt.mpn} alt={alt} sourceMpn={mpn} />
                 ))}
               </div>
             )}

@@ -1,5 +1,28 @@
-export const APP_ORIGIN = 'https://app.partgenie.ai'
-export const MARKETING_ORIGIN = 'https://www.partgenie.ai'
+function resolvePublicOrigin(
+  envKey: 'NEXT_PUBLIC_APP_ORIGIN' | 'NEXT_PUBLIC_MARKETING_ORIGIN',
+  devDefault: string,
+  productionDefault: string,
+): string {
+  const configured = process.env[envKey]?.trim()
+  if (configured) {
+    return configured.replace(/\/$/, '')
+  }
+  if (process.env.NODE_ENV === 'development') {
+    return devDefault
+  }
+  return productionDefault
+}
+
+export const APP_ORIGIN = resolvePublicOrigin(
+  'NEXT_PUBLIC_APP_ORIGIN',
+  'http://localhost:3000',
+  'https://app.partgenie.ai',
+)
+export const MARKETING_ORIGIN = resolvePublicOrigin(
+  'NEXT_PUBLIC_MARKETING_ORIGIN',
+  'http://localhost:3002',
+  'https://www.partgenie.ai',
+)
 export const HELP_CENTER_ORIGIN = 'https://help.partgenie.ai/en-US'
 
 /** Public marketing tool landings (Webflow). */
@@ -140,8 +163,30 @@ export function appBomAnalyzerUrl(slug: string, mpn?: string): string {
   return appToolUrl('bom_analyzer', slug, extra)
 }
 
-export function rfqUrl(slug: string): string {
+export function rfqUrl(slug: string, mpn?: string): string {
+  if (mpn) {
+    return sourcingHelpSignInUrl(slug, mpn)
+  }
   return withUtm(APP_ORIGIN, '/', slug, 'rfq', { ref_part: slug })
+}
+
+/** SEO sidebar: logged-out users land in app login, then sourcing RFQ dialog. */
+export function sourcingHelpSignInUrl(slug: string, mpn: string): string {
+  return withUtm(APP_ORIGIN, '/app/chat', slug, 'rfq', {
+    ref_part: slug,
+    login: 'true',
+    intent: 'sourcing',
+    mpn,
+  })
+}
+
+/** SEO sidebar: logged-in users open sourcing RFQ dialog in app. */
+export function sourcingHelpAppUrl(slug: string, mpn: string): string {
+  return withUtm(APP_ORIGIN, '/app/chat', slug, 'rfq', {
+    ref_part: slug,
+    sourcing: 'true',
+    mpn,
+  })
 }
 
 export function signInUrl(slug: string): string {

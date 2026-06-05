@@ -36,7 +36,7 @@ export function SidebarQuickActions({
             {
               label: 'Request RFQ',
               description: `Get sourcing support for ${mpn} lines.`,
-              href: rfqUrl(slug),
+              href: rfqUrl(slug, mpn),
             },
             {
               label: 'Analyze in BOM',
@@ -89,7 +89,7 @@ export function SidebarQuickActions({
               {
                 label: 'Request RFQ',
                 description: 'Get pricing and availability quotes.',
-                href: rfqUrl(slug),
+                href: rfqUrl(slug, mpn),
               },
             ]
 

@@ -4532,7 +4532,8 @@ a.seo-datasheet-file__name:hover {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.seo-floating-chat:focus-within .seo-floating-chat__input-wrap {
+.seo-floating-chat:focus-within .seo-floating-chat__input-wrap,
+.seo-floating-chat--primed .seo-floating-chat__input-wrap {
   border-color: var(--seo-accent-hover);
   box-shadow:
     0 0 0 4px rgba(25, 96, 104, 0.08),

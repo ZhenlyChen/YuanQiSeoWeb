@@ -115,7 +115,7 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
         sidebar={
           <>
             <SidebarToolGrid tools={buildComponentToolGrid(page)} />
-            <SidebarSourcingHelp slug={page.slug} />
+            <SidebarSourcingHelp slug={page.slug} mpn={page.mpn} />
             <SidebarRelatedLinks links={relatedLinks} />
           </>
         }
