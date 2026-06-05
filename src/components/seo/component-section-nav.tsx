@@ -25,7 +25,7 @@ export function ComponentSectionNav({ items }: { items: ComponentSectionNavItem[
           setActiveId(visible[0].target.id)
         }
       },
-      { rootMargin: '-128px 0px -58% 0px', threshold: [0, 0.12, 0.35] },
+      { rootMargin: '-134px 0px -58% 0px', threshold: [0, 0.12, 0.35] },
     )
 
     elements.forEach((el) => observer.observe(el))

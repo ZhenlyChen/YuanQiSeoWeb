@@ -1,5 +1,6 @@
-const APP_ORIGIN = 'https://app.partgenie.ai'
-const MARKETING_ORIGIN = 'https://www.partgenie.ai'
+export const APP_ORIGIN = 'https://app.partgenie.ai'
+export const MARKETING_ORIGIN = 'https://www.partgenie.ai'
+export const HELP_CENTER_ORIGIN = 'https://help.partgenie.ai/en-US'
 
 /** Public marketing tool landings (Webflow). */
 export const MARKETING_TOOL_PAGES = {
@@ -7,6 +8,21 @@ export const MARKETING_TOOL_PAGES = {
   alternativeFinder: `${MARKETING_ORIGIN}/alternative-finder`,
   datasheetAi: `${MARKETING_ORIGIN}/datasheet-ai`,
   bomAnalyzer: `${MARKETING_ORIGIN}/ai-bom-analyzer`,
+} as const
+
+export const MARKETING_PAGES = {
+  pricing: `${MARKETING_ORIGIN}/pricing`,
+  bookDemo: `${MARKETING_ORIGIN}/book-demo`,
+  bookDemoCalendar: 'https://calendar.app.google/Tj6yCShFzurxdYUK8',
+} as const
+
+export const HELP_CENTER_PAGES = {
+  home: HELP_CENTER_ORIGIN,
+  changelog: `${HELP_CENTER_ORIGIN}/changelog`,
+  aiQueryWriting: `${HELP_CENTER_ORIGIN}/ai-query-writing`,
+  fuzzyToPrecise: `${HELP_CENTER_ORIGIN}/fuzzy-to-precise`,
+  searchOptimization: `${HELP_CENTER_ORIGIN}/search-optimization`,
+  effectiveBomManagement: `${HELP_CENTER_ORIGIN}/effective-bom-management`,
 } as const
 
 const MARKETING_TOOL_PATH_BY_CAMPAIGN = {
@@ -129,9 +145,14 @@ export function rfqUrl(slug: string): string {
 }
 
 export function signInUrl(slug: string): string {
-  return withUtm(APP_ORIGIN, '/login', slug, 'sign_in', { ref_part: slug })
+  return withUtm(APP_ORIGIN, '/app/chat', slug, 'sign_in', { ref_part: slug, login: 'true' })
 }
 
+/** Opens app chat with login modal (app has no /signup route). */
 export function signUpUrl(slug: string): string {
-  return withUtm(APP_ORIGIN, '/signup', slug, 'get_started', { ref_part: slug })
+  return withUtm(APP_ORIGIN, '/app/chat', slug, 'get_started', { ref_part: slug, login: 'true' })
+}
+
+export function dashboardUrl(): string {
+  return `${APP_ORIGIN}/app/chat`
 }
