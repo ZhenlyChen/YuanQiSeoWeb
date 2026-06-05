@@ -907,11 +907,12 @@
   width: 1.5rem;
   height: 2px;
   background: var(--seo-text-primary);
+  transform-origin: center;
   transition: transform 300ms ease, opacity 300ms ease;
 }
 
 .seo-site-navbar__menu-btn--open span:nth-child(1) {
-  transform: rotate(45deg) translateY(8px);
+  transform: translateY(8px) rotate(45deg);
 }
 
 .seo-site-navbar__menu-btn--open span:nth-child(2) {
@@ -919,7 +920,7 @@
 }
 
 .seo-site-navbar__menu-btn--open span:nth-child(3) {
-  transform: rotate(-45deg) translateY(-8px);
+  transform: translateY(-8px) rotate(-45deg);
 }
 
 .seo-site-navbar__mobile-panel {
@@ -6062,6 +6063,16 @@ a.seo-datasheet-file__name:hover {
   color: #344054;
   font-size: 0.82rem;
   text-decoration: none;
+}
+
+.seo-mfg-dir-toolbar__pill-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: #667085;
 }
 
 .seo-mfg-dir-grid-wrap {

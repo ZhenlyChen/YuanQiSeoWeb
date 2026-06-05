@@ -3,6 +3,22 @@
 import Link from 'next/link'
 import { SeoSelect } from '@/components/ui/seo-select'
 
+function FilterPillDismissIcon() {
+  return (
+    <span className="seo-mfg-dir-toolbar__pill-dismiss" aria-hidden="true">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path
+          d="M9 3L3 9M3 3l6 6"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  )
+}
+
 type ActiveFilter = {
   key: string
   label: string
@@ -42,7 +58,7 @@ export function ManufacturerDirectoryToolbar({
           {activeFilters.map((filter) => (
             <Link key={filter.key} href={filter.href} className="seo-mfg-dir-toolbar__pill">
               {filter.label}
-              <span aria-hidden="true">×</span>
+              <FilterPillDismissIcon />
             </Link>
           ))}
         </div>
