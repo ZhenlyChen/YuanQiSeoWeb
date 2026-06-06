@@ -19,7 +19,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ManufacturerPage({ params }: PageProps) {
-  const { slug } = await params
+  const { locale: localeParam, slug } = await params
+  const locale = parseAppLocale(localeParam)
   const page = getMockManufacturerPage(slug)
   if (!page) notFound()
 
@@ -36,6 +37,7 @@ export default async function ManufacturerPage({ params }: PageProps) {
       breadcrumbs={page.breadcrumbs}
       faq={page.faq}
       hideBreadcrumbs
+      locale={locale}
       pageContext={{ slug: page.slug, manufacturer: page.name, kind: 'manufacturer' }}
       banner={
         <div className="seo-mfg-hero-zone">

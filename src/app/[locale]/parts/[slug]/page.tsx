@@ -5,11 +5,13 @@ import { ComponentIntelligenceView } from '@/components/seo/component-intelligen
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { getMockComponentPage } from '@/data/mock'
 import { isMockComponentSlug } from '@/lib/mock-registry'
+import {
+  mapPublicSeoPageToComponentPage,
+  productJsonLdFromPublicPage,
+} from '@/lib/map-public-seo-page'
 import { parseAppLocale } from '@/lib/page-locale'
 import { fetchSeoPage } from '@/lib/seo-api'
-import { buildPageMetadata } from '@/lib/seo-meta'
-import { localizePath } from '@/lib/localized-path'
-import { SEO_SITE_ORIGIN } from '@/lib/site'
+import { buildPageMetadata, buildPageMetadataFromApi } from '@/lib/seo-meta'
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>
@@ -31,19 +33,17 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     previewToken: sp.preview,
   })
   if (!page) {
-    const t = await getTranslations('shell')
-    return { title: t('partNotFound') }
+    return { title: 'Part not found | PartGenie', robots: { index: false, follow: false } }
   }
 
-  const canonicalPath = page.canonicalPath || `/parts/${slug}`
-  return {
-    title: { absolute: page.title },
+  return buildPageMetadataFromApi({
+    title: page.title,
     description: page.description,
+    canonicalPath: page.canonicalPath || `/parts/${slug}`,
+    slug,
     robots: page.robots,
-    alternates: {
-      canonical: `${SEO_SITE_ORIGIN}${localizePath(canonicalPath, locale)}`,
-    },
-  }
+    locale,
+  })
 }
 
 export default async function PartPage({ params, searchParams }: PageProps) {
@@ -59,39 +59,41 @@ export default async function PartPage({ params, searchParams }: PageProps) {
       <SeoPageShell
         breadcrumbs={mockPage.breadcrumbs}
         faq={mockPage.faq}
+        locale={locale}
+        includeFaqJsonLd={false}
+        product={{
+          name: mockPage.mpn,
+          mpn: mockPage.mpn,
+          brandName: mockPage.manufacturer,
+          description: mockPage.meta.description,
+          canonicalPath: mockPage.meta.canonicalPath,
+        }}
         pageContext={{ slug: mockPage.slug, mpn: mockPage.mpn, kind: 'part' }}
       >
-        <ComponentIntelligenceView page={mockPage} />
+        <ComponentIntelligenceView page={mockPage} substitutesEmptyMessage={t('substitutesEmpty')} />
       </SeoPageShell>
     )
   }
 
-  const page = await fetchSeoPage(slug, {
+  const apiPage = await fetchSeoPage(slug, {
     locale,
     previewToken: sp.preview,
   })
-  if (!page) notFound()
+  if (!apiPage) notFound()
 
-  const code = String(page.component?.code ?? slug)
-  const summary = String(page.component?.summary ?? page.description ?? '')
+  const page = mapPublicSeoPageToComponentPage(apiPage, locale)
 
   return (
     <SeoPageShell
-      breadcrumbs={[{ label: t('components') }, { label: code }]}
+      breadcrumbs={page.breadcrumbs}
+      faq={page.faq}
+      locale={locale}
+      includeFaqJsonLd={false}
+      product={productJsonLdFromPublicPage(apiPage)}
       showPreviewBanner={Boolean(sp.preview)}
+      pageContext={{ slug: page.slug, mpn: page.mpn, kind: 'part' }}
     >
-      <article className="seo-card seo-hero">
-        <h1 className="seo-page-header__h1">
-          <span className="seo-page-header__h1-line">{code} AI Analysis:</span>
-          <br />
-          <span className="seo-page-header__h1-line">Specs, Applications & Alternatives</span>
-        </h1>
-        {summary ? <p className="seo-section__lead">{summary}</p> : null}
-        <p className="seo-section__lead" style={{ marginTop: 'var(--pg-space-4)' }}>
-          Full template available on design-preview slug{' '}
-          <a href="/parts/stm32f103c8t6">STM32F103C8T6</a>.
-        </p>
-      </article>
+      <ComponentIntelligenceView page={page} substitutesEmptyMessage={t('substitutesEmpty')} />
     </SeoPageShell>
   )
 }

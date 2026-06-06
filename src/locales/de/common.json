@@ -1,3 +1,4 @@
 {
-  "components": "Bauteile"
+  "components": "Bauteile",
+  "substitutesEmpty": "Alternativen werden angereichert. Analysieren Sie dieses Bauteil in PartGenie für die neuesten Treffer."
 }

@@ -12,6 +12,7 @@ export type SeoMeta = {
   h1SecondLine?: string
   canonicalPath: string
   keywords: string[]
+  robots?: string
 }
 
 /** Hero subtitle: Manufacturer • Category • Package */

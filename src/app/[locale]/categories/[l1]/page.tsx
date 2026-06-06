@@ -27,6 +27,7 @@ export default async function CategoryL1HubPage({ params }: PageProps) {
       hideBreadcrumbs
       faq={page.faq}
       itemList={itemList}
+      locale={locale}
       pageContext={{ slug: page.slug, kind: 'category' }}
     >
       <CategoryIntelligenceView page={page} />

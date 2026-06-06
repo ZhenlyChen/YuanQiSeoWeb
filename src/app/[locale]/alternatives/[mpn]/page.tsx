@@ -4,7 +4,7 @@ import { AlternativeIntelligenceView } from '@/components/seo/alternative-intell
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { getMockAlternativePage } from '@/data/mock'
 import { parseAppLocale } from '@/lib/page-locale'
-import { buildPageMetadata } from '@/lib/seo-meta'
+import { resolvePublicSeoMetadata } from '@/lib/resolve-seo-page-meta'
 
 type PageProps = {
   params: Promise<{ locale: string; mpn: string }>
@@ -14,12 +14,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale: localeParam, mpn } = await params
   const locale = parseAppLocale(localeParam)
   const page = getMockAlternativePage(mpn)
-  if (!page) return { title: 'Alternatives not found | PartGenie' }
-  return buildPageMetadata(page.meta, locale)
+  return resolvePublicSeoMetadata({
+    slug: mpn,
+    locale,
+    pageType: 'alternative',
+    fallbackMeta: page?.meta ?? null,
+    notFoundTitle: 'Alternatives not found | PartGenie',
+  })
 }
 
 export default async function AlternativePage({ params }: PageProps) {
-  const { mpn } = await params
+  const { locale: localeParam, mpn } = await params
+  const locale = parseAppLocale(localeParam)
   const page = getMockAlternativePage(mpn)
   if (!page) notFound()
 
@@ -27,6 +33,7 @@ export default async function AlternativePage({ params }: PageProps) {
     <SeoPageShell
       breadcrumbs={page.breadcrumbs}
       faq={page.faq}
+      locale={locale}
       pageContext={{ slug: page.slug, mpn: page.mpn, kind: 'alternative' }}
     >
       <AlternativeIntelligenceView page={page} />

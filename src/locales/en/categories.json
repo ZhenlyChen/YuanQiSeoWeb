@@ -16,6 +16,9 @@
     "viewIntelligence": "View intelligence",
     "itemListName": "Electronic component categories"
   },
+  "finder": {
+    "title": "Finder"
+  },
   "hub": {
     "quickAnswerTitle": "What are {categoryName} components?",
     "howToChooseTitle": "How to Choose {categoryName} Components",

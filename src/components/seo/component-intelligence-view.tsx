@@ -16,7 +16,13 @@ import { partImageForMpn } from '@/lib/part-images'
 import { signUpUrl } from '@/lib/tool-urls'
 import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
 
-export function ComponentIntelligenceView({ page }: { page: ComponentIntelligencePage }) {
+export function ComponentIntelligenceView({
+  page,
+  substitutesEmptyMessage,
+}: {
+  page: ComponentIntelligencePage
+  substitutesEmptyMessage?: string
+}) {
   const relatedLinks = [
     page.relatedManufacturer,
     page.relatedCategory,
@@ -97,6 +103,7 @@ export function ComponentIntelligenceView({ page }: { page: ComponentIntelligenc
               slug={page.slug}
               mpn={page.mpn}
               gatedCtaHref={signUpUrl(page.slug)}
+              emptyMessage={substitutesEmptyMessage}
             />
             </div>
 

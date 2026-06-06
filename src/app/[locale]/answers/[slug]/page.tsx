@@ -4,7 +4,7 @@ import { QueryAnswerView } from '@/components/seo/query-answer-view'
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { getMockAnswerPage } from '@/data/mock'
 import { parseAppLocale } from '@/lib/page-locale'
-import { buildPageMetadata } from '@/lib/seo-meta'
+import { resolvePublicSeoMetadata } from '@/lib/resolve-seo-page-meta'
 
 type PageProps = { params: Promise<{ locale: string; slug: string }> }
 
@@ -12,17 +12,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale: localeParam, slug } = await params
   const locale = parseAppLocale(localeParam)
   const page = getMockAnswerPage(slug)
-  if (!page) return { title: 'Answer not found | PartGenie' }
-  return buildPageMetadata(page.meta, locale)
+  return resolvePublicSeoMetadata({
+    slug,
+    locale,
+    pageType: 'query_answer',
+    fallbackMeta: page?.meta ?? null,
+    notFoundTitle: 'Answer not found | PartGenie',
+  })
 }
 
 export default async function AnswerPage({ params }: PageProps) {
-  const { slug } = await params
+  const { locale: localeParam, slug } = await params
+  const locale = parseAppLocale(localeParam)
   const page = getMockAnswerPage(slug)
   if (!page) notFound()
 
   return (
-    <SeoPageShell breadcrumbs={page.breadcrumbs} faq={page.faq}>
+    <SeoPageShell
+      breadcrumbs={page.breadcrumbs}
+      faq={page.faq}
+      locale={locale}
+      pageContext={{ slug: page.slug, kind: 'answer' }}
+    >
       <QueryAnswerView page={page} />
     </SeoPageShell>
   )

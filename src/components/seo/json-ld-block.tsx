@@ -1,19 +1,31 @@
-import { breadcrumbJsonLd, faqJsonLd, itemListJsonLd, jsonLdScript } from '@/lib/json-ld'
+import { breadcrumbJsonLd, faqJsonLd, itemListJsonLd, jsonLdScript, productJsonLd, type ProductJsonLdInput } from '@/lib/json-ld'
+import type { AppLocale } from '@/i18n/routing'
 import type { BreadcrumbItem, FaqItem } from '@/types/seo-intelligence'
 
 export function JsonLdBlock({
   breadcrumbs,
   faq,
   itemList,
+  locale = 'en',
+  product,
+  includeFaq = true,
 }: {
   breadcrumbs: BreadcrumbItem[]
   faq?: FaqItem[]
   itemList?: { name: string; items: { name: string; url: string }[] }
+  locale?: AppLocale
+  product?: ProductJsonLdInput
+  includeFaq?: boolean
 }) {
-  const graphs: object[] = [breadcrumbJsonLd(breadcrumbs)]
-  const faqLd = faq?.length ? faqJsonLd(faq) : null
-  if (faqLd) graphs.push(faqLd)
-  const listLd = itemList ? itemListJsonLd(itemList) : null
+  const graphs: object[] = [breadcrumbJsonLd(breadcrumbs, locale)]
+  if (product) {
+    graphs.push(productJsonLd(product, locale))
+  }
+  if (includeFaq) {
+    const faqLd = faq?.length ? faqJsonLd(faq) : null
+    if (faqLd) graphs.push(faqLd)
+  }
+  const listLd = itemList ? itemListJsonLd(itemList, locale) : null
   if (listLd) graphs.push(listLd)
 
   return (

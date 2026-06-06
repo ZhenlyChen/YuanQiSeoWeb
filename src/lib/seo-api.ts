@@ -16,6 +16,39 @@ export type PublicSeoPage = {
     completeParams: boolean
     completeDesc: boolean
   }
+  content: PublicPageContent
+  links: PublicPageLinks
+}
+
+export type PublicPageContent = {
+  degraded: boolean
+  shortAnswer?: Record<string, unknown>
+  shortAnswerText?: string
+  qaBlocks?: Array<Record<string, unknown>>
+  substitutes?: Array<Record<string, unknown>>
+  aiVerdict?: Record<string, unknown>
+  keySpecs?: Array<{ label: string; value: string }>
+}
+
+export type PublicPageLinks = {
+  breadcrumbs?: Array<{ label: string; href?: string }>
+  manufacturer?: { label: string; href: string }
+  category?: { label: string; href: string }
+  sameCategoryParts?: Array<{ label: string; href: string; mpn?: string }>
+  sameManufacturerParts?: Array<{ label: string; href: string; mpn?: string }>
+  compare?: Array<{ label: string; href: string }>
+  answers?: Array<{ label: string; href: string }>
+}
+
+export type PublicSitemapEntry = {
+  canonicalPath: string
+  locale: string
+  pageType: string
+}
+
+export type PublicSitemapPaths = {
+  paths: string[]
+  entries: PublicSitemapEntry[]
 }
 
 export type ManufacturerDirectoryApiPage = {
@@ -67,9 +100,36 @@ export async function fetchSeoPage(
     if (!res.ok) return null
     const json = (await res.json()) as ApiResponse<PublicSeoPage>
     if (json.code !== 200) return null
-    return json.data
+    const data = json.data
+    if (!data) return null
+    return {
+      ...data,
+      content: data.content ?? { degraded: true, substitutes: [] },
+      links: data.links ?? {},
+    }
   } catch {
     return null
+  }
+}
+
+export async function fetchSitemapPaths(): Promise<PublicSitemapPaths> {
+  try {
+    const res = await fetch(`${apiBase()}seo/sitemap-paths`, {
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) {
+      return { paths: [], entries: [] }
+    }
+    const json = (await res.json()) as ApiResponse<PublicSitemapPaths>
+    if (json.code !== 200 || !json.data) {
+      return { paths: [], entries: [] }
+    }
+    return {
+      paths: json.data.paths ?? [],
+      entries: json.data.entries ?? [],
+    }
+  } catch {
+    return { paths: [], entries: [] }
   }
 }
 

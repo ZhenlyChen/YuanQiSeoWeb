@@ -16,6 +16,9 @@
     "viewIntelligence": "Intelligence ansehen",
     "itemListName": "Elektronische Bauteilkategorien"
   },
+  "finder": {
+    "title": "Finder"
+  },
   "hub": {
     "quickAnswerTitle": "Was sind {categoryName}-Bauteile?",
     "howToChooseTitle": "So wählen Sie {categoryName}-Bauteile",

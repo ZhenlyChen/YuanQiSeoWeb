@@ -9,7 +9,7 @@ export function buildPageMetadata(meta: SeoMeta, locale: AppLocale = 'en'): Meta
   const localizedPath = localizePath(meta.canonicalPath, locale)
   const canonical = `${SEO_SITE_ORIGIN}${localizedPath}`
 
-  return {
+  const metadata: Metadata = {
     title: { absolute: meta.title },
     description: meta.description,
     keywords: meta.keywords,
@@ -33,6 +33,42 @@ export function buildPageMetadata(meta: SeoMeta, locale: AppLocale = 'en'): Meta
       images: [SEO_DEFAULT_OG_IMAGE],
     },
   }
+
+  if (meta.robots) {
+    metadata.robots = parseRobots(meta.robots)
+  }
+
+  return metadata
+}
+
+function parseRobots(value: string): Metadata['robots'] {
+  const normalized = value.toLowerCase()
+  return {
+    index: !normalized.includes('noindex'),
+    follow: !normalized.includes('nofollow'),
+  }
+}
+
+export function buildPageMetadataFromApi(input: {
+  title: string
+  description: string
+  canonicalPath: string
+  slug: string
+  robots?: string
+  locale?: AppLocale
+}): Metadata {
+  const locale = input.locale ?? 'en'
+  return buildPageMetadata(
+    {
+      title: input.title,
+      description: input.description,
+      h1: input.title,
+      canonicalPath: input.canonicalPath || `/parts/${input.slug}`,
+      keywords: [input.slug, input.title],
+      robots: input.robots,
+    },
+    locale,
+  )
 }
 
 /** Component intelligence — not datasheet/price catalog titles */

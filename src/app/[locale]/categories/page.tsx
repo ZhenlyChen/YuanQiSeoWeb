@@ -26,6 +26,7 @@ export default async function CategoriesDirectoryPage({ params }: PageProps) {
       breadcrumbs={breadcrumbs}
       hideBreadcrumbs
       itemList={itemList}
+      locale={locale}
       pageContext={{ slug: 'category-directory', kind: 'category' }}
     >
       <CategoryDirectoryView items={page.items} totalInDatabase={page.totalInDatabase} />

@@ -44,6 +44,7 @@ export default async function ManufacturersDirectoryPage({ params, searchParams 
       breadcrumbs={breadcrumbs}
       hideBreadcrumbs
       itemList={itemList}
+      locale={locale}
       pageContext={{ slug: 'manufacturer-directory', kind: 'manufacturer' }}
     >
       <ManufacturerDirectoryView
