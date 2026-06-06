@@ -1,12 +1,12 @@
 import type { QueryAnswerPage } from '@/types/seo-intelligence'
-import { answerSeoMeta } from '@/lib/seo-meta'
+import { answerSeoMetaSync } from '@/lib/seo-meta'
 
 export const mockAnswerWearableMcu: QueryAnswerPage = {
   pageType: 'answer',
   slug: 'best-mcu-for-wearable-device',
   useCase: 'wearable device',
   category: 'MCU',
-  meta: answerSeoMeta({
+  meta: answerSeoMetaSync({
     useCase: 'wearable device',
     category: 'MCU',
     slug: 'best-mcu-for-wearable-device',

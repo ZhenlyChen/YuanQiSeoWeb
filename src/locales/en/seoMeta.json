@@ -1,0 +1,50 @@
+{
+  "defaultTitle": "PartGenie | Electronic Component Specs & Sourcing",
+  "defaultDescription": "PartGenie helps engineers find electronic component specs, datasheets, and in-stock alternatives — powered by AI sourcing from weeks to minutes.",
+  "manufacturerDirectory": {
+    "title": "Electronic Component Manufacturers Directory | PartGenie",
+    "description": "Electronic component manufacturers indexed by category and name — with PartGenie intelligence for alternatives, supply context, and BOM analysis.",
+    "h1": "Manufacturer Directory"
+  },
+  "manufacturerDirectoryCategory": {
+    "title": "{category} Manufacturers Directory | PartGenie",
+    "description": "Explore {category} manufacturers with curated intelligence hubs, popular families, alternatives context, and sourcing considerations.",
+    "h1": "{category} manufacturers"
+  },
+  "manufacturerDirectoryLetter": {
+    "title": "Manufacturers Starting with {letter} | PartGenie",
+    "description": "Browse electronics manufacturers whose names start with {letter}. Explore intelligence hubs for alternatives, supply insights, and BOM analysis.",
+    "h1": "Manufacturers starting with {letter}"
+  },
+  "component": {
+    "title": "{mpn} AI Component Analysis: Specs, Uses, Alternatives & Risks | PartGenie",
+    "description": "AI-powered review of {mpn} specs, applications, design considerations, replacement risks, and alternative components from {manufacturer}. Compare pin-compatible options and analyze {mpn} in your BOM with PartGenie.",
+    "h1": "{mpn} AI Analysis:",
+    "h1SecondLine": "Specs, Applications & Alternatives"
+  },
+  "alternative": {
+    "title": "Best {mpn} Alternatives & Cross References | PartGenie",
+    "description": "Find {mpn} alternatives, pin-compatible replacements, and functional equivalents from {manufacturer}. Compare package risks, application fit, and sourcing options for {category} designs.",
+    "h1": "Best Alternatives to {mpn}"
+  },
+  "compare": {
+    "title": "{mpnA} vs {mpnB}: Specs, Differences & Replacement Guide | PartGenie",
+    "description": "Compare {mpnA} ({mfgA}) and {mpnB} ({mfgB}) by specifications, package, pin compatibility, applications, sourcing risk, and drop-in replacement suitability.",
+    "h1": "{mpnA} vs {mpnB}"
+  },
+  "manufacturer": {
+    "title": "{name} Components, Alternatives & Market Analysis | PartGenie",
+    "description": "Explore {name} components, popular product families, comparable manufacturers, replacement options, applications, and sourcing considerations — curated intelligence, not a full catalog.",
+    "h1": "{name} Component Intelligence"
+  },
+  "answer": {
+    "title": "Best {category} for {useCase}: Selection Guide | PartGenie",
+    "description": "Compare {category} options for {useCase} by performance, power, interfaces, package, ecosystem, sourcing availability, and design tradeoffs. Curated part recommendations for engineers.",
+    "h1": "Best {category} for {useCase}"
+  },
+  "categoryFinder": {
+    "title": "{categoryLabel} Component Finder & Selection Guide | PartGenie",
+    "description": "Find curated {categoryLabel} options with engineering-oriented filters, replacement guidance, and related intelligence pages. Built for fast BOM decision-making.",
+    "h1": "{categoryLabel} Component Finder"
+  }
+}

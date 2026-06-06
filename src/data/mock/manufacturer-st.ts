@@ -1,5 +1,5 @@
 import type { ManufacturerIntelligencePage } from '@/types/seo-intelligence'
-import { manufacturerSeoMeta } from '@/lib/seo-meta'
+import { manufacturerSeoMetaSync } from '@/lib/seo-meta'
 
 export const mockManufacturerSt: ManufacturerIntelligencePage = {
   pageType: 'manufacturer',
@@ -9,7 +9,7 @@ export const mockManufacturerSt: ManufacturerIntelligencePage = {
   manufacturerId: 'MFG_003343',
   representativeMpn: 'STM32F103C8T6',
   logoUrl: '/manufacturers/stmicroelectronics.svg',
-  meta: manufacturerSeoMeta({ name: 'STMicroelectronics', slug: 'stmicroelectronics' }),
+  meta: manufacturerSeoMetaSync({ name: 'STMicroelectronics', slug: 'stmicroelectronics' }),
   breadcrumbs: [
     { label: 'Manufacturers', href: '/manufacturers' },
     { label: 'STMicroelectronics' },

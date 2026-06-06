@@ -1,5 +1,5 @@
 import type { CompareIntelligencePage } from '@/types/seo-intelligence'
-import { compareSeoMeta } from '@/lib/seo-meta'
+import { compareSeoMetaSync } from '@/lib/seo-meta'
 
 export const mockCompareStm32Gd32: CompareIntelligencePage = {
   pageType: 'compare',
@@ -14,7 +14,7 @@ export const mockCompareStm32Gd32: CompareIntelligencePage = {
     manufacturer: 'GigaDevice',
     slug: 'gd32f103c8t6',
   },
-  meta: compareSeoMeta({
+  meta: compareSeoMetaSync({
     mpnA: 'STM32F103C8T6',
     mpnB: 'GD32F103C8T6',
     mfgA: 'STMicroelectronics',

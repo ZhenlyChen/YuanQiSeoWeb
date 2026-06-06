@@ -1,9 +1,6 @@
-import {
-  HELP_CENTER_PAGES,
-  MARKETING_ORIGIN,
-  MARKETING_PAGES,
-  MARKETING_TOOL_PAGES,
-} from '@/lib/tool-urls'
+import { getHelpCenterPages, MARKETING_ORIGIN, MARKETING_PAGES, MARKETING_TOOL_PAGES } from '@/lib/tool-urls'
+import type { AppLocale } from '@/i18n/routing'
+import { localizePath } from '@/lib/localized-path'
 
 export const FOOTER_LOGO_SRC =
   'https://cdn.prod.website-files.com/68bc2912d8c4f0f259702337/68bc2dc24c2d85bc943e5bbd_relume-364285.png'
@@ -20,51 +17,102 @@ export const FOOTER_LEGAL = {
   terms: 'https://www.partgenie.ai/terms-of-service',
 } as const
 
-export const FOOTER_COLUMNS = [
-  {
-    title: 'Product',
-    links: [
-      { label: 'Features', href: `${MARKETING_ORIGIN}/#features` },
-      { label: 'Pricing', href: MARKETING_PAGES.pricing },
-      { label: 'Changelog', href: HELP_CENTER_PAGES.changelog },
-    ],
-  },
-  {
-    title: 'Resource',
-    links: [
-      { label: 'Help Center', href: HELP_CENTER_PAGES.home },
-      { label: 'Talk to Us', href: `${MARKETING_ORIGIN}/contact` },
-      { label: 'Book a demo', href: MARKETING_PAGES.bookDemo },
-    ],
-  },
-  {
-    title: 'Tools',
-    links: [
-      { label: 'AI Component Finder', href: MARKETING_TOOL_PAGES.componentFinder },
-      { label: 'Alternative Finder', href: MARKETING_TOOL_PAGES.alternativeFinder },
-      { label: 'BOM Analyzer', href: MARKETING_TOOL_PAGES.bomAnalyzer },
-      { label: 'Datasheet AI', href: MARKETING_TOOL_PAGES.datasheetAi },
-    ],
-  },
-  {
-    title: 'Best Practice',
-    links: [
-      {
-        label: 'How to Write AI-Understandable Queries',
-        href: HELP_CENTER_PAGES.aiQueryWriting,
-      },
-      {
-        label: 'From Fuzzy Intent to Precise Solutions',
-        href: HELP_CENTER_PAGES.fuzzyToPrecise,
-      },
-      {
-        label: 'Electronics Search Optimization Tips',
-        href: HELP_CENTER_PAGES.searchOptimization,
-      },
-      {
-        label: 'Effective BOM Management Best Practices',
-        href: HELP_CENTER_PAGES.effectiveBomManagement,
-      },
-    ],
-  },
-] as const
+export type FooterLabels = {
+  product: string
+  resources: string
+  tools: string
+  bestPractice: string
+  features: string
+  pricing: string
+  changelog: string
+  manufacturerDirectory: string
+  helpCenter: string
+  talkToUs: string
+  bookDemo: string
+  aiComponentFinder: string
+  alternativeFinder: string
+  bomAnalyzer: string
+  datasheetAi: string
+  aiQueryWriting: string
+  fuzzyToPrecise: string
+  searchOptimization: string
+  effectiveBomManagement: string
+}
+
+export function getFooterLabelsFromTranslations(t: (key: string) => string): FooterLabels {
+  return {
+    product: t('product'),
+    resources: t('resources'),
+    tools: t('tools'),
+    bestPractice: t('bestPractice'),
+    features: t('features'),
+    pricing: t('pricing'),
+    changelog: t('changelog'),
+    manufacturerDirectory: t('manufacturerDirectory'),
+    helpCenter: t('helpCenter'),
+    talkToUs: t('talkToUs'),
+    bookDemo: t('bookDemo'),
+    aiComponentFinder: t('aiComponentFinder'),
+    alternativeFinder: t('alternativeFinder'),
+    bomAnalyzer: t('bomAnalyzer'),
+    datasheetAi: t('datasheetAi'),
+    aiQueryWriting: t('aiQueryWriting'),
+    fuzzyToPrecise: t('fuzzyToPrecise'),
+    searchOptimization: t('searchOptimization'),
+    effectiveBomManagement: t('effectiveBomManagement'),
+  }
+}
+
+export function buildFooterColumns(labels: FooterLabels, locale: AppLocale = 'en') {
+  const helpCenter = getHelpCenterPages(locale)
+
+  return [
+    {
+      title: labels.product,
+      links: [
+        { label: labels.features, href: `${MARKETING_ORIGIN}/#features` },
+        { label: labels.pricing, href: MARKETING_PAGES.pricing },
+        { label: labels.changelog, href: helpCenter.changelog },
+      ],
+    },
+    {
+      title: labels.resources,
+      links: [
+        { label: labels.manufacturerDirectory, href: localizePath('/manufacturers', locale) },
+        { label: labels.helpCenter, href: helpCenter.home },
+        { label: labels.talkToUs, href: `${MARKETING_ORIGIN}/contact` },
+        { label: labels.bookDemo, href: MARKETING_PAGES.bookDemo },
+      ],
+    },
+    {
+      title: labels.tools,
+      links: [
+        { label: labels.aiComponentFinder, href: MARKETING_TOOL_PAGES.componentFinder },
+        { label: labels.alternativeFinder, href: MARKETING_TOOL_PAGES.alternativeFinder },
+        { label: labels.bomAnalyzer, href: MARKETING_TOOL_PAGES.bomAnalyzer },
+        { label: labels.datasheetAi, href: MARKETING_TOOL_PAGES.datasheetAi },
+      ],
+    },
+    {
+      title: labels.bestPractice,
+      links: [
+        {
+          label: labels.aiQueryWriting,
+          href: helpCenter.aiQueryWriting,
+        },
+        {
+          label: labels.fuzzyToPrecise,
+          href: helpCenter.fuzzyToPrecise,
+        },
+        {
+          label: labels.searchOptimization,
+          href: helpCenter.searchOptimization,
+        },
+        {
+          label: labels.effectiveBomManagement,
+          href: helpCenter.effectiveBomManagement,
+        },
+      ],
+    },
+  ] as const
+}

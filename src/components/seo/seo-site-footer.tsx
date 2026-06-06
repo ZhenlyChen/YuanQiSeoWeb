@@ -1,14 +1,16 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { SeoLocaleSwitcher } from '@/components/seo/seo-locale-switcher'
 import { SeoPrimaryCtaButton } from '@/components/seo/seo-primary-cta'
+import type { AppLocale } from '@/i18n/routing'
 import {
-  FOOTER_COLUMNS,
+  buildFooterColumns,
   FOOTER_LEGAL,
   FOOTER_LOGO_SRC,
   FOOTER_SOCIAL,
+  getFooterLabelsFromTranslations,
 } from '@/lib/footer-links'
 import { subscribeNewsletter } from '@/lib/newsletter-api'
 import { MARKETING_ORIGIN } from '@/lib/tool-urls'
@@ -73,18 +75,17 @@ export function SeoSiteFooter() {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [successMessage, setSuccessMessage] = useState(
-    'Thank you! Your submission has been received!',
-  )
+  const [successMessage, setSuccessMessage] = useState('')
+  const t = useTranslations('footer')
+  const locale = useLocale() as AppLocale
+  const footerColumns = buildFooterColumns(getFooterLabelsFromTranslations(t), locale)
 
   return (
     <footer className="seo-site-footer">
       <div className="seo-site-footer__inner">
         <div className="seo-site-footer__newsletter">
           <div className="seo-site-footer__newsletter-copy">
-            <h3 className="seo-site-footer__newsletter-title">
-              Join our newsletter to stay up to date on features and releases.
-            </h3>
+            <h3 className="seo-site-footer__newsletter-title">{t('newsletterTitle')}</h3>
           </div>
           <div className="seo-site-footer__newsletter-form-wrap">
             {!submitted ? (
@@ -97,14 +98,14 @@ export function SeoSiteFooter() {
                     setSubmitting(true)
                     setError('')
                     try {
-                      const result = await subscribeNewsletter(email)
-                      setSuccessMessage(result.message)
+                      const result = await subscribeNewsletter(email, { locale })
+                      setSuccessMessage(result.message || t('subscriptionSuccess'))
                       setSubmitted(true)
                     } catch (submitError) {
                       setError(
                         submitError instanceof Error
                           ? submitError.message
-                          : 'Subscription failed. Please try again later.',
+                          : t('subscriptionFailed'),
                       )
                     } finally {
                       setSubmitting(false)
@@ -114,7 +115,7 @@ export function SeoSiteFooter() {
                   <input
                     type="email"
                     name="email"
-                    placeholder="Enter your email"
+                    placeholder={t('emailPlaceholder')}
                     value={email}
                     onChange={(event) => {
                       setEmail(event.target.value)
@@ -130,7 +131,7 @@ export function SeoSiteFooter() {
                     className="seo-site-footer__newsletter-submit"
                     disabled={submitting}
                   >
-                    {submitting ? 'Subscribing…' : 'Subscribe'}
+                    {submitting ? t('subscribing') : t('subscribe')}
                   </SeoPrimaryCtaButton>
                 </form>
                 {error ? (
@@ -139,14 +140,18 @@ export function SeoSiteFooter() {
                   </p>
                 ) : null}
                 <p className="seo-site-footer__newsletter-disclaimer">
-                  By subscribing you agree to with our{' '}
-                  <a href={FOOTER_LEGAL.privacy}>Privacy Policy</a> and provide consent to
-                  receive updates from our company.
+                  {t.rich('newsletterDisclaimer', {
+                    privacyLink: (chunks) => (
+                      <a key="privacy" href={FOOTER_LEGAL.privacy}>
+                        {chunks}
+                      </a>
+                    ),
+                  })}
                 </p>
               </>
             ) : (
               <p className="seo-site-footer__newsletter-success" role="status">
-                {successMessage}
+                {successMessage || t('subscriptionSuccess')}
               </p>
             )}
           </div>
@@ -154,7 +159,7 @@ export function SeoSiteFooter() {
 
         <div className="seo-site-footer__columns">
           <div className="seo-site-footer__brand-col">
-            <Link href={MARKETING_ORIGIN} className="seo-site-footer__brand">
+            <a href={MARKETING_ORIGIN} className="seo-site-footer__brand">
               <img
                 src={FOOTER_LOGO_SRC}
                 alt="PartGenie"
@@ -162,10 +167,10 @@ export function SeoSiteFooter() {
                 width={182}
                 height={32}
               />
-            </Link>
+            </a>
             <SeoLocaleSwitcher variant="footer" />
           </div>
-          {FOOTER_COLUMNS.map((column) => (
+          {footerColumns.map((column) => (
             <div key={column.title} className="seo-site-footer__column">
               <p className="seo-site-footer__column-title">{column.title}</p>
               <ul className="seo-site-footer__column-links">
@@ -182,8 +187,8 @@ export function SeoSiteFooter() {
         <div className="seo-site-footer__divider" aria-hidden="true" />
 
         <div className="seo-site-footer__bottom">
-          <p className="seo-site-footer__copyright">© 2026 PartGenie. All rights reserved.</p>
-          <div className="seo-site-footer__social" aria-label="Social links">
+          <p className="seo-site-footer__copyright">{t('copyright')}</p>
+          <div className="seo-site-footer__social" aria-label={t('socialLinks')}>
             {SOCIAL_LINKS.map(({ href, label, icon: Icon }) => (
               <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
                 <Icon />
@@ -191,8 +196,8 @@ export function SeoSiteFooter() {
             ))}
           </div>
           <div className="seo-site-footer__legal">
-            <a href={FOOTER_LEGAL.privacy}>Privacy Policy</a>
-            <a href={FOOTER_LEGAL.terms}>Terms of Service</a>
+            <a href={FOOTER_LEGAL.privacy}>{t('privacyPolicy')}</a>
+            <a href={FOOTER_LEGAL.terms}>{t('termsOfService')}</a>
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { Link, usePathname, useRouter } from '@/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
 import { ManufacturerDirectoryAzBar } from '@/components/seo/manufacturer-directory-az-bar'
 import { ManufacturerDirectoryHero } from '@/components/seo/manufacturer-directory-hero'
 import { ManufacturerDirectoryList } from '@/components/seo/manufacturer-directory-list'
@@ -9,6 +10,7 @@ import { ManufacturerDirectoryPagination } from '@/components/seo/manufacturer-d
 import { ManufacturerDirectorySidebar } from '@/components/seo/manufacturer-directory-sidebar'
 import { ManufacturerDirectoryToolbar } from '@/components/seo/manufacturer-directory-toolbar'
 import { getDirectoryHeroMarqueeItems } from '@/lib/manufacturer-directory'
+import { buildDirectoryQueryHref, type DirectoryQueryHref } from '@/lib/manufacturer-directory-href'
 import type {
   ManufacturerDirectoryActiveFacet,
   ManufacturerDirectoryFacet,
@@ -39,6 +41,7 @@ export function ManufacturerDirectoryView({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const t = useTranslations('directory')
   const marqueeItems = getDirectoryHeroMarqueeItems(items)
 
   const activeFilters = (() => {
@@ -60,27 +63,21 @@ export function ManufacturerDirectoryView({
         : '/manufacturers'
       filters.push({
         key: 'letter',
-        label: `Letter ${display}`,
+        label: t('letterFilter', { letter: display }),
         href: clearHref,
       })
     }
     return filters
   })()
 
-  function buildHref(next: { sort?: 'popular' | 'name'; page?: number }) {
-    const params = new URLSearchParams(searchParams.toString())
-    const nextSort = next.sort ?? sort
-    if (nextSort === 'popular') params.delete('sort')
-    else params.set('sort', nextSort)
-
-    if (pagination) {
-      const nextPage = next.page ?? pagination.page
-      if (nextPage <= 1) params.delete('page')
-      else params.set('page', String(nextPage))
-    }
-
-    const query = params.toString()
-    return query ? `${pathname}?${query}` : pathname
+  function buildHref(next: { sort?: 'popular' | 'name'; page?: number }): DirectoryQueryHref {
+    return buildDirectoryQueryHref({
+      pathname,
+      searchParams,
+      sort,
+      next,
+      pagination,
+    })
   }
 
   return (

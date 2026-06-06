@@ -1,5 +1,5 @@
 import type { ManufacturerIntelligencePage } from '@/types/seo-intelligence'
-import { manufacturerSeoMeta } from '@/lib/seo-meta'
+import { manufacturerSeoMetaSync } from '@/lib/seo-meta'
 
 export function createMinimalManufacturerMock(input: {
   slug: string
@@ -14,7 +14,7 @@ export function createMinimalManufacturerMock(input: {
     slug: input.slug,
     name: input.name,
     shortName: input.shortName,
-    meta: manufacturerSeoMeta({ name: input.name, slug: input.slug }),
+    meta: manufacturerSeoMetaSync({ name: input.name, slug: input.slug }),
     breadcrumbs: [
       { label: 'Manufacturers', href: '/manufacturers' },
       { label: input.name },

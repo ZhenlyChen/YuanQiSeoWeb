@@ -1,17 +1,27 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import type { AppLocale } from '@/i18n/routing'
+import { buildHreflangAlternates, localizePath, openGraphAlternateLocale, openGraphLocale } from '@/lib/localized-path'
 import type { SeoMeta } from '@/types/seo-intelligence'
 import { SEO_DEFAULT_OG_IMAGE, SEO_SITE_ORIGIN } from '@/lib/site'
 
-export function buildPageMetadata(meta: SeoMeta): Metadata {
-  const canonical = `${SEO_SITE_ORIGIN}${meta.canonicalPath}`
+export function buildPageMetadata(meta: SeoMeta, locale: AppLocale = 'en'): Metadata {
+  const localizedPath = localizePath(meta.canonicalPath, locale)
+  const canonical = `${SEO_SITE_ORIGIN}${localizedPath}`
+
   return {
     title: { absolute: meta.title },
     description: meta.description,
     keywords: meta.keywords,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      languages: buildHreflangAlternates(meta.canonicalPath),
+    },
     openGraph: {
       type: 'website',
       url: canonical,
+      locale: openGraphLocale(locale),
+      alternateLocale: [openGraphAlternateLocale(locale)],
       title: meta.title,
       description: meta.description,
       images: [{ url: SEO_DEFAULT_OG_IMAGE, alt: meta.h1SecondLine ? `${meta.h1} ${meta.h1SecondLine}` : meta.h1 }],
@@ -26,18 +36,19 @@ export function buildPageMetadata(meta: SeoMeta): Metadata {
 }
 
 /** Component intelligence — not datasheet/price catalog titles */
-export function componentSeoMeta(input: {
+export async function componentSeoMeta(input: {
   mpn: string
   manufacturer: string
   category: string
   slug: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const { mpn, manufacturer, category, slug } = input
   return {
-    title: `${mpn} AI Component Analysis: Specs, Uses, Alternatives & Risks | PartGenie`,
-    description: `AI-powered review of ${mpn} specs, applications, design considerations, replacement risks, and alternative components from ${manufacturer}. Compare pin-compatible options and analyze ${mpn} in your BOM with PartGenie.`,
-    h1: `${mpn} AI Analysis:`,
-    h1SecondLine: 'Specs, Applications & Alternatives',
+    title: t('component.title', { mpn }),
+    description: t('component.description', { mpn, manufacturer }),
+    h1: t('component.h1', { mpn }),
+    h1SecondLine: t('component.h1SecondLine'),
     canonicalPath: `/parts/${slug}`,
     keywords: [
       mpn,
@@ -56,17 +67,18 @@ export function componentSeoMeta(input: {
   }
 }
 
-export function alternativeSeoMeta(input: {
+export async function alternativeSeoMeta(input: {
   mpn: string
   manufacturer: string
   category: string
   slug: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const { mpn, manufacturer, category, slug } = input
   return {
-    title: `Best ${mpn} Alternatives & Cross References | PartGenie`,
-    description: `Find ${mpn} alternatives, pin-compatible replacements, and functional equivalents from ${manufacturer}. Compare package risks, application fit, and sourcing options for ${category} designs.`,
-    h1: `Best Alternatives to ${mpn}`,
+    title: t('alternative.title', { mpn }),
+    description: t('alternative.description', { mpn, manufacturer, category }),
+    h1: t('alternative.h1', { mpn }),
     canonicalPath: `/alternatives/${slug}`,
     keywords: [
       `${mpn} alternative`,
@@ -82,18 +94,19 @@ export function alternativeSeoMeta(input: {
   }
 }
 
-export function compareSeoMeta(input: {
+export async function compareSeoMeta(input: {
   mpnA: string
   mpnB: string
   mfgA: string
   mfgB: string
   slug: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const { mpnA, mpnB, mfgA, mfgB, slug } = input
   return {
-    title: `${mpnA} vs ${mpnB}: Specs, Differences & Replacement Guide | PartGenie`,
-    description: `Compare ${mpnA} (${mfgA}) and ${mpnB} (${mfgB}) by specifications, package, pin compatibility, applications, sourcing risk, and drop-in replacement suitability.`,
-    h1: `${mpnA} vs ${mpnB}`,
+    title: t('compare.title', { mpnA, mpnB }),
+    description: t('compare.description', { mpnA, mpnB, mfgA, mfgB }),
+    h1: t('compare.h1', { mpnA, mpnB }),
     canonicalPath: `/compare/${slug}`,
     keywords: [
       `${mpnA} vs ${mpnB}`,
@@ -108,15 +121,16 @@ export function compareSeoMeta(input: {
   }
 }
 
-export function manufacturerSeoMeta(input: {
+export async function manufacturerSeoMeta(input: {
   name: string
   slug: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const { name, slug } = input
   return {
-    title: `${name} Components, Alternatives & Market Analysis | PartGenie`,
-    description: `Explore ${name} components, popular product families, comparable manufacturers, replacement options, applications, and sourcing considerations — curated intelligence, not a full catalog.`,
-    h1: `${name} Component Intelligence`,
+    title: t('manufacturer.title', { name }),
+    description: t('manufacturer.description', { name }),
+    h1: t('manufacturer.h1', { name }),
     canonicalPath: `/manufacturers/${slug}`,
     keywords: [
       name,
@@ -130,17 +144,18 @@ export function manufacturerSeoMeta(input: {
   }
 }
 
-export function answerSeoMeta(input: {
+export async function answerSeoMeta(input: {
   useCase: string
   category: string
   slug: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const { useCase, category, slug } = input
   const titleCase = useCase.charAt(0).toUpperCase() + useCase.slice(1)
   return {
-    title: `Best ${category} for ${titleCase}: Selection Guide | PartGenie`,
-    description: `Compare ${category} options for ${useCase} by performance, power, interfaces, package, ecosystem, sourcing availability, and design tradeoffs. Curated part recommendations for engineers.`,
-    h1: `Best ${category} for ${titleCase}`,
+    title: t('answer.title', { category, useCase: titleCase }),
+    description: t('answer.description', { category, useCase }),
+    h1: t('answer.h1', { category, useCase: titleCase }),
     canonicalPath: `/answers/${slug}`,
     keywords: [
       `best ${category} for ${useCase}`,
@@ -153,15 +168,16 @@ export function answerSeoMeta(input: {
   }
 }
 
-export function categoryFinderSeoMeta(input: {
+export async function categoryFinderSeoMeta(input: {
   categoryLabel: string
   slug: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const { categoryLabel, slug } = input
   return {
-    title: `${categoryLabel} Component Finder & Selection Guide | PartGenie`,
-    description: `Find curated ${categoryLabel.toLowerCase()} options with engineering-oriented filters, replacement guidance, and related intelligence pages. Built for fast BOM decision-making.`,
-    h1: `${categoryLabel} Component Finder`,
+    title: t('categoryFinder.title', { categoryLabel }),
+    description: t('categoryFinder.description', { categoryLabel }),
+    h1: t('categoryFinder.h1', { categoryLabel }),
     canonicalPath: `/categories/${slug}/finder`,
     keywords: [
       `${categoryLabel} finder`,
@@ -174,12 +190,12 @@ export function categoryFinderSeoMeta(input: {
   }
 }
 
-export function manufacturerDirectorySeoMeta(): SeoMeta {
+export async function manufacturerDirectorySeoMeta(): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   return {
-    title: 'Electronic Component Manufacturers Directory | PartGenie',
-    description:
-      'Browse by category and A–Z — or chat to ask about any manufacturer. Intelligence hubs for alternatives, supply context, and BOM-ready analysis, not a traditional catalog.',
-    h1: 'Manufacturer intelligence directory',
+    title: t('manufacturerDirectory.title'),
+    description: t('manufacturerDirectory.description'),
+    h1: t('manufacturerDirectory.h1'),
     canonicalPath: '/manufacturers',
     keywords: [
       'electronics manufacturers',
@@ -192,15 +208,16 @@ export function manufacturerDirectorySeoMeta(): SeoMeta {
   }
 }
 
-export function manufacturerDirectoryCategorySeoMeta(input: {
+export async function manufacturerDirectoryCategorySeoMeta(input: {
   categoryLabel: string
   slug: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const { categoryLabel, slug } = input
   return {
-    title: `${categoryLabel} Manufacturers Directory | PartGenie`,
-    description: `Explore ${categoryLabel.toLowerCase()} manufacturers with curated intelligence hubs, popular families, alternatives context, and sourcing considerations.`,
-    h1: `${categoryLabel} manufacturers`,
+    title: t('manufacturerDirectoryCategory.title', { category: categoryLabel }),
+    description: t('manufacturerDirectoryCategory.description', { category: categoryLabel }),
+    h1: t('manufacturerDirectoryCategory.h1', { category: categoryLabel }),
     canonicalPath: `/manufacturers/category/${slug}`,
     keywords: [
       `${categoryLabel} manufacturers`,
@@ -211,14 +228,15 @@ export function manufacturerDirectoryCategorySeoMeta(input: {
   }
 }
 
-export function manufacturerDirectoryLetterSeoMeta(input: {
+export async function manufacturerDirectoryLetterSeoMeta(input: {
   letter: string
-}): SeoMeta {
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
   const display = input.letter === '0-9' || input.letter === '#' ? '0–9' : input.letter.toUpperCase()
   return {
-    title: `Manufacturers Starting with ${display} | PartGenie`,
-    description: `Browse electronics manufacturers whose names start with ${display}. Explore intelligence hubs for alternatives, supply insights, and BOM analysis.`,
-    h1: `Manufacturers starting with ${display}`,
+    title: t('manufacturerDirectoryLetter.title', { letter: display }),
+    description: t('manufacturerDirectoryLetter.description', { letter: display }),
+    h1: t('manufacturerDirectoryLetter.h1', { letter: display }),
     canonicalPath: `/manufacturers/letter/${encodeURIComponent(input.letter === '#' ? '0-9' : input.letter.toLowerCase())}`,
     keywords: [
       `manufacturers ${display}`,
@@ -226,5 +244,90 @@ export function manufacturerDirectoryLetterSeoMeta(input: {
       'semiconductor suppliers',
       'component intelligence',
     ],
+  }
+}
+
+/** English-only sync helpers for mock fixtures and dev previews. */
+export function componentSeoMetaSync(input: {
+  mpn: string
+  manufacturer: string
+  category: string
+  slug: string
+}): SeoMeta {
+  const { mpn, manufacturer, category, slug } = input
+  return {
+    title: `${mpn} AI Component Analysis: Specs, Uses, Alternatives & Risks | PartGenie`,
+    description: `AI-powered review of ${mpn} specs, applications, design considerations, replacement risks, and alternative components from ${manufacturer}. Compare pin-compatible options and analyze ${mpn} in your BOM with PartGenie.`,
+    h1: `${mpn} AI Analysis:`,
+    h1SecondLine: 'Specs, Applications & Alternatives',
+    canonicalPath: `/parts/${slug}`,
+    keywords: [mpn, manufacturer, category],
+  }
+}
+
+export function alternativeSeoMetaSync(input: {
+  mpn: string
+  manufacturer: string
+  category: string
+  slug: string
+}): SeoMeta {
+  const { mpn, manufacturer, category, slug } = input
+  return {
+    title: `Best ${mpn} Alternatives & Cross References | PartGenie`,
+    description: `Find ${mpn} alternatives, pin-compatible replacements, and functional equivalents from ${manufacturer}. Compare package risks, application fit, and sourcing options for ${category} designs.`,
+    h1: `Best Alternatives to ${mpn}`,
+    canonicalPath: `/alternatives/${slug}`,
+    keywords: [`${mpn} alternative`, manufacturer, category],
+  }
+}
+
+export function compareSeoMetaSync(input: {
+  mpnA: string
+  mpnB: string
+  mfgA: string
+  mfgB: string
+  slug: string
+}): SeoMeta {
+  const { mpnA, mpnB, mfgA, mfgB, slug } = input
+  return {
+    title: `${mpnA} vs ${mpnB}: Specs, Differences & Replacement Guide | PartGenie`,
+    description: `Compare ${mpnA} (${mfgA}) and ${mpnB} (${mfgB}) by specifications, package, pin compatibility, applications, sourcing risk, and drop-in replacement suitability.`,
+    h1: `${mpnA} vs ${mpnB}`,
+    canonicalPath: `/compare/${slug}`,
+    keywords: [`${mpnA} vs ${mpnB}`, mfgA, mfgB],
+  }
+}
+
+export function manufacturerSeoMetaSync(input: { name: string; slug: string }): SeoMeta {
+  const { name, slug } = input
+  return {
+    title: `${name} Components, Alternatives & Market Analysis | PartGenie`,
+    description: `Explore ${name} components, popular product families, comparable manufacturers, replacement options, applications, and sourcing considerations — curated intelligence, not a full catalog.`,
+    h1: `${name} Component Intelligence`,
+    canonicalPath: `/manufacturers/${slug}`,
+    keywords: [name, `${name} components`],
+  }
+}
+
+export function answerSeoMetaSync(input: { useCase: string; category: string; slug: string }): SeoMeta {
+  const { useCase, category, slug } = input
+  const titleCase = useCase.charAt(0).toUpperCase() + useCase.slice(1)
+  return {
+    title: `Best ${category} for ${titleCase}: Selection Guide | PartGenie`,
+    description: `Compare ${category} options for ${useCase} by performance, power, interfaces, package, ecosystem, sourcing availability, and design tradeoffs.`,
+    h1: `Best ${category} for ${titleCase}`,
+    canonicalPath: `/answers/${slug}`,
+    keywords: [`best ${category} for ${useCase}`],
+  }
+}
+
+export function manufacturerDirectorySeoMetaSync(): SeoMeta {
+  return {
+    title: 'Electronic Component Manufacturers Directory | PartGenie',
+    description:
+      'Electronic component manufacturers indexed by category and name — with PartGenie intelligence for alternatives, supply context, and BOM analysis.',
+    h1: 'Manufacturer Directory',
+    canonicalPath: '/manufacturers',
+    keywords: ['electronics manufacturers', 'manufacturer directory'],
   }
 }

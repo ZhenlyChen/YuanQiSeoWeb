@@ -1,0 +1,50 @@
+{
+  "defaultTitle": "PartGenie | Bauteilspezifikationen & Beschaffung",
+  "defaultDescription": "PartGenie hilft Ingenieuren, Bauteilspezifikationen, Datenblätter und verfügbare Alternativen zu finden — mit KI-gestützter Beschaffung in Minuten statt Wochen.",
+  "manufacturerDirectory": {
+    "title": "Elektronik-Herstellerverzeichnis | PartGenie",
+    "description": "Elektronik-Hersteller nach Kategorie und Name — mit PartGenie-Intelligence für Alternativen, Lieferkontext und Stücklisten-Analyse.",
+    "h1": "Herstellerverzeichnis"
+  },
+  "manufacturerDirectoryCategory": {
+    "title": "{category}-Herstellerverzeichnis | PartGenie",
+    "description": "Entdecken Sie {category}-Hersteller mit kuratierten Intelligence-Hubs, beliebten Produktfamilien, Alternativen-Kontext und Beschaffungsaspekten.",
+    "h1": "{category}-Hersteller"
+  },
+  "manufacturerDirectoryLetter": {
+    "title": "Hersteller mit {letter} | PartGenie",
+    "description": "Durchsuchen Sie Elektronik-Hersteller, deren Namen mit {letter} beginnen. Intelligence-Hubs für Alternativen, Lieferketten-Einblicke und Stücklisten-Analyse.",
+    "h1": "Hersteller mit {letter}"
+  },
+  "component": {
+    "title": "{mpn} KI-Bauteilanalyse: Specs, Einsatz, Alternativen & Risiken | PartGenie",
+    "description": "KI-gestützte Analyse von {mpn}: Specs, Anwendungen, Designüberlegungen, Ersatzrisiken und Alternativen von {manufacturer}. Pin-kompatible Optionen vergleichen und {mpn} in Ihrer Stückliste analysieren.",
+    "h1": "{mpn} KI-Analyse:",
+    "h1SecondLine": "Specs, Anwendungen & Alternativen"
+  },
+  "alternative": {
+    "title": "Beste {mpn}-Alternativen & Cross-References | PartGenie",
+    "description": "Finden Sie {mpn}-Alternativen, pin-kompatible Ersatzteile und funktionale Äquivalente von {manufacturer}. Gehäuse-Risiken, Anwendungsfit und Beschaffungsoptionen für {category}-Designs vergleichen.",
+    "h1": "Beste Alternativen zu {mpn}"
+  },
+  "compare": {
+    "title": "{mpnA} vs {mpnB}: Specs, Unterschiede & Ersatzleitfaden | PartGenie",
+    "description": "Vergleichen Sie {mpnA} ({mfgA}) und {mpnB} ({mfgB}) nach Specs, Gehäuse, Pin-Kompatibilität, Anwendungen, Beschaffungsrisiko und Drop-in-Eignung.",
+    "h1": "{mpnA} vs {mpnB}"
+  },
+  "manufacturer": {
+    "title": "{name}: Bauteile, Alternativen & Marktanalyse | PartGenie",
+    "description": "Entdecken Sie {name}-Bauteile, beliebte Produktfamilien, vergleichbare Hersteller, Ersatzoptionen, Anwendungen und Beschaffungsaspekte — kuratierte Intelligence, kein Vollkatalog.",
+    "h1": "{name} Bauteil-Intelligence"
+  },
+  "answer": {
+    "title": "Beste {category} für {useCase}: Auswahlleitfaden | PartGenie",
+    "description": "Vergleichen Sie {category}-Optionen für {useCase} nach Leistung, Leistung, Schnittstellen, Gehäuse, Ökosystem, Verfügbarkeit und Design-Trade-offs.",
+    "h1": "Beste {category} für {useCase}"
+  },
+  "categoryFinder": {
+    "title": "{categoryLabel} Bauteil-Finder & Auswahlleitfaden | PartGenie",
+    "description": "Finden Sie kuratierte {categoryLabel}-Optionen mit ingenieurorientierten Filtern, Ersatzleitfaden und verwandten Intelligence-Seiten.",
+    "h1": "{categoryLabel} Bauteil-Finder"
+  }
+}

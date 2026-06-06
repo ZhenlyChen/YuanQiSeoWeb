@@ -1,6 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { Link, usePathname } from '@/i18n/navigation'
+import type { AppLocale } from '@/i18n/routing'
 import { NAV_LOCALES } from '@/lib/nav-links'
 
 function ChevronDown({ open, size = 16 }: { open: boolean; size?: number }) {
@@ -90,7 +93,11 @@ export function SeoLocaleSwitcher({
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const close = useCallback(() => setOpen(false), [])
   useClickOutside(ref, close, open)
-  const currentLocale = NAV_LOCALES[0]
+  const locale = useLocale() as AppLocale
+  const pathname = usePathname()
+  const tNav = useTranslations('nav')
+  const tShell = useTranslations('shell')
+  const currentLocale = NAV_LOCALES.find((item) => item.tag === locale) ?? NAV_LOCALES[0]
 
   const cancelClose = useCallback(() => {
     if (closeTimerRef.current) {
@@ -114,21 +121,22 @@ export function SeoLocaleSwitcher({
   if (variant === 'mobile') {
     return (
       <div className="seo-locale-switcher seo-locale-switcher--mobile">
-        <p className="seo-locale-switcher__mobile-label">Language</p>
-        {NAV_LOCALES.map((locale) => (
-          <a
-            key={locale.tag}
-            href={locale.href}
+        <p className="seo-locale-switcher__mobile-label">{tShell('language')}</p>
+        {NAV_LOCALES.map((item) => (
+          <Link
+            key={item.tag}
+            href={pathname}
+            locale={item.tag}
             className={`seo-locale-switcher__mobile-link${
-              locale.tag === currentLocale.tag ? ' seo-locale-switcher__mobile-link--active' : ''
+              item.tag === currentLocale.tag ? ' seo-locale-switcher__mobile-link--active' : ''
             }`}
           >
             <GlobeIcon />
-            {locale.fullLabel}
-            {locale.tag === currentLocale.tag ? (
-              <span className="seo-locale-switcher__badge">Active</span>
+            {tNav(item.fullLabelKey)}
+            {item.tag === currentLocale.tag ? (
+              <span className="seo-locale-switcher__badge">{tShell('active')}</span>
             ) : null}
-          </a>
+          </Link>
         ))}
       </div>
     )
@@ -147,7 +155,7 @@ export function SeoLocaleSwitcher({
       <button
         type="button"
         className="seo-locale-switcher__trigger"
-        aria-label="Switch language"
+        aria-label={tShell('switchLanguage')}
         aria-expanded={open}
         onClick={() => {
           if (isNavbar) {
@@ -159,7 +167,7 @@ export function SeoLocaleSwitcher({
         }}
       >
         <GlobeIcon size={isFooter ? 16 : 18} />
-        <span>{isFooter ? currentLocale.fullLabel : currentLocale.label}</span>
+        <span>{isFooter ? tNav(currentLocale.fullLabelKey) : currentLocale.label}</span>
         <ChevronDown open={open} size={isFooter ? 14 : 16} />
       </button>
       {open ? (
@@ -168,19 +176,20 @@ export function SeoLocaleSwitcher({
           role="menu"
         >
           <div className="seo-locale-switcher__panel-surface">
-            {NAV_LOCALES.map((locale) => (
-              <a
-                key={locale.tag}
-                href={locale.href}
+            {NAV_LOCALES.map((item) => (
+              <Link
+                key={item.tag}
+                href={pathname}
+                locale={item.tag}
                 className={`seo-locale-switcher__link${
-                  locale.tag === currentLocale.tag ? ' seo-locale-switcher__link--active' : ''
+                  item.tag === currentLocale.tag ? ' seo-locale-switcher__link--active' : ''
                 }`}
                 role="menuitem"
                 onClick={() => setOpen(false)}
               >
-                {locale.fullLabel}
-                {locale.tag === currentLocale.tag ? <CheckIcon /> : null}
-              </a>
+                {tNav(item.fullLabelKey)}
+                {item.tag === currentLocale.tag ? <CheckIcon /> : null}
+              </Link>
             ))}
           </div>
         </div>

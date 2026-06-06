@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
 import { ArrowUpRightIcon } from '@/components/seo/arrow-up-right-icon'
 import { resolveManufacturerLogo } from '@/lib/manufacturer-logos'
@@ -137,8 +137,8 @@ export function ManufacturerDirectoryList({ items }: { items: ManufacturerDirect
   return (
     <div className="seo-mfg-dir-grid-wrap">
       <ul className="seo-mfg-dir-grid">
-        {items.map((item) => (
-          <li key={item.slug}>
+        {items.map((item, index) => (
+          <li key={item.manufacturerId ?? `${item.slug}-${index}`}>
             <ManufacturerDirectoryCard item={item} />
           </li>
         ))}

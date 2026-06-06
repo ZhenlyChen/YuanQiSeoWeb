@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { getMockManufacturerDirectoryPage } from '@/data/mock/manufacturer-directory'
+import type { AppLocale } from '@/i18n/routing'
 import { fetchManufacturerDirectory } from '@/lib/seo-api'
 import { SEO_SITE_ORIGIN } from '@/lib/site'
 import {
@@ -10,6 +12,7 @@ import {
 import type {
   BreadcrumbItem,
   ManufacturerDirectoryActiveFacet,
+  ManufacturerDirectoryItem,
   ManufacturerDirectoryPage,
   ManufacturerDirectoryViewMode,
 } from '@/types/seo-intelligence'
@@ -27,6 +30,16 @@ function useMockManufacturerDirectory(): boolean {
   return process.env.USE_MOCK_MANUFACTURER_DIRECTORY === 'true'
 }
 
+function dedupeDirectoryItems(items: ManufacturerDirectoryItem[]): ManufacturerDirectoryItem[] {
+  const seen = new Set<string>()
+  return items.filter((item) => {
+    const key = item.manufacturerId?.trim() || item.slug
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
 export function getCategoryFacetLabel(page: ManufacturerDirectoryPage, slug: string): string | undefined {
   return page.categoryFacets.find((facet) => facet.slug === slug)?.label
 }
@@ -35,21 +48,25 @@ async function fetchManufacturerDirectoryPage(
   params: DirectoryFetchParams = {},
 ): Promise<ManufacturerDirectoryPage> {
   if (useMockManufacturerDirectory()) {
-    return getMockManufacturerDirectoryPage()
+    const page = getMockManufacturerDirectoryPage()
+    return { ...page, meta: await manufacturerDirectorySeoMeta() }
   }
 
   const apiPage = await fetchManufacturerDirectory(params)
   if (!apiPage) {
-    return getMockManufacturerDirectoryPage()
+    const page = getMockManufacturerDirectoryPage()
+    return { ...page, meta: await manufacturerDirectorySeoMeta() }
   }
 
   return {
     pageType: 'manufacturer_directory',
-    meta: manufacturerDirectorySeoMeta(),
-    items: apiPage.items.map((item) => ({
-      ...item,
-      primaryCategoryL1: item.primaryCategoryL1 ?? [],
-    })),
+    meta: await manufacturerDirectorySeoMeta(),
+    items: dedupeDirectoryItems(
+      apiPage.items.map((item) => ({
+        ...item,
+        primaryCategoryL1: item.primaryCategoryL1 ?? [],
+      })),
+    ),
     categoryFacets: apiPage.categoryFacets,
     totalInDatabase: apiPage.totalInDatabase,
     total: apiPage.total,
@@ -69,25 +86,30 @@ function normalizeSortParam(sort?: string): 'popular' | 'name' {
   return sort === 'name' ? 'name' : 'popular'
 }
 
-export async function buildDirectoryIndexProps(params?: {
-  sort?: string
-  page?: number
-  pageSize?: number
-}) {
+export async function buildDirectoryIndexProps(
+  params?: {
+    sort?: string
+    page?: number
+    pageSize?: number
+    locale?: AppLocale
+  },
+) {
+  const locale = params?.locale ?? 'en'
+  const t = await getTranslations('directory')
   const sort = normalizeSortParam(params?.sort)
   const pageNum = Math.max(1, params?.page ?? 1)
   const pageSize = params?.pageSize ?? 100
-  const page = await fetchManufacturerDirectoryPage({ sort, page: pageNum, pageSize })
+  const page = await fetchManufacturerDirectoryPage({ sort, page: pageNum, pageSize, locale })
 
   return {
     page,
     activeFacet: { tab: 'all' as const },
     viewMode: 'browse' as ManufacturerDirectoryViewMode,
-    pageTitle: 'All manufacturers',
+    pageTitle: t('allManufacturers'),
     sort,
-    breadcrumbs: [{ label: 'Manufacturers' }],
+    breadcrumbs: [{ label: t('manufacturers') }],
     itemList: {
-      name: 'Electronic component manufacturers',
+      name: t('itemListName'),
       items: page.items.slice(0, 50).map((item) => ({
         name: item.name,
         url: `${SEO_SITE_ORIGIN}${item.href}`,
@@ -96,28 +118,36 @@ export async function buildDirectoryIndexProps(params?: {
   }
 }
 
-export async function buildDirectoryCategoryProps(l1: string, params?: { sort?: string }) {
+export async function buildDirectoryCategoryProps(
+  l1: string,
+  params?: { sort?: string; locale?: AppLocale },
+) {
+  const locale = params?.locale ?? 'en'
+  const t = await getTranslations('directory')
   const sort = normalizeSortParam(params?.sort)
-  const page = await fetchManufacturerDirectoryPage({ categoryL1: l1, sort, pageSize: 500 })
+  const page = await fetchManufacturerDirectoryPage({ categoryL1: l1, sort, pageSize: 500, locale })
   const label = getCategoryFacetLabel(page, l1)
   if (!label) notFound()
 
   return {
-    page: { ...page, meta: manufacturerDirectoryCategorySeoMeta({ categoryLabel: label, slug: l1 }) },
+    page: {
+      ...page,
+      meta: await manufacturerDirectoryCategorySeoMeta({ categoryLabel: label, slug: l1 }),
+    },
     activeFacet: {
       tab: 'category' as const,
       categoryL1: l1,
       categoryLabel: label,
     } satisfies ManufacturerDirectoryActiveFacet,
     viewMode: 'browse' as ManufacturerDirectoryViewMode,
-    pageTitle: `${label} manufacturers`,
+    pageTitle: t('categoryManufacturers', { category: label }),
     sort,
     breadcrumbs: [
-      { label: 'Manufacturers', href: '/manufacturers' },
+      { label: t('manufacturers'), href: '/manufacturers' },
       { label: label },
     ] satisfies BreadcrumbItem[],
     itemList: {
-      name: `${label} manufacturers`,
+      name: t('itemListCategory', { category: label }),
       items: page.items.slice(0, 50).map((item) => ({
         name: item.name,
         url: `${SEO_SITE_ORIGIN}${item.href}`,
@@ -129,8 +159,10 @@ export async function buildDirectoryCategoryProps(l1: string, params?: { sort?: 
 export async function buildDirectoryLetterProps(
   letterParam: string,
   categoryL1?: string,
-  params?: { sort?: string },
+  params?: { sort?: string; locale?: AppLocale },
 ) {
+  const locale = params?.locale ?? 'en'
+  const t = await getTranslations('directory')
   const letter = normalizeLetterParam(letterParam)
   if (!letter) notFound()
 
@@ -140,6 +172,7 @@ export async function buildDirectoryLetterProps(
     letter: letter === '0-9' ? '0-9' : letter,
     sort,
     pageSize: 500,
+    locale,
   })
 
   let categoryLabel: string | undefined
@@ -148,7 +181,7 @@ export async function buildDirectoryLetterProps(
     if (!categoryLabel) notFound()
   }
 
-  const breadcrumbs: BreadcrumbItem[] = [{ label: 'Manufacturers', href: '/manufacturers' }]
+  const breadcrumbs: BreadcrumbItem[] = [{ label: t('manufacturers'), href: '/manufacturers' }]
   if (categoryLabel && categoryL1) {
     breadcrumbs.push({
       label: categoryLabel,
@@ -156,12 +189,12 @@ export async function buildDirectoryLetterProps(
     })
   }
   const display = letter === '0-9' ? '0–9' : letter.toUpperCase()
-  breadcrumbs.push({ label: `Letter ${display}` })
+  breadcrumbs.push({ label: t('letterFilter', { letter: display }) })
 
   return {
     page: {
       ...page,
-      meta: manufacturerDirectoryLetterSeoMeta({ letter }),
+      meta: await manufacturerDirectoryLetterSeoMeta({ letter }),
     },
     activeFacet: {
       tab: 'letter' as const,
@@ -170,11 +203,11 @@ export async function buildDirectoryLetterProps(
       letter,
     } satisfies ManufacturerDirectoryActiveFacet,
     viewMode: 'letter' as ManufacturerDirectoryViewMode,
-    pageTitle: `Manufacturers starting with ${display}`,
+    pageTitle: t('startingWith', { letter: display }),
     sort,
     breadcrumbs,
     itemList: {
-      name: `Manufacturers starting with ${display}`,
+      name: t('itemListLetter', { letter: display }),
       items: page.items.slice(0, 50).map((item) => ({
         name: item.name,
         url: `${SEO_SITE_ORIGIN}${item.href}`,

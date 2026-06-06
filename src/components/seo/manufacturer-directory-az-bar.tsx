@@ -1,4 +1,7 @@
-import Link from 'next/link'
+'use client'
+
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import { DIRECTORY_AZ_LETTERS, DIRECTORY_AZ_NUMERIC } from '@/lib/manufacturer-directory'
 
@@ -9,6 +12,8 @@ export function ManufacturerDirectoryAzBar({
   activeLetter?: string
   categoryL1?: string
 }) {
+  const t = useTranslations('directory')
+
   const letterHref = (letter: string) => {
     const segment = letter === '#' ? '0-9' : letter.toLowerCase()
     const base = `/manufacturers/letter/${segment}`
@@ -30,9 +35,9 @@ export function ManufacturerDirectoryAzBar({
   return (
     <section className="seo-mfg-dir-az-footer" aria-labelledby="seo-mfg-dir-az-footer-title">
       <h2 id="seo-mfg-dir-az-footer-title" className="seo-mfg-dir-divider seo-mfg-dir-az-footer__divider">
-        <span>Manufacturers by title</span>
+        <span>{t('manufacturersByTitle')}</span>
       </h2>
-      <nav className="seo-mfg-dir-az-footer__nav" aria-label="Browse manufacturers by letter">
+      <nav className="seo-mfg-dir-az-footer__nav" aria-label={t('browseByLetter')}>
         <Link
           href={letterHref('#')}
           className={cn(

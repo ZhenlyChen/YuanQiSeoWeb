@@ -1,5 +1,5 @@
 import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
-import { componentSeoMeta } from '@/lib/seo-meta'
+import { componentSeoMetaSync } from '@/lib/seo-meta'
 
 const MPN = 'STM32F103C8T6'
 const SLUG = 'stm32f103c8t6'
@@ -24,7 +24,7 @@ export const mockComponentStm32: ComponentIntelligencePage = {
     'Industrial I/O',
     'Pin-compatible alternates',
   ],
-  meta: componentSeoMeta({
+  meta: componentSeoMetaSync({
     mpn: MPN,
     manufacturer: 'STMicroelectronics',
     category: '32-bit ARM Cortex-M3 MCU',

@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { ManufacturerDirectoryNameCarousel } from '@/components/seo/manufacturer-directory-name-carousel'
 import { manufacturerDirectorySearchActionUrl } from '@/lib/tool-urls'
 import type { ManufacturerDirectoryItem } from '@/types/seo-intelligence'
@@ -9,20 +12,19 @@ export function ManufacturerDirectoryHero({
   totalInDatabase: number
   marqueeItems: ManufacturerDirectoryItem[]
 }) {
+  const t = useTranslations('directory')
+
   return (
     <section className="seo-mfg-dir-hero" aria-labelledby="seo-mfg-dir-hero-title">
       <div className="seo-mfg-dir-hero__inner">
         <p className="seo-mfg-dir-hero__eyebrow">
           <span className="seo-mfg-dir-hero__dot" aria-hidden="true" />
-          {totalInDatabase.toLocaleString()}+ manufacturers in PartGenie
+          {t('heroEyebrow', { count: totalInDatabase.toLocaleString() })}
         </p>
         <h1 id="seo-mfg-dir-hero-title" className="seo-mfg-dir-hero__title">
-          The connected manufacturer intelligence directory
+          {t('heroTitle')}
         </h1>
-        <p className="seo-mfg-dir-hero__subtitle">
-          Browse by category and A–Z — or chat to ask about any manufacturer. Intelligence hubs for
-          alternatives, supply context, and BOM-ready analysis, not a traditional catalog.
-        </p>
+        <p className="seo-mfg-dir-hero__subtitle">{t('heroSubtitle')}</p>
       </div>
 
       <ManufacturerDirectoryNameCarousel items={marqueeItems} />
@@ -34,10 +36,10 @@ export function ManufacturerDirectoryHero({
             action={manufacturerDirectorySearchActionUrl()}
             method="get"
             role="search"
-            aria-label="Search manufacturers in PartGenie"
+            aria-label={t('searchFormLabel')}
           >
             <label htmlFor="seo-mfg-dir-hero-search" className="seo-sr-only">
-              Search manufacturers
+              {t('searchLabel')}
             </label>
             <div className="seo-floating-chat__input-wrap">
               <input
@@ -45,11 +47,11 @@ export function ManufacturerDirectoryHero({
                 name="q"
                 type="search"
                 className="seo-floating-chat__input"
-                placeholder="Ask PartGenie about manufacturers, alternatives, or BOM"
+                placeholder={t('searchPlaceholder')}
                 autoComplete="off"
               />
             </div>
-            <button type="submit" className="seo-floating-chat__submit" aria-label="Send query">
+            <button type="submit" className="seo-floating-chat__submit" aria-label={t('searchSubmit')}>
               <svg
                 width="18"
                 height="18"

@@ -1,6 +1,8 @@
 import type { ComponentToolIconName } from '@/components/seo/untitled-ui-line-icon'
+import type { AppLocale } from '@/i18n/routing'
+import { localizePath } from '@/lib/localized-path'
 import {
-  HELP_CENTER_PAGES,
+  getHelpCenterPages,
   MARKETING_ORIGIN,
   MARKETING_PAGES,
   MARKETING_TOOL_PAGES,
@@ -15,52 +17,100 @@ export type NavLink = {
   icon?: ComponentToolIconName
 }
 
-export const NAV_LOCALES = [
-  { tag: 'en', label: 'EN', fullLabel: 'English', href: MARKETING_ORIGIN },
-  { tag: 'de', label: 'DE', fullLabel: 'Deutsch', href: `${MARKETING_ORIGIN}/de` },
-] as const
+export type NavLabels = {
+  tools: string
+  pricing: string
+  compare: string
+  resources: string
+  aiAlternativeFinder: string
+  aiComponentFinder: string
+  datasheetAi: string
+  bomAnalyzer: string
+  vsOctopart: string
+  vsFindchips: string
+  vsAlldatasheet: string
+  manufacturerDirectory: string
+  helpCenter: string
+  changelog: string
+  getStarted: string
+}
 
-export function buildNavLinks(slug: string): {
+export const NAV_LOCALES: ReadonlyArray<{
+  tag: AppLocale
+  label: string
+  fullLabelKey: 'english' | 'german'
+}> = [
+  { tag: 'en', label: 'EN', fullLabelKey: 'english' },
+  { tag: 'de', label: 'DE', fullLabelKey: 'german' },
+]
+
+export function buildNavLinks(
+  slug: string,
+  labels: NavLabels,
+  locale: AppLocale = 'en',
+): {
   tools: NavLink[]
   pricing: { label: string; href: string }
   compare: NavLink[]
   resources: NavLink[]
   cta: { label: string; href: string }
 } {
+  const helpCenter = getHelpCenterPages(locale)
+
   return {
     tools: [
       {
-        label: 'AI Alternative Finder',
+        label: labels.aiAlternativeFinder,
         href: MARKETING_TOOL_PAGES.alternativeFinder,
         icon: 'list',
       },
       {
-        label: 'AI Component Finder',
+        label: labels.aiComponentFinder,
         href: MARKETING_TOOL_PAGES.componentFinder,
         icon: 'chip',
       },
       {
-        label: 'Datasheet AI',
+        label: labels.datasheetAi,
         href: MARKETING_TOOL_PAGES.datasheetAi,
         icon: 'file06',
       },
       {
-        label: 'BOM Analyzer',
+        label: labels.bomAnalyzer,
         href: MARKETING_TOOL_PAGES.bomAnalyzer,
         icon: 'hash02',
       },
     ],
-    pricing: { label: 'Pricing', href: MARKETING_PAGES.pricing },
+    pricing: { label: labels.pricing, href: MARKETING_PAGES.pricing },
     compare: [
-      { label: 'PartGenie vs. Octopart', href: `${MARKETING_ORIGIN}/compare/vs-octopart` },
-      { label: 'PartGenie vs. Findchips', href: `${MARKETING_ORIGIN}/compare/vs-findchips` },
-      { label: 'PartGenie vs. Alldatasheet', href: `${MARKETING_ORIGIN}/compare/vs-alldatasheet` },
+      { label: labels.vsOctopart, href: `${MARKETING_ORIGIN}/compare/vs-octopart` },
+      { label: labels.vsFindchips, href: `${MARKETING_ORIGIN}/compare/vs-findchips` },
+      { label: labels.vsAlldatasheet, href: `${MARKETING_ORIGIN}/compare/vs-alldatasheet` },
     ],
     resources: [
-      { label: 'Manufacturers', href: '/manufacturers' },
-      { label: 'Help center', href: HELP_CENTER_PAGES.home },
-      { label: 'Changelog', href: HELP_CENTER_PAGES.changelog },
+      { label: labels.manufacturerDirectory, href: localizePath('/manufacturers', locale) },
+      { label: labels.helpCenter, href: helpCenter.home },
+      { label: labels.changelog, href: helpCenter.changelog },
     ],
-    cta: { label: 'Get started', href: signUpUrl(slug) },
+    cta: { label: labels.getStarted, href: signUpUrl(slug) },
+  }
+}
+
+export function getNavLabelsFromTranslations(t: (key: string) => string): NavLabels {
+  return {
+    tools: t('tools'),
+    pricing: t('pricing'),
+    compare: t('compare'),
+    resources: t('resources'),
+    aiAlternativeFinder: t('aiAlternativeFinder'),
+    aiComponentFinder: t('aiComponentFinder'),
+    datasheetAi: t('datasheetAi'),
+    bomAnalyzer: t('bomAnalyzer'),
+    vsOctopart: t('vsOctopart'),
+    vsFindchips: t('vsFindchips'),
+    vsAlldatasheet: t('vsAlldatasheet'),
+    manufacturerDirectory: t('manufacturerDirectory'),
+    helpCenter: t('helpCenter'),
+    changelog: t('changelog'),
+    getStarted: t('getStarted'),
   }
 }

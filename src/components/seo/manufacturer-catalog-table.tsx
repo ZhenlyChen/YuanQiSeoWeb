@@ -1,6 +1,7 @@
 'use client'
 
 import type { CSSProperties } from 'react'
+import { useLocale } from 'next-intl'
 import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
 import { cn } from '@/lib/cn'
@@ -14,11 +15,11 @@ import type { ManufacturerCatalogCategory } from '@/types/seo-intelligence'
 const MAX_VISIBLE = 10
 const FREE_VISIBLE = 3
 
-function formatPartCount(count: number): string {
+function formatPartCount(count: number, locale: string): string {
   if (count >= 1000) {
     return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1).replace(/\.0$/, '')}k`
   }
-  return count.toLocaleString('en-US')
+  return count.toLocaleString(locale === 'de' ? 'de-DE' : 'en-US')
 }
 
 function catalogCategoryHref(
@@ -60,6 +61,8 @@ function CatalogCategoryRow({
   href: string
   interactive?: boolean
 }) {
+  const locale = useLocale()
+
   return (
     <tr className={cn('seo-mfg-catalog__row', interactive && 'seo-mfg-catalog__row--interactive')}>
       <td className="seo-mfg-catalog__category">
@@ -71,7 +74,7 @@ function CatalogCategoryRow({
           category.label
         )}
       </td>
-      <td className="seo-mfg-catalog__count">{formatPartCount(category.partCount)}</td>
+      <td className="seo-mfg-catalog__count">{formatPartCount(category.partCount, locale)}</td>
     </tr>
   )
 }

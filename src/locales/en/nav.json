@@ -1,0 +1,19 @@
+{
+  "tools": "Tools",
+  "pricing": "Pricing",
+  "compare": "Compare",
+  "resources": "Resources",
+  "aiAlternativeFinder": "AI Alternative Finder",
+  "aiComponentFinder": "AI Component Finder",
+  "datasheetAi": "Datasheet AI",
+  "bomAnalyzer": "BOM Analyzer",
+  "vsOctopart": "PartGenie vs. Octopart",
+  "vsFindchips": "PartGenie vs. Findchips",
+  "vsAlldatasheet": "PartGenie vs. Alldatasheet",
+  "manufacturerDirectory": "Manufacturer Directory",
+  "helpCenter": "Help Center",
+  "changelog": "Changelog",
+  "getStarted": "Get started",
+  "english": "English",
+  "german": "Deutsch"
+}

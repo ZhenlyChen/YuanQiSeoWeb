@@ -1,5 +1,5 @@
 import type { AlternativeIntelligencePage } from '@/types/seo-intelligence'
-import { alternativeSeoMeta } from '@/lib/seo-meta'
+import { alternativeSeoMetaSync } from '@/lib/seo-meta'
 
 const MPN = 'BQ24195L'
 const SLUG = 'bq24195l'
@@ -10,7 +10,7 @@ export const mockAlternativeBq24195l: AlternativeIntelligencePage = {
   mpn: MPN,
   manufacturer: 'Texas Instruments',
   category: 'Li-Ion Battery Charger IC',
-  meta: alternativeSeoMeta({
+  meta: alternativeSeoMetaSync({
     mpn: MPN,
     manufacturer: 'Texas Instruments',
     category: 'battery charger IC',

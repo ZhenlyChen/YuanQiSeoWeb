@@ -4,7 +4,7 @@ import {
   categoryRef,
   directoryLetterForName,
 } from '@/lib/manufacturer-directory'
-import { manufacturerDirectorySeoMeta } from '@/lib/seo-meta'
+import { manufacturerDirectorySeoMetaSync } from '@/lib/seo-meta'
 
 function mfg(input: {
   slug: string
@@ -435,7 +435,7 @@ export const MOCK_MANUFACTURER_DIRECTORY_ITEMS: ManufacturerDirectoryItem[] = [
 export function getMockManufacturerDirectoryPage() {
   return {
     pageType: 'manufacturer_directory' as const,
-    meta: manufacturerDirectorySeoMeta(),
+    meta: manufacturerDirectorySeoMetaSync(),
     items: MOCK_MANUFACTURER_DIRECTORY_ITEMS,
     categoryFacets: buildCategoryFacets(MOCK_MANUFACTURER_DIRECTORY_ITEMS),
     totalInDatabase: 7700,

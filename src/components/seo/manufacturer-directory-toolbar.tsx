@@ -1,6 +1,8 @@
 'use client'
 
-import Link from 'next/link'
+import { useMemo } from 'react'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { SeoSelect } from '@/components/ui/seo-select'
 
 function FilterPillDismissIcon() {
@@ -25,11 +27,6 @@ type ActiveFilter = {
   href: string
 }
 
-const SORT_OPTIONS = [
-  { value: 'popular' as const, label: 'Most popular' },
-  { value: 'name' as const, label: 'Name A–Z' },
-]
-
 export function ManufacturerDirectoryToolbar({
   title,
   activeFilters,
@@ -41,6 +38,15 @@ export function ManufacturerDirectoryToolbar({
   sort: 'popular' | 'name'
   onSortChange: (value: 'popular' | 'name') => void
 }) {
+  const t = useTranslations('directory')
+  const sortOptions = useMemo(
+    () => [
+      { value: 'popular' as const, label: t('sortPopular') },
+      { value: 'name' as const, label: t('sortName') },
+    ],
+    [t],
+  )
+
   return (
     <div className="seo-mfg-dir-toolbar">
       <div className="seo-mfg-dir-toolbar__top">
@@ -48,9 +54,9 @@ export function ManufacturerDirectoryToolbar({
         <SeoSelect
           className="seo-mfg-dir-toolbar__sort"
           value={sort}
-          options={SORT_OPTIONS}
+          options={sortOptions}
           onChange={onSortChange}
-          ariaLabel="Sort manufacturers"
+          ariaLabel={t('sortLabel')}
         />
       </div>
       {activeFilters.length > 0 ? (

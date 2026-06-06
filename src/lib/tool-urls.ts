@@ -25,6 +25,22 @@ export const MARKETING_ORIGIN = resolvePublicOrigin(
 )
 export const HELP_CENTER_ORIGIN = 'https://help.partgenie.ai/en-US'
 
+export function helpCenterOrigin(locale: string = 'en'): string {
+  return locale === 'de' ? 'https://help.partgenie.ai/de-DE' : 'https://help.partgenie.ai/en-US'
+}
+
+export function getHelpCenterPages(locale: string = 'en') {
+  const origin = helpCenterOrigin(locale)
+  return {
+    home: origin,
+    changelog: `${origin}/changelog`,
+    aiQueryWriting: `${origin}/ai-query-writing`,
+    fuzzyToPrecise: `${origin}/fuzzy-to-precise`,
+    searchOptimization: `${origin}/search-optimization`,
+    effectiveBomManagement: `${origin}/effective-bom-management`,
+  } as const
+}
+
 /** Public marketing tool landings (Webflow). */
 export const MARKETING_TOOL_PAGES = {
   componentFinder: `${MARKETING_ORIGIN}/ai-component-finder`,

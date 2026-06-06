@@ -1,8 +1,10 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
 import { SeoPrimaryCtaLink } from '@/components/seo/seo-primary-cta'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
-import { buildNavLinks } from '@/lib/nav-links'
+import type { AppLocale } from '@/i18n/routing'
+import { buildNavLinks, getNavLabelsFromTranslations } from '@/lib/nav-links'
 import { dashboardUrl } from '@/lib/tool-urls'
 
 export function SeoNavUserActions({
@@ -15,7 +17,9 @@ export function SeoNavUserActions({
   className?: string
 }) {
   const { user, isLoggedIn, isReady } = useSeoNavUser()
-  const nav = buildNavLinks(ctaSlug)
+  const t = useTranslations('nav')
+  const locale = useLocale() as AppLocale
+  const nav = buildNavLinks(ctaSlug, getNavLabelsFromTranslations(t), locale)
 
   if (!isReady) {
     return (

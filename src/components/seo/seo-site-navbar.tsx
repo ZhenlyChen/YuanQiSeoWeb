@@ -1,11 +1,12 @@
 'use client'
 
-import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { SeoLocaleSwitcher } from '@/components/seo/seo-locale-switcher'
 import { SeoNavUserActions } from '@/components/seo/seo-nav-user-actions'
 import { ComponentToolIcon } from '@/components/seo/untitled-ui-line-icon'
-import { buildNavLinks, NAV_LOGO_SRC, type NavLink } from '@/lib/nav-links'
+import type { AppLocale } from '@/i18n/routing'
+import { buildNavLinks, getNavLabelsFromTranslations, NAV_LOGO_SRC, type NavLink } from '@/lib/nav-links'
 import { MARKETING_ORIGIN } from '@/lib/tool-urls'
 
 type NavDropdownAlign = 'left' | 'center' | 'right'
@@ -171,7 +172,10 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
   const [activeDesktopDropdown, setActiveDesktopDropdown] = useState<string | null>(null)
   const [activeMobileDropdown, setActiveMobileDropdown] = useState<string | null>(null)
   const desktopCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const nav = buildNavLinks(ctaSlug)
+  const t = useTranslations('nav')
+  const tShell = useTranslations('shell')
+  const locale = useLocale() as AppLocale
+  const nav = buildNavLinks(ctaSlug, getNavLabelsFromTranslations(t), locale)
 
   const cancelDesktopDropdownClose = useCallback(() => {
     if (desktopCloseTimerRef.current) {
@@ -210,12 +214,12 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
     <header className="seo-site-navbar">
       <div className="seo-site-navbar__bar">
         <div className="seo-site-navbar__inner">
-          <Link href={MARKETING_ORIGIN} className="seo-site-navbar__brand">
+          <a href={MARKETING_ORIGIN} className="seo-site-navbar__brand">
             <img src={NAV_LOGO_SRC} alt="PartGenie" className="seo-site-navbar__brand-logo" />
-          </Link>
+          </a>
 
-          <div className="seo-site-navbar__desktop" aria-label="Primary">
-            <NavDropdown label="Tools" links={nav.tools} openKey="tools" {...dropdownProps} />
+          <div className="seo-site-navbar__desktop" aria-label={tShell('primaryNav')}>
+            <NavDropdown label={t('tools')} links={nav.tools} openKey="tools" {...dropdownProps} />
             <a
               href={nav.pricing.href}
               className="seo-site-navbar__link"
@@ -223,8 +227,8 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
             >
               {nav.pricing.label}
             </a>
-            <NavDropdown label="Compare" links={nav.compare} openKey="compare" {...dropdownProps} />
-            <NavDropdown label="Resources" links={nav.resources} openKey="resources" {...dropdownProps} />
+            <NavDropdown label={t('compare')} links={nav.compare} openKey="compare" {...dropdownProps} />
+            <NavDropdown label={t('resources')} links={nav.resources} openKey="resources" {...dropdownProps} />
           </div>
 
           <div className="seo-site-navbar__actions">
@@ -235,7 +239,7 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
           <button
             type="button"
             className={`seo-site-navbar__menu-btn${mobileMenuOpen ? ' seo-site-navbar__menu-btn--open' : ''}`}
-            aria-label="Toggle menu"
+            aria-label={tShell('toggleMenu')}
             aria-expanded={mobileMenuOpen}
             onClick={() => {
               setMobileMenuOpen((open) => {
@@ -254,7 +258,7 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
       {mobileMenuOpen ? (
         <div className="seo-site-navbar__mobile-panel">
           <MobileDropdown
-            label="Tools"
+            label={t('tools')}
             links={nav.tools}
             openKey="tools"
             activeKey={activeMobileDropdown}
@@ -264,14 +268,14 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
             {nav.pricing.label}
           </a>
           <MobileDropdown
-            label="Compare"
+            label={t('compare')}
             links={nav.compare}
             openKey="compare"
             activeKey={activeMobileDropdown}
             onToggle={toggleMobileDropdown}
           />
           <MobileDropdown
-            label="Resources"
+            label={t('resources')}
             links={nav.resources}
             openKey="resources"
             activeKey={activeMobileDropdown}

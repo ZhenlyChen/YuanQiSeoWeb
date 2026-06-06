@@ -7,7 +7,7 @@ import { mockManufacturerGigadevice } from '@/data/mock/manufacturer-gigadevice'
 import { mockManufacturerMicrochip } from '@/data/mock/manufacturer-microchip'
 import { mockManufacturerNxp } from '@/data/mock/manufacturer-nxp'
 import { getMockManufacturerDirectoryPage } from '@/data/mock/manufacturer-directory'
-import { alternativeSeoMeta } from '@/lib/seo-meta'
+import { alternativeSeoMetaSync } from '@/lib/seo-meta'
 import type {
   AlternativeIntelligencePage,
   CompareIntelligencePage,
@@ -32,7 +32,7 @@ export function getMockAlternativePage(mpn: string): AlternativeIntelligencePage
       mpn: 'STM32F103C8T6',
       manufacturer: 'STMicroelectronics',
       category: '32-bit ARM Cortex-M3 Microcontroller',
-      meta: alternativeSeoMeta({
+      meta: alternativeSeoMetaSync({
         mpn: 'STM32F103C8T6',
         manufacturer: 'STMicroelectronics',
         category: '32-bit MCU',

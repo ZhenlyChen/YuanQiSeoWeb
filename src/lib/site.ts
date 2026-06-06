@@ -10,3 +10,23 @@ export const SEO_DEFAULT_DESCRIPTION =
   'PartGenie helps engineers find electronic component specs, datasheets, and in-stock alternatives — powered by AI sourcing from weeks to minutes.'
 
 export const SEO_THEME_COLOR = '#22808d'
+
+export async function getSeoDefaultTitle(): Promise<string> {
+  try {
+    const { getTranslations } = await import('next-intl/server')
+    const t = await getTranslations('seoMeta')
+    return t('defaultTitle')
+  } catch {
+    return SEO_DEFAULT_TITLE
+  }
+}
+
+export async function getSeoDefaultDescription(): Promise<string> {
+  try {
+    const { getTranslations } = await import('next-intl/server')
+    const t = await getTranslations('seoMeta')
+    return t('defaultDescription')
+  } catch {
+    return SEO_DEFAULT_DESCRIPTION
+  }
+}
