@@ -46,5 +46,22 @@
     "title": "{categoryLabel} Bauteil-Finder & Auswahlleitfaden | PartGenie",
     "description": "Finden Sie kuratierte {categoryLabel}-Optionen mit ingenieurorientierten Filtern, Ersatzleitfaden und verwandten Intelligence-Seiten.",
     "h1": "{categoryLabel} Bauteil-Finder"
+  },
+  "categoryDirectory": {
+    "title": "Bauteilkategorie-Verzeichnis | PartGenie",
+    "description": "Elektronische Bauteilkategorien nach Name — Auswahlhilfen, Alternativen-Kontext und Intelligence-Hubs für Entwickler und Einkauf.",
+    "h1": "Bauteilkategorie-Verzeichnis"
+  },
+  "categoryHub": {
+    "l1": {
+      "title": "{categoryName}: Bauteile, Alternativen & Auswahlleitfaden | PartGenie",
+      "description": "Entdecken Sie {categoryName}-Bauteile, Auswahlfaktoren, beliebte Teile, Alternativen, Design-Risiken und Beschaffungsaspekte mit PartGenie-Intelligence.",
+      "h1": "{categoryName} Bauteil-Intelligence"
+    },
+    "l2": {
+      "title": "{categoryName}: Bauteile, Alternativen & Auswahlleitfaden | PartGenie",
+      "description": "Entdecken Sie {categoryName}-Bauteile, Auswahlfaktoren, beliebte Teile, Alternativen, Design-Risiken und Beschaffungsaspekte mit PartGenie.",
+      "h1": "{categoryName} Bauteil-Intelligence"
+    }
   }
 }

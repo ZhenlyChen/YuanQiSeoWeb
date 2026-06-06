@@ -1,0 +1,31 @@
+{
+  "directory": {
+    "categories": "Kategorien",
+    "allCategories": "Alle Kategorien",
+    "heroEyebrow": "{count}+ Bauteilkategorien in PartGenie",
+    "heroTitle": "Das vernetzte Bauteilkategorie-Verzeichnis",
+    "heroSubtitle": "Nach Name A–Z browsen — Auswahlhilfen, Alternativen-Kontext und Intelligence-Hubs für Entwickler und Einkauf, kein traditioneller Katalog.",
+    "searchLabel": "Kategorien suchen",
+    "searchPlaceholder": "Fragen Sie PartGenie zu Kategorien, Auswahlhilfen oder Alternativen",
+    "searchSubmit": "Suchen",
+    "searchFormLabel": "Kategorien in PartGenie suchen",
+    "categoriesByTitle": "Kategorien nach Name",
+    "browseByLetter": "Kategorien nach Buchstabe durchsuchen",
+    "subcategoryCount": "{count} Unterkategorien",
+    "partCount": "{count} Bauteile",
+    "viewIntelligence": "Intelligence ansehen",
+    "itemListName": "Elektronische Bauteilkategorien"
+  },
+  "hub": {
+    "quickAnswerTitle": "Was sind {categoryName}-Bauteile?",
+    "howToChooseTitle": "So wählen Sie {categoryName}-Bauteile",
+    "popularPartsTitle": "Beliebte {categoryName}-Bauteile",
+    "popularPartsEmpty": "Ausgewählte Beispiele erscheinen hier, sobald Intelligence-Seiten veröffentlicht sind.",
+    "alternativeTitle": "Häufige Alternativen-Suchen in {categoryName}",
+    "designRisksTitle": "Design-Risiken prüfen",
+    "sourcingTitle": "Beschaffung und BOM-Gesundheit",
+    "manufacturersTitle": "Hersteller in {categoryName}",
+    "faqTitle": "Häufig gestellte Fragen",
+    "relatedLinksTitle": "Verwandte Kategorie-Links"
+  }
+}

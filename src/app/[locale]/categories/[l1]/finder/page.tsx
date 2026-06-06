@@ -72,25 +72,25 @@ const FINDER_BY_SLUG: Record<string, FinderCategory> = {
 }
 
 type PageProps = {
-  params: Promise<{ locale: string; slug: string }>
+  params: Promise<{ locale: string; l1: string }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale: localeParam, slug } = await params
+  const { locale: localeParam, l1 } = await params
   const locale = parseAppLocale(localeParam)
-  const category = FINDER_BY_SLUG[slug]
+  const category = FINDER_BY_SLUG[l1]
   if (!category) {
     return { title: 'Category Finder Not Found | PartGenie' }
   }
   return buildPageMetadata(
-    await categoryFinderSeoMeta({ categoryLabel: category.label, slug }),
+    await categoryFinderSeoMeta({ categoryLabel: category.label, slug: l1 }),
     locale,
   )
 }
 
 export default async function CategoryFinderPage({ params }: PageProps) {
-  const { slug } = await params
-  const category = FINDER_BY_SLUG[slug]
+  const { l1 } = await params
+  const category = FINDER_BY_SLUG[l1]
   if (!category) notFound()
 
   return (

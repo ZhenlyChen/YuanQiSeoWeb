@@ -1,4 +1,4 @@
-import { SEO_PUBLIC_BOUNDARY, buildAlternativesGateStats } from '@/lib/seo-copy'
+import { SEO_PUBLIC_BOUNDARY, buildAlternativesGateStats, type AlternativesGateStat } from '@/lib/seo-copy'
 
 function GatePatternDecor() {
   return (
@@ -47,14 +47,16 @@ export function AlternativesGateModal({
   title = SEO_PUBLIC_BOUNDARY.gateModalTitle,
   description = SEO_PUBLIC_BOUNDARY.gateModalDescription,
   ctaLabel = SEO_PUBLIC_BOUNDARY.gateModalCta,
+  stats: statsOverride,
 }: {
   alternativesCount: number
   ctaHref?: string
   title?: string
   description?: string
   ctaLabel?: string
+  stats?: AlternativesGateStat[]
 }) {
-  const stats = buildAlternativesGateStats(alternativesCount)
+  const stats = statsOverride ?? buildAlternativesGateStats(alternativesCount)
 
   return (
     <div className="seo-alt-gated-overlay" role="dialog" aria-labelledby="seo-alt-gate-title">

@@ -110,6 +110,8 @@ export function getMockManufacturerDirectory() {
   return getMockManufacturerDirectoryPage()
 }
 
+export { getMockCategoryDirectoryPage, getMockCategoryHubPage } from '@/data/mock/category'
+
 export function getMockAnswerPage(slug: string): QueryAnswerPage | null {
   const key = slug.toLowerCase()
   if (key === 'best-mcu-for-wearable-device') return mockAnswerWearableMcu
@@ -117,6 +119,26 @@ export function getMockAnswerPage(slug: string): QueryAnswerPage | null {
 }
 
 export const MOCK_PREVIEW_PAGES = [
+  {
+    type: 'Category Directory',
+    href: '/categories',
+    description: 'Browse component categories A–Z — hub links to category intelligence pages',
+  },
+  {
+    type: 'Category Hub (Power Management)',
+    href: '/categories/power-management',
+    description: 'Power Management — selection guide, alternatives, risks, sourcing',
+  },
+  {
+    type: 'Category Hub (MCU)',
+    href: '/categories/mcu',
+    description: 'MCU — ARM paths, STM32 examples, alternatives context',
+  },
+  {
+    type: 'Category Hub L2 (DC-DC)',
+    href: '/categories/power-management/dc-dc-converters',
+    description: 'DC-DC Converters — buck selection and replacement searches',
+  },
   {
     type: 'Component Intelligence',
     href: '/parts/stm32f103c8t6',

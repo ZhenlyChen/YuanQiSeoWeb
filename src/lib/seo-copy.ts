@@ -3,14 +3,19 @@ export type AlternativesGateStat = {
   label: string
 }
 
+const GATE_STATS_TAIL: AlternativesGateStat[] = [
+  { value: '22M+', label: 'Electronics components in PartGenie' },
+  { value: '7700+', label: 'Manufacturers covered in the database' },
+]
+
 export function buildAlternativesGateStats(alternativesCount: number): AlternativesGateStat[] {
-  const ranked =
-    alternativesCount > 0 ? `${alternativesCount}+` : '12+'
-  return [
-    { value: ranked, label: 'Ranked alternatives for this part' },
-    { value: '22M+', label: 'Electronics components in PartGenie' },
-    { value: '7700+', label: 'Manufacturers covered in the database' },
-  ]
+  const ranked = alternativesCount > 0 ? `${alternativesCount}+` : '12+'
+  return [{ value: ranked, label: 'Ranked alternatives for this part' }, ...GATE_STATS_TAIL]
+}
+
+export function buildCategoryTopPartsGateStats(hiddenPartsCount: number): AlternativesGateStat[] {
+  const moreParts = hiddenPartsCount > 0 ? `${hiddenPartsCount}+` : '10+'
+  return [{ value: moreParts, label: 'Trending parts in this category' }, ...GATE_STATS_TAIL]
 }
 
 export const SEO_PUBLIC_BOUNDARY = {

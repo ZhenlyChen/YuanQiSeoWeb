@@ -1,0 +1,31 @@
+{
+  "directory": {
+    "categories": "Categories",
+    "allCategories": "All categories",
+    "heroEyebrow": "{count}+ component categories in PartGenie",
+    "heroTitle": "The connected component category directory",
+    "heroSubtitle": "Browse by name A–Z — selection guides, alternatives context, and intelligence hubs for engineers and sourcing teams, not a traditional catalog.",
+    "searchLabel": "Search categories",
+    "searchPlaceholder": "Ask PartGenie about categories, selection guides, or alternatives",
+    "searchSubmit": "Search",
+    "searchFormLabel": "Search categories in PartGenie",
+    "categoriesByTitle": "Categories by title",
+    "browseByLetter": "Browse categories by letter",
+    "subcategoryCount": "{count} subcategories",
+    "partCount": "{count} parts",
+    "viewIntelligence": "View intelligence",
+    "itemListName": "Electronic component categories"
+  },
+  "hub": {
+    "quickAnswerTitle": "What are {categoryName} components?",
+    "howToChooseTitle": "How to Choose {categoryName} Components",
+    "popularPartsTitle": "Popular {categoryName} Components",
+    "popularPartsEmpty": "Curated examples will appear here as intelligence pages are published.",
+    "alternativeTitle": "Common {categoryName} Alternative Searches",
+    "designRisksTitle": "Design Risks to Review",
+    "sourcingTitle": "Sourcing and BOM Health Considerations",
+    "manufacturersTitle": "Manufacturers in {categoryName}",
+    "faqTitle": "Frequently Asked Questions",
+    "relatedLinksTitle": "Related category links"
+  }
+}

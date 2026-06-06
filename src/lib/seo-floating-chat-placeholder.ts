@@ -9,6 +9,10 @@ export function getFloatingChatPlaceholder(pageContext?: SeoPageContext): string
     return `Try "STM32 alternatives" or ask about ${manufacturer} parts and sourcing`
   }
 
+  if (kind === 'category') {
+    return 'Ask PartGenie to find parts, compare alternatives, or review BOM risk in this category'
+  }
+
   if (kind === 'alternative' && mpn) {
     return `Ask about ${mpn} alternatives, compare options, or design fit`
   }

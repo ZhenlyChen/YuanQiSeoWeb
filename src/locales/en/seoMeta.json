@@ -46,5 +46,22 @@
     "title": "{categoryLabel} Component Finder & Selection Guide | PartGenie",
     "description": "Find curated {categoryLabel} options with engineering-oriented filters, replacement guidance, and related intelligence pages. Built for fast BOM decision-making.",
     "h1": "{categoryLabel} Component Finder"
+  },
+  "categoryDirectory": {
+    "title": "Component Category Directory | PartGenie",
+    "description": "Browse electronic component categories by name — selection guides, alternatives context, and intelligence hubs for engineers and sourcing teams.",
+    "h1": "Component Category Directory"
+  },
+  "categoryHub": {
+    "l1": {
+      "title": "{categoryName} Components, Alternatives & Selection Guide | PartGenie",
+      "description": "Explore {categoryName} components, key selection factors, popular parts, alternatives, design risks, and sourcing considerations with PartGenie intelligence.",
+      "h1": "{categoryName} Component Intelligence"
+    },
+    "l2": {
+      "title": "{categoryName} Components, Alternatives & Selection Guide | PartGenie",
+      "description": "Explore {categoryName} components, selection factors, popular parts, alternatives, design risks, and sourcing considerations with PartGenie.",
+      "h1": "{categoryName} Component Intelligence"
+    }
   }
 }

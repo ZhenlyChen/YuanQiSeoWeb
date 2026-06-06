@@ -32,7 +32,7 @@ export function SeoPageShell({
           {hideBreadcrumbs ? null : <Breadcrumbs items={breadcrumbs} />}
           {children}
         </div>
-        {pageContext?.slug !== 'manufacturer-directory' ? (
+        {pageContext?.slug !== 'manufacturer-directory' && pageContext?.slug !== 'category-directory' ? (
           <FloatingCtaDock pageContext={pageContext} />
         ) : null}
       </main>

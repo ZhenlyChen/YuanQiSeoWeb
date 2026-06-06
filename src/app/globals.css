@@ -17,6 +17,20 @@ body {
   margin: 0;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
+body.seo-scroll-locked {
+  overflow: hidden;
+  padding-right: var(--seo-scroll-lock-padding, 0px);
+}
+
+body.seo-scroll-locked .seo-site-navbar,
+body.seo-scroll-locked .seo-section-nav {
+  padding-right: var(--seo-scroll-lock-padding, 0px);
+}
+
 a {
   color: inherit;
 }

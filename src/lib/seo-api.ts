@@ -28,6 +28,18 @@ export type ManufacturerDirectoryApiPage = {
   pageSize: number
 }
 
+export type CategoryDirectoryApiPage = {
+  pageType: 'category_directory'
+  items: Array<
+    Omit<import('@/types/seo-intelligence').CategoryDirectoryItem, 'partCount'> & {
+      partCount: number
+    }
+  >
+  totalInDatabase: number
+}
+
+export type CategoryHubApiPage = import('@/types/seo-intelligence').CategoryHubPage
+
 type ApiResponse<T> = { code: number; data: T; msg: string }
 
 function apiBase(): string {
@@ -84,6 +96,49 @@ export async function fetchManufacturerDirectory(params?: {
     })
     if (!res.ok) return null
     const json = (await res.json()) as ApiResponse<ManufacturerDirectoryApiPage>
+    if (json.code !== 200 || !json.data) return null
+    return json.data
+  } catch {
+    return null
+  }
+}
+
+export async function fetchCategoryDirectory(params?: {
+  locale?: string
+}): Promise<CategoryDirectoryApiPage | null> {
+  const search = new URLSearchParams()
+  search.set('locale', params?.locale || 'en')
+
+  try {
+    const res = await fetch(`${apiBase()}seo/categories/directory?${search.toString()}`, {
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) return null
+    const json = (await res.json()) as ApiResponse<CategoryDirectoryApiPage>
+    if (json.code !== 200 || !json.data) return null
+    return json.data
+  } catch {
+    return null
+  }
+}
+
+export async function fetchCategoryHub(params: {
+  l1Slug: string
+  l2Slug?: string
+  locale?: string
+}): Promise<CategoryHubApiPage | null> {
+  const search = new URLSearchParams()
+  search.set('locale', params.locale || 'en')
+  const path = params.l2Slug
+    ? `seo/categories/${encodeURIComponent(params.l1Slug)}/${encodeURIComponent(params.l2Slug)}?${search.toString()}`
+    : `seo/categories/${encodeURIComponent(params.l1Slug)}?${search.toString()}`
+
+  try {
+    const res = await fetch(`${apiBase()}${path}`, {
+      next: { revalidate: 86400 },
+    })
+    if (!res.ok) return null
+    const json = (await res.json()) as ApiResponse<CategoryHubApiPage>
     if (json.code !== 200 || !json.data) return null
     return json.data
   } catch {

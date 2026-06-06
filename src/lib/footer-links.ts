@@ -26,6 +26,7 @@ export type FooterLabels = {
   pricing: string
   changelog: string
   manufacturerDirectory: string
+  categoryDirectory: string
   helpCenter: string
   talkToUs: string
   bookDemo: string
@@ -49,6 +50,7 @@ export function getFooterLabelsFromTranslations(t: (key: string) => string): Foo
     pricing: t('pricing'),
     changelog: t('changelog'),
     manufacturerDirectory: t('manufacturerDirectory'),
+    categoryDirectory: t('categoryDirectory'),
     helpCenter: t('helpCenter'),
     talkToUs: t('talkToUs'),
     bookDemo: t('bookDemo'),
@@ -78,6 +80,7 @@ export function buildFooterColumns(labels: FooterLabels, locale: AppLocale = 'en
     {
       title: labels.resources,
       links: [
+        { label: labels.categoryDirectory, href: localizePath('/categories', locale) },
         { label: labels.manufacturerDirectory, href: localizePath('/manufacturers', locale) },
         { label: labels.helpCenter, href: helpCenter.home },
         { label: labels.talkToUs, href: `${MARKETING_ORIGIN}/contact` },

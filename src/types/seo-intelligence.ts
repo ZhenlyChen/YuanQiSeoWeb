@@ -85,6 +85,9 @@ export type TopSearchedPartItem = {
   href: string
   category: string
   imageUrl?: string
+  manufacturer?: string
+  keySpecs?: string
+  commonUse?: string
   /** Relative search interest 0–100 (sort order). */
   interest: number
   changePercent?: number
@@ -419,4 +422,128 @@ export type QueryAnswerPage = {
   relatedComponents: EntityLink[]
   categoryFinderLink: EntityLink
   faq: FaqItem[]
+}
+
+export type CategoryIconId =
+  | 'mcu'
+  | 'power-management'
+  | 'power-discrete'
+  | 'mems-sensors'
+  | 'data-converters'
+  | 'rf-wireless'
+  | 'automotive'
+  | 'connectivity'
+  | 'memory'
+  | 'passives'
+  | 'connectors'
+  | 'fpga-logic'
+
+export type CategoryDirectoryItem = {
+  slug: string
+  name: string
+  description: string
+  letter: string
+  href: string
+  iconId: CategoryIconId
+  subcategoryCount: number
+  partCount: number
+  published: boolean
+  sortRank?: number
+}
+
+export type CategoryDirectoryPage = {
+  pageType: 'category_directory'
+  meta: SeoMeta
+  items: CategoryDirectoryItem[]
+  totalInDatabase: number
+}
+
+export type CategoryChoiceCard = {
+  title: string
+  detail: string
+}
+
+export type CategorySubcategoryCard = {
+  name: string
+  slug: string
+  description: string
+  href: string
+  iconId: CategoryIconId
+}
+
+export type CategoryPopularPartRow = {
+  mpn: string
+  manufacturer: string
+  category: string
+  keySpecs: string
+  commonUse: string
+  partHref: string
+  alternativeHref?: string
+  compareHref?: string
+  chatQuery?: string
+}
+
+export type CategoryRiskCard = {
+  title: string
+  detail: string
+}
+
+export type CategoryManufacturerCard = {
+  name: string
+  slug: string
+  knownFor: string
+  popularFamilies: string
+  href: string
+}
+
+export type CategoryQueryChip = {
+  label: string
+  chatQuery?: string
+  href?: string
+}
+
+export type CategoryHubPage = {
+  pageType: 'category'
+  level: 'l1' | 'l2'
+  slug: string
+  l1Slug: string
+  l2Slug?: string
+  name: string
+  parentSlug?: string
+  parentName?: string
+  meta: SeoMeta
+  breadcrumbs: BreadcrumbItem[]
+  heroSubheading: string
+  primaryCtaLabel: string
+  secondaryCtaLabel: string
+  searchPlaceholder: string
+  queryChips: CategoryQueryChip[]
+  quickAnswer: string
+  howToChooseIntro: string
+  howToChooseCards: CategoryChoiceCard[]
+  subcategoriesSectionTitle: string
+  subcategoriesIntro: string
+  subcategories: CategorySubcategoryCard[]
+  popularPartsIntro: string
+  popularParts: CategoryPopularPartRow[]
+  popularPartsCatalogCta: string
+  alternativeIntro: string
+  alternativeLinks: EntityLink[]
+  alternativeCtaLabel: string
+  designRisksIntro: string
+  designRisks: CategoryRiskCard[]
+  designRiskCtaLabel: string
+  sourcingIntro: string
+  sourcingBullets: string[]
+  sourcingCtaLabel: string
+  manufacturersIntro: string
+  manufacturers: CategoryManufacturerCard[]
+  intelligenceCtaTitle: string
+  intelligenceCtaCopy: string
+  intelligenceCtaButtons: EntityLink[]
+  faq: FaqItem[]
+  internalLinks: EntityLink[]
+  mostSearchedParts: TopSearchedPartItem[]
+  sidebarRelatedLinks: EntityLink[]
+  degraded?: boolean
 }

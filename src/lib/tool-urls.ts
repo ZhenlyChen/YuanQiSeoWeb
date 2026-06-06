@@ -271,3 +271,20 @@ export function dashboardUrl(): string {
 export function manufacturerDirectorySearchActionUrl(): string {
   return seoChatDeepLinkUrl('manufacturer-directory', 'manufacturer_directory')
 }
+
+/** Hero search on category directory → app chat with category_directory campaign. */
+export function categoryDirectorySearchActionUrl(): string {
+  return seoChatDeepLinkUrl('category-directory', 'category_directory')
+}
+
+/** Category hub primary search CTA → app chat with category context. */
+export function categorySearchActionUrl(categoryLabel: string): string {
+  const params = new URLSearchParams({
+    utm_source: 'seo',
+    utm_medium: 'pseo',
+    utm_campaign: 'category_hub',
+    utm_content: categoryLabel.toLowerCase().replace(/\s+/g, '-'),
+    q: categoryLabel,
+  })
+  return `${APP_ORIGIN}/app/chat?${params.toString()}`
+}

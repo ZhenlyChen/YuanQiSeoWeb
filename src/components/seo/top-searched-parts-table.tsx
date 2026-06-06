@@ -6,8 +6,8 @@ import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
 import { UIBadge } from '@/components/ui/ui-badge'
 import { partImageForMpn } from '@/lib/part-images'
-import { SEO_PUBLIC_BOUNDARY } from '@/lib/seo-copy'
-import { signUpUrl } from '@/lib/tool-urls'
+import { SEO_PUBLIC_BOUNDARY, buildCategoryTopPartsGateStats } from '@/lib/seo-copy'
+import { MARKETING_TOOL_PAGES, signUpUrl } from '@/lib/tool-urls'
 import type { TopSearchedPartItem } from '@/types/seo-intelligence'
 
 const MAX_VISIBLE = 10
@@ -22,11 +22,14 @@ function rankBadgeTone(rank: number): 'danger' | 'warning' | 'neutral' {
 function TopSearchedPartRow({
   item,
   rank,
+  variant,
 }: {
   item: TopSearchedPartItem
   rank: number
+  variant: 'default' | 'category'
 }) {
   const imageSrc = item.imageUrl?.trim() || partImageForMpn(item.mpn)
+  const showCategoryColumns = variant === 'category'
 
   return (
     <tr className="seo-top-parts__row">
@@ -45,6 +48,12 @@ function TopSearchedPartRow({
           </Link>
         </div>
       </td>
+      {showCategoryColumns ? (
+        <>
+          <td className="seo-top-parts__manufacturer">{item.manufacturer ?? '—'}</td>
+          <td className="seo-top-parts__keyspecs">{item.keySpecs ?? '—'}</td>
+        </>
+      ) : null}
       <td className="seo-top-parts__category">{item.category}</td>
     </tr>
   )
@@ -53,9 +62,11 @@ function TopSearchedPartRow({
 function TopSearchedPartsTableBody({
   items,
   startRank = 1,
+  variant,
 }: {
   items: TopSearchedPartItem[]
   startRank?: number
+  variant: 'default' | 'category'
 }) {
   return (
     <>
@@ -64,6 +75,7 @@ function TopSearchedPartsTableBody({
           key={`${item.href}-${item.mpn}`}
           item={item}
           rank={startRank + index}
+          variant={variant}
         />
       ))}
     </>
@@ -74,20 +86,31 @@ export function TopSearchedPartsTable({
   title = 'Most searched parts',
   slug,
   items,
+  variant = 'default',
+  intro,
+  emptyMessage,
+  catalogCta,
 }: {
   title?: string
   slug: string
   items: TopSearchedPartItem[]
+  variant?: 'default' | 'category'
+  intro?: string
+  emptyMessage?: string
+  catalogCta?: { label: string; href?: string }
 }) {
   const { isLoggedIn, isReady } = useSeoNavUser()
   const showGated = !isReady || !isLoggedIn
+  const showCategoryColumns = variant === 'category'
+  const isEmpty = items.length === 0
 
-  if (items.length === 0) return null
-
-  const ranked = [...items].sort((a, b) => b.interest - a.interest).slice(0, MAX_VISIBLE)
+  const ranked = isEmpty
+    ? []
+    : [...items].sort((a, b) => b.interest - a.interest).slice(0, MAX_VISIBLE)
   const preview = ranked.slice(0, FREE_VISIBLE)
   const locked = ranked.slice(FREE_VISIBLE)
   const gateHref = signUpUrl(slug)
+  const catalogHref = catalogCta?.href ?? MARKETING_TOOL_PAGES.componentFinder
 
   const tableHead = (
     <thead>
@@ -98,6 +121,16 @@ export function TopSearchedPartsTable({
         <th className="seo-top-parts__th seo-top-parts__th--part" scope="col">
           Part
         </th>
+        {showCategoryColumns ? (
+          <>
+            <th className="seo-top-parts__th seo-top-parts__th--manufacturer" scope="col">
+              Manufacturer
+            </th>
+            <th className="seo-top-parts__th seo-top-parts__th--keyspecs" scope="col">
+              Key Specs
+            </th>
+          </>
+        ) : null}
         <th className="seo-top-parts__th seo-top-parts__th--category" scope="col">
           Category
         </th>
@@ -110,7 +143,9 @@ export function TopSearchedPartsTable({
   } satisfies CSSProperties
 
   return (
-    <section className="seo-section seo-top-parts">
+    <section
+      className={`seo-section seo-top-parts${showCategoryColumns ? ' seo-top-parts--category' : ''}`}
+    >
       <div className="seo-top-parts__card">
         <header className="seo-top-parts__head">
           <div className="seo-top-parts__title-row">
@@ -120,9 +155,12 @@ export function TopSearchedPartsTable({
               Live
             </span>
           </div>
+          {intro ? <p className="seo-top-parts__intro">{intro}</p> : null}
         </header>
 
-        {showGated && locked.length > 0 ? (
+        {isEmpty ? (
+          emptyMessage ? <p className="seo-top-parts__empty">{emptyMessage}</p> : null
+        ) : showGated && locked.length > 0 ? (
           <div
             className="seo-top-parts-gated-wrap seo-top-parts-gated-wrap--active"
             style={gatedWrapStyle}
@@ -130,18 +168,23 @@ export function TopSearchedPartsTable({
             <table className="seo-top-parts__table">
               {tableHead}
               <tbody>
-                <TopSearchedPartsTableBody items={preview} />
+                <TopSearchedPartsTableBody items={preview} variant={variant} />
               </tbody>
             </table>
             <div className="seo-top-parts-blurred" aria-hidden="true">
               <table className="seo-top-parts__table">
                 <tbody>
-                  <TopSearchedPartsTableBody items={locked} startRank={FREE_VISIBLE + 1} />
+                  <TopSearchedPartsTableBody
+                    items={locked}
+                    startRank={FREE_VISIBLE + 1}
+                    variant={variant}
+                  />
                 </tbody>
               </table>
             </div>
             <AlternativesGateModal
               alternativesCount={locked.length}
+              stats={variant === 'category' ? buildCategoryTopPartsGateStats(locked.length) : undefined}
               ctaHref={gateHref}
               title={SEO_PUBLIC_BOUNDARY.topPartsGateTitle}
               description={SEO_PUBLIC_BOUNDARY.topPartsGateDescription}
@@ -152,10 +195,23 @@ export function TopSearchedPartsTable({
           <table className="seo-top-parts__table">
             {tableHead}
             <tbody>
-              <TopSearchedPartsTableBody items={ranked} />
+              <TopSearchedPartsTableBody items={ranked} variant={variant} />
             </tbody>
           </table>
         )}
+
+        {catalogCta ? (
+          <div className="seo-top-parts__footer">
+            <a
+              href={catalogHref}
+              className="seo-primary-cta seo-primary-cta--compact"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {catalogCta.label}
+            </a>
+          </div>
+        ) : null}
       </div>
     </section>
   )

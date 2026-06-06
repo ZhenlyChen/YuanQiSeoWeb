@@ -331,3 +331,81 @@ export function manufacturerDirectorySeoMetaSync(): SeoMeta {
     keywords: ['electronics manufacturers', 'manufacturer directory'],
   }
 }
+
+export async function categoryDirectorySeoMeta(): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
+  return {
+    title: t('categoryDirectory.title'),
+    description: t('categoryDirectory.description'),
+    h1: t('categoryDirectory.h1'),
+    canonicalPath: '/categories',
+    keywords: [
+      'component categories',
+      'electronics taxonomy',
+      'category intelligence',
+      'selection guide',
+      'alternatives hub',
+    ],
+  }
+}
+
+export async function categoryHubSeoMeta(input: {
+  name: string
+  l1Slug: string
+  l2Slug?: string
+}): Promise<SeoMeta> {
+  const t = await getTranslations('seoMeta')
+  const canonicalPath = input.l2Slug
+    ? `/categories/${input.l1Slug}/${input.l2Slug}`
+    : `/categories/${input.l1Slug}`
+
+  if (input.l2Slug) {
+    return {
+      title: t('categoryHub.l2.title', { categoryName: input.name }),
+      description: t('categoryHub.l2.description', { categoryName: input.name }),
+      h1: t('categoryHub.l2.h1', { categoryName: input.name }),
+      canonicalPath,
+      keywords: [input.name, `${input.name} components`, `${input.name} alternatives`],
+    }
+  }
+
+  return {
+    title: t('categoryHub.l1.title', { categoryName: input.name }),
+    description: t('categoryHub.l1.description', { categoryName: input.name }),
+    h1: t('categoryHub.l1.h1', { categoryName: input.name }),
+    canonicalPath,
+    keywords: [input.name, `${input.name} components`, `${input.name} alternatives`],
+  }
+}
+
+export function categoryDirectorySeoMetaSync(): SeoMeta {
+  return {
+    title: 'Component Category Directory | PartGenie',
+    description:
+      'Browse electronic component categories by name — selection guides, alternatives context, and intelligence hubs for engineers and sourcing teams.',
+    h1: 'Component Category Directory',
+    canonicalPath: '/categories',
+    keywords: ['component categories', 'category directory'],
+  }
+}
+
+export function categoryHubSeoMetaSync(input: {
+  name: string
+  l1Slug: string
+  l2Slug?: string
+}): SeoMeta {
+  const canonicalPath = input.l2Slug
+    ? `/categories/${input.l1Slug}/${input.l2Slug}`
+    : `/categories/${input.l1Slug}`
+  const description = input.l2Slug
+    ? `Explore ${input.name} components, selection factors, popular parts, alternatives, design risks, and sourcing considerations with PartGenie.`
+    : `Explore ${input.name} components, key selection factors, popular parts, alternatives, design risks, and sourcing considerations with PartGenie intelligence.`
+
+  return {
+    title: `${input.name} Components, Alternatives & Selection Guide | PartGenie`,
+    description: description.slice(0, 155),
+    h1: `${input.name} Component Intelligence`,
+    canonicalPath,
+    keywords: [input.name, `${input.name} components`, `${input.name} alternatives`],
+  }
+}

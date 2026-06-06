@@ -30,6 +30,7 @@ export type NavLabels = {
   vsFindchips: string
   vsAlldatasheet: string
   manufacturerDirectory: string
+  categoryDirectory: string
   helpCenter: string
   changelog: string
   getStarted: string
@@ -87,6 +88,7 @@ export function buildNavLinks(
       { label: labels.vsAlldatasheet, href: `${MARKETING_ORIGIN}/compare/vs-alldatasheet` },
     ],
     resources: [
+      { label: labels.categoryDirectory, href: localizePath('/categories', locale) },
       { label: labels.manufacturerDirectory, href: localizePath('/manufacturers', locale) },
       { label: labels.helpCenter, href: helpCenter.home },
       { label: labels.changelog, href: helpCenter.changelog },
@@ -109,6 +111,7 @@ export function getNavLabelsFromTranslations(t: (key: string) => string): NavLab
     vsFindchips: t('vsFindchips'),
     vsAlldatasheet: t('vsAlldatasheet'),
     manufacturerDirectory: t('manufacturerDirectory'),
+    categoryDirectory: t('categoryDirectory'),
     helpCenter: t('helpCenter'),
     changelog: t('changelog'),
     getStarted: t('getStarted'),

@@ -1,3 +1,4 @@
+import categories from './categories.json'
 import common from './common.json'
 import directory from './directory.json'
 import footer from './footer.json'
@@ -6,6 +7,7 @@ import seoMeta from './seoMeta.json'
 import shell from './shell.json'
 
 export default {
+  categories,
   common,
   directory,
   footer,
