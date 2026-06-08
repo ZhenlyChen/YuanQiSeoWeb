@@ -18,6 +18,7 @@ export type PublicSeoPage = {
   }
   content: PublicPageContent
   links: PublicPageLinks
+  hubPage?: import('@/types/seo-intelligence').ManufacturerIntelligencePage
 }
 
 export type PublicPageContent = {
@@ -28,6 +29,20 @@ export type PublicPageContent = {
   substitutes?: Array<Record<string, unknown>>
   aiVerdict?: Record<string, unknown>
   keySpecs?: Array<{ label: string; value: string }>
+  applications?: {
+    goodFit?: Array<string | { label: string; icon?: string }>
+    notRecommended?: string[]
+  }
+  designConsiderations?: string[]
+  commonPitfalls?: Array<{ title?: string; detail?: string }>
+  bomSourcing?: {
+    lifecycle?: string
+    supplyRisk?: string
+    replacementReadiness?: string
+    bullets?: string[]
+  }
+  overviewTags?: string[]
+  signals?: Record<string, unknown>
 }
 
 export type PublicPageLinks = {
@@ -66,6 +81,7 @@ export type CategoryDirectoryApiPage = {
   items: Array<
     Omit<import('@/types/seo-intelligence').CategoryDirectoryItem, 'partCount'> & {
       partCount: number
+      iconUrl?: string
     }
   >
   totalInDatabase: number
@@ -171,10 +187,34 @@ export async function fetchCategoryDirectory(params?: {
 
   try {
     const res = await fetch(`${apiBase()}seo/categories/directory?${search.toString()}`, {
-      next: { revalidate: 3600 },
+      // Category counts come from ES + DigiKey taxonomy; avoid stale directory cache.
+      cache: 'no-store',
     })
     if (!res.ok) return null
     const json = (await res.json()) as ApiResponse<CategoryDirectoryApiPage>
+    if (json.code !== 200 || !json.data) return null
+    return json.data
+  } catch {
+    return null
+  }
+}
+
+export async function fetchCategorySubcategories(
+  l1Slug: string,
+  params?: { locale?: string },
+): Promise<import('@/lib/category-hub-subcategories').CategorySubcategoriesApiPage | null> {
+  const search = new URLSearchParams()
+  search.set('locale', params?.locale || 'en')
+
+  try {
+    const res = await fetch(
+      `${apiBase()}seo/categories/${encodeURIComponent(l1Slug)}/subcategories?${search.toString()}`,
+      { cache: 'no-store' },
+    )
+    if (!res.ok) return null
+    const json = (await res.json()) as ApiResponse<
+      import('@/lib/category-hub-subcategories').CategorySubcategoriesApiPage
+    >
     if (json.code !== 200 || !json.data) return null
     return json.data
   } catch {

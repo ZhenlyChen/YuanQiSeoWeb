@@ -1,8 +1,15 @@
 import type { AppLocale } from '@/i18n/routing'
+import { normalizeBreadcrumbItems } from '@/lib/breadcrumb-items'
 import { componentSeoMetaSync } from '@/lib/seo-meta'
 import type { PublicSeoPage } from '@/lib/seo-api'
 import type { ProductJsonLdInput } from '@/lib/json-ld'
-import type { BreadcrumbItem, ComponentIntelligencePage, FaqItem } from '@/types/seo-intelligence'
+import type {
+  ApplicationTagInput,
+  BreadcrumbItem,
+  CommonPitfall,
+  ComponentIntelligencePage,
+  FaqItem,
+} from '@/types/seo-intelligence'
 
 function stringField(source: Record<string, unknown> | undefined, key: string): string {
   const value = source?.[key]
@@ -31,10 +38,88 @@ function mapQaBlocks(blocks?: Array<Record<string, unknown>>): FaqItem[] {
 }
 
 function mapBreadcrumbs(links: PublicSeoPage['links']): BreadcrumbItem[] {
-  return (links.breadcrumbs ?? []).map((item) => ({
-    label: item.label ?? '',
-    href: item.href,
-  }))
+  return normalizeBreadcrumbItems(links.breadcrumbs ?? [])
+}
+
+function mapApplications(raw: PublicSeoPage['content']['applications']): {
+  goodFit: ApplicationTagInput[]
+  notRecommended: string[]
+} {
+  const goodFit = Array.isArray(raw?.goodFit)
+    ? raw.goodFit.filter((item): item is ApplicationTagInput => {
+        if (typeof item === 'string') return Boolean(item.trim())
+        return Boolean(item && typeof item === 'object' && typeof item.label === 'string' && item.label.trim())
+      })
+    : []
+  const notRecommended = Array.isArray(raw?.notRecommended)
+    ? raw.notRecommended.filter((item): item is string => typeof item === 'string' && Boolean(item.trim()))
+    : []
+  return { goodFit, notRecommended }
+}
+
+function mapCommonPitfalls(raw?: Array<{ title?: string; detail?: string }>): CommonPitfall[] {
+  if (!raw?.length) return []
+  return raw
+    .map((item) => ({
+      title: stringField(item as Record<string, unknown>, 'title'),
+      detail: stringField(item as Record<string, unknown>, 'detail'),
+    }))
+    .filter((item) => item.title && item.detail)
+}
+
+function mapCompliance(component: Record<string, unknown>) {
+  const rohs = stringField(component, 'rohs')
+  const reach = stringField(component, 'reach')
+  const msl = stringField(component, 'msl')
+  const eccn = stringField(component, 'eccn')
+  const htsus = stringField(component, 'htsus')
+  if (!rohs && !reach && !msl && !eccn && !htsus) return undefined
+  return { rohs: rohs || undefined, reach: reach || undefined, msl: msl || undefined, eccn: eccn || undefined, htsus: htsus || undefined }
+}
+
+function mapMechanical(component: Record<string, unknown>) {
+  const pinCount = component.pin_count
+  const pinPitchMm = component.pin_pitch_mm
+  const pinType = stringField(component, 'pin_type')
+  const lengthMm = component.length
+  const widthMm = component.width
+  const heightMm = component.height
+  if (
+    pinCount == null &&
+    pinPitchMm == null &&
+    !pinType &&
+    lengthMm == null &&
+    widthMm == null &&
+    heightMm == null
+  ) {
+    return undefined
+  }
+  return {
+    pinCount: typeof pinCount === 'number' ? pinCount : undefined,
+    pinPitchMm: typeof pinPitchMm === 'number' ? pinPitchMm : undefined,
+    pinType: pinType || undefined,
+    lengthMm: typeof lengthMm === 'number' ? lengthMm : undefined,
+    widthMm: typeof widthMm === 'number' ? widthMm : undefined,
+    heightMm: typeof heightMm === 'number' ? heightMm : undefined,
+  }
+}
+
+function mapDatasheetUrls(component: Record<string, unknown>): string[] {
+  const raw = component.datasheet_urls
+  if (Array.isArray(raw)) {
+    return raw.filter((item): item is string => typeof item === 'string' && Boolean(item.trim()))
+  }
+  const single = stringField(component, 'datasheet_urls')
+  return single ? [single] : []
+}
+
+function mapImageUrls(component: Record<string, unknown>): string[] {
+  const raw = component.img_urls
+  if (Array.isArray(raw)) {
+    return raw.filter((item): item is string => typeof item === 'string' && Boolean(item.trim()))
+  }
+  const single = stringField(component, 'img_urls')
+  return single ? [single] : []
 }
 
 export function mapPublicSeoPageToComponentPage(
@@ -73,6 +158,14 @@ export function mapPublicSeoPageToComponentPage(
   const checkBeforeUse = Array.isArray(aiVerdictRaw.checkBeforeUse)
     ? aiVerdictRaw.checkBeforeUse.filter((item): item is string => typeof item === 'string')
     : ['Package', 'Key specs', 'Lifecycle', 'Authorized supply']
+  const bomSourcingRaw = apiPage.content.bomSourcing ?? {}
+  const bomBullets = Array.isArray(bomSourcingRaw.bullets)
+    ? bomSourcingRaw.bullets.filter((item): item is string => typeof item === 'string' && Boolean(item.trim()))
+    : []
+  const lifecycleStatus = stringField(apiPage.content.signals as Record<string, unknown> | undefined, 'lifecycleStatus')
+  const datasheetUrls = mapDatasheetUrls(component)
+  const imgUrls = mapImageUrls(component)
+  const enriched = !apiPage.content.degraded
 
   return {
     pageType: 'component',
@@ -84,6 +177,7 @@ export function mapPublicSeoPageToComponentPage(
     categoryLabel,
     categorySlug,
     package: packageName,
+    overviewTags: apiPage.content.overviewTags,
     meta,
     subtitle: {
       manufacturer,
@@ -112,21 +206,29 @@ export function mapPublicSeoPageToComponentPage(
       label: row.label,
       value: row.value,
     })),
-    applications: { goodFit: [], notRecommended: [] },
-    designConsiderations: [],
-    commonPitfalls: [],
+    applications: mapApplications(apiPage.content.applications),
+    designConsiderations: apiPage.content.designConsiderations ?? [],
+    commonPitfalls: mapCommonPitfalls(apiPage.content.commonPitfalls),
     alternatives: [],
     compareLinks: (apiPage.links.compare ?? []).map((link) => ({
       label: link.label,
       href: link.href,
     })),
     bomSourcing: {
-      lifecycle: 'Review lifecycle status before production.',
-      supplyRisk: 'Confirm authorized supply channels for your region.',
-      replacementReadiness: apiPage.content.degraded
-        ? 'Alternatives are being enriched in PartGenie.'
-        : 'Review substitute options in PartGenie.',
-      bullets: [],
+      lifecycle:
+        stringField(bomSourcingRaw as Record<string, unknown>, 'lifecycle') ||
+        lifecycleStatus ||
+        stringField(component, 'lifecycle') ||
+        'Review lifecycle status before production.',
+      supplyRisk:
+        stringField(bomSourcingRaw as Record<string, unknown>, 'supplyRisk') ||
+        'Confirm authorized supply channels for your region.',
+      replacementReadiness:
+        stringField(bomSourcingRaw as Record<string, unknown>, 'replacementReadiness') ||
+        (apiPage.content.degraded
+          ? 'Alternatives are being enriched in PartGenie.'
+          : 'Review substitute options in PartGenie.'),
+      bullets: bomBullets,
     },
     decisionMatrix: [],
     faq: qa,
@@ -148,24 +250,24 @@ export function mapPublicSeoPageToComponentPage(
       manufacturerNorm: manufacturer,
       identityKey: `${code}|${manufacturerSlug || manufacturer}`,
     },
+    compliance: mapCompliance(component),
+    mechanical: mapMechanical(component),
     sourceQuality: {
-      datasheetStatus: stringField(component, 'datasheet_urls') ? 'matched' : 'missing',
-      datasheetTextQuality: 'unavailable',
-      enrichmentVersion: apiPage.content.degraded ? '2a-degraded' : '2b',
-      usedSources: ['es'],
+      datasheetStatus: datasheetUrls.length ? 'matched' : 'missing',
+      datasheetTextQuality: enriched ? 'good' : 'unavailable',
+      enrichmentVersion: enriched ? 'tier-a-basic-v2' : '2a-degraded',
+      usedSources: enriched ? ['es', 'content_json'] : ['es'],
       requiresHumanReview: apiPage.content.degraded,
     },
     media: {
-      datasheetUrls: stringField(component, 'datasheet_urls')
-        ? [stringField(component, 'datasheet_urls')]
-        : [],
-      imgUrls: stringField(component, 'img_urls') ? [stringField(component, 'img_urls')] : [],
+      datasheetUrls,
+      imgUrls,
     },
     substituteSummary: {
       dropInCount: 0,
       functionalCount: 0,
       alternateCount: apiPage.content.substitutes?.length ?? 0,
-      requiresValidation: apiPage.content.degraded,
+      requiresValidation: apiPage.content.degraded || apiPage.content.signals?.hasSubstitute !== false,
     },
   }
 }
@@ -185,5 +287,50 @@ export function productJsonLdFromPublicPage(apiPage: PublicSeoPage): ProductJson
     canonicalPath: apiPage.canonicalPath || `/parts/${apiPage.slug}`,
     image,
     category: category || undefined,
+  }
+}
+
+export function mapPublicSeoPageToManufacturerPage(
+  apiPage: PublicSeoPage,
+  _locale: AppLocale,
+): import('@/types/seo-intelligence').ManufacturerIntelligencePage {
+  const hubPage = apiPage.hubPage as import('@/types/seo-intelligence').ManufacturerIntelligencePage
+  if (!hubPage) {
+    throw new Error(`Missing hubPage for manufacturer slug ${apiPage.slug}`)
+  }
+
+  const hubMeta = hubPage.meta ?? {
+    title: apiPage.title,
+    description: apiPage.description,
+    canonicalPath: apiPage.canonicalPath || `/manufacturers/${apiPage.slug}`,
+    robots: apiPage.robots,
+    h1: apiPage.title,
+  }
+
+  const meta = {
+    ...hubMeta,
+    title: apiPage.title || hubMeta.title,
+    description: apiPage.description || hubMeta.description,
+    canonicalPath: apiPage.canonicalPath || hubMeta.canonicalPath,
+    robots: apiPage.robots || hubMeta.robots,
+  }
+
+  const breadcrumbs = normalizeBreadcrumbItems(
+    Array.isArray(hubPage.breadcrumbs) && hubPage.breadcrumbs.length > 0
+      ? hubPage.breadcrumbs
+      : mapBreadcrumbs(apiPage.links),
+  )
+
+  const faqItems = Array.isArray(hubPage.faq) ? hubPage.faq : []
+
+  return {
+    ...hubPage,
+    meta,
+    breadcrumbs,
+    shortAnswer: hubPage.shortAnswer || apiPage.content.shortAnswerText || '',
+    faq:
+      faqItems.length > 0
+        ? faqItems
+        : mapQaBlocks(apiPage.content.qaBlocks),
   }
 }
