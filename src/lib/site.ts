@@ -1,5 +1,5 @@
-/** Public SEO site origin (partgenie.ai pSEO pages). */
-export const SEO_SITE_ORIGIN = 'https://partgenie.ai'
+/** Public SEO site origin (www.partgenie.ai — marketing + pSEO on one host). */
+export const SEO_SITE_ORIGIN = 'https://www.partgenie.ai'
 
 export const SEO_DEFAULT_OG_IMAGE =
   'https://web-static.partgenie.ai/img/partgenie.png'
