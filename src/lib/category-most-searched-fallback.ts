@@ -1,17 +1,12 @@
 import type { AppLocale } from '@/i18n/routing'
 import { formatCategoryLabel } from '@/lib/category-display'
+import { MIN_CATEGORY_HOT_PARTS, countCategoryHotParts } from '@/lib/category-hot-parts'
 import { slugFromEntityKey } from '@/lib/manufacturer-most-searched-fallback'
 import { fetchCategoryProductItems } from '@/lib/seo-api'
 import type { CategoryHubPage, TopSearchedPartItem } from '@/types/seo-intelligence'
 
 const MOST_SEARCHED_PARTS_LIMIT = 12
 const KEY_SPECS_MAX_LEN = 160
-
-function hasHotParts(page: CategoryHubPage): boolean {
-  const fromPopular = page.popularParts?.some((row) => row.mpn.trim())
-  const fromMostSearched = page.mostSearchedParts?.some((part) => part.mpn.trim())
-  return Boolean(fromPopular || fromMostSearched)
-}
 
 function firstNonEmpty(...values: unknown[]): string {
   for (const value of values) {
@@ -88,7 +83,7 @@ export async function enrichCategoryMostSearchedParts(
   page: CategoryHubPage,
   locale: AppLocale,
 ): Promise<CategoryHubPage> {
-  if (hasHotParts(page)) return page
+  if (countCategoryHotParts(page) >= MIN_CATEGORY_HOT_PARTS) return page
 
   const { categoryL1, categoryL2 } = resolveCategoryTaxonomyLabels(page)
   if (!categoryL1) return page
@@ -100,10 +95,24 @@ export async function enrichCategoryMostSearchedParts(
       pageSize: MOST_SEARCHED_PARTS_LIMIT,
       locale,
     })
-    const mostSearchedParts = mapCategoryProductItemsToMostSearchedParts(items)
-    if (!mostSearchedParts.length) return page
+    const catalogParts = mapCategoryProductItemsToMostSearchedParts(items)
+    if (!catalogParts.length) return page
 
-    return { ...page, mostSearchedParts }
+    const seen = new Set<string>()
+    for (const row of page.popularParts) {
+      const mpn = row.mpn?.trim().toLowerCase()
+      if (mpn) seen.add(mpn)
+    }
+    for (const part of page.mostSearchedParts) {
+      const mpn = part.mpn?.trim().toLowerCase()
+      if (mpn) seen.add(mpn)
+    }
+    const merged = [
+      ...page.mostSearchedParts,
+      ...catalogParts.filter((part) => !seen.has(part.mpn.trim().toLowerCase())),
+    ].slice(0, MOST_SEARCHED_PARTS_LIMIT)
+
+    return { ...page, mostSearchedParts: merged }
   } catch (error) {
     console.error('[enrichCategoryMostSearchedParts]', {
       slug: page.slug,

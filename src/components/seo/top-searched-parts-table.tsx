@@ -69,6 +69,7 @@ function TopSearchedPartRow({
   showDemandScores?: boolean
 }) {
   const imageSrc = item.imageUrl?.trim() || partImageForMpn(item.mpn)
+  const partHref = item.href?.trim() || '#'
   const showCategoryColumns = variant === 'category'
   const placeholder = isPlaceholderPart(item)
 
@@ -91,17 +92,14 @@ function TopSearchedPartRow({
             <div className="seo-top-parts__thumb">
               <img src={imageSrc} alt="" />
             </div>
-            <Link href={item.href} className="seo-top-parts__part-link">
+            <Link href={partHref} className="seo-top-parts__part-link">
               {item.mpn}
             </Link>
           </div>
         )}
       </td>
       {showCategoryColumns ? (
-        <>
-          <td className="seo-top-parts__manufacturer">{placeholder ? '\u00a0' : (item.manufacturer ?? '—')}</td>
-          <td className="seo-top-parts__keyspecs">{placeholder ? '\u00a0' : (item.keySpecs ?? '—')}</td>
-        </>
+        <td className="seo-top-parts__manufacturer">{placeholder ? '\u00a0' : (item.manufacturer ?? '—')}</td>
       ) : null}
       {showDemandScores ? (
         <td
@@ -197,14 +195,9 @@ export function TopSearchedPartsTable({
           Part
         </th>
         {showCategoryColumns ? (
-          <>
-            <th className="seo-top-parts__th seo-top-parts__th--manufacturer" scope="col">
-              Manufacturer
-            </th>
-            <th className="seo-top-parts__th seo-top-parts__th--keyspecs" scope="col">
-              Key Specs
-            </th>
-          </>
+          <th className="seo-top-parts__th seo-top-parts__th--manufacturer" scope="col">
+            Manufacturer
+          </th>
         ) : null}
         {showDemandScores ? (
           <th className="seo-top-parts__th seo-top-parts__th--score" scope="col">

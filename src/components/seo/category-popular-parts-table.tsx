@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { resolvePopularPartHref } from '@/lib/category-hot-parts'
 import { MARKETING_TOOL_PAGES } from '@/lib/tool-urls'
 import type { CategoryPopularPartRow } from '@/types/seo-intelligence'
 
@@ -34,10 +35,12 @@ export function CategoryPopularPartsTable({
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr key={row.partHref}>
+                {rows.map((row) => {
+                  const partHref = resolvePopularPartHref(row)
+                  return (
+                  <tr key={`${partHref}-${row.mpn}`}>
                     <td>
-                      <Link href={row.partHref} className="seo-cat-parts-table__mpn">
+                      <Link href={partHref} className="seo-cat-parts-table__mpn">
                         {row.mpn}
                       </Link>
                     </td>
@@ -47,7 +50,7 @@ export function CategoryPopularPartsTable({
                     <td>{row.commonUse}</td>
                     <td>
                       <div className="seo-cat-parts-table__actions">
-                        <Link href={row.partHref}>View intelligence</Link>
+                        <Link href={partHref}>View intelligence</Link>
                         {row.alternativeHref ? <Link href={row.alternativeHref}>Find alternatives</Link> : null}
                         {row.compareHref ? <Link href={row.compareHref}>Compare</Link> : null}
                         <a
@@ -60,7 +63,8 @@ export function CategoryPopularPartsTable({
                       </div>
                     </td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>
