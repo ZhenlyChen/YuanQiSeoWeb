@@ -8,7 +8,7 @@ import { formatCategoryLabel } from '@/lib/category-display'
 import { cn } from '@/lib/cn'
 import { partImageForMpn } from '@/lib/part-images'
 import { SEO_PUBLIC_BOUNDARY, buildCategoryTopPartsGateStats, buildGeneralGateStats } from '@/lib/seo-copy'
-import { MARKETING_TOOL_PAGES, signUpUrl } from '@/lib/tool-urls'
+import { partFinderUrl, signUpUrl } from '@/lib/tool-urls'
 import type { TopSearchedPartItem } from '@/types/seo-intelligence'
 
 const MAX_VISIBLE = 10
@@ -183,7 +183,7 @@ export function TopSearchedPartsTable({
   const useGatedLayout = isEmpty || showGated
   const hiddenPartsCount = isEmpty ? 1 : Math.max(ranked.length - FREE_VISIBLE, 1)
   const gateHref = signUpUrl(slug)
-  const catalogHref = catalogCta?.href ?? MARKETING_TOOL_PAGES.componentFinder
+  const catalogHref = catalogCta?.href ?? partFinderUrl(slug)
 
   const tableHead = (
     <thead>

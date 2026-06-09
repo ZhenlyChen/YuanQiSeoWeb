@@ -27,6 +27,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
       canonicalPath: apiPage.canonicalPath || `/alternatives/${mpn}`,
       slug: mpn,
       robots: apiPage.robots,
+      ogImage: apiPage.ogImage,
       locale,
     })
   }

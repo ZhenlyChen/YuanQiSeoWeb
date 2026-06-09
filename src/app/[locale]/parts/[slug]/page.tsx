@@ -42,6 +42,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     canonicalPath: page.canonicalPath || `/parts/${slug}`,
     slug,
     robots: page.robots,
+    ogImage: page.ogImage,
     locale,
   })
 }

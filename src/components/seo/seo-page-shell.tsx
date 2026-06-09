@@ -8,7 +8,7 @@ import { localizeItemList } from '@/lib/json-ld'
 import type { ProductJsonLdInput } from '@/lib/json-ld'
 import type { BreadcrumbItem, FaqItem } from '@/types/seo-intelligence'
 
-export function SeoPageShell({
+export async function SeoPageShell({
   breadcrumbs,
   faq,
   children,

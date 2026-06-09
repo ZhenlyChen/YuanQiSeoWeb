@@ -1,5 +1,5 @@
 import { categoryFinderPath } from '@/lib/category-taxonomy'
-import { MARKETING_TOOL_PAGES } from '@/lib/tool-urls'
+import { alternativeFinderUrl } from '@/lib/tool-urls'
 import type { CategoryHubPage, CategoryQueryChip } from '@/types/seo-intelligence'
 
 const MIN_CAROUSEL_ITEMS = 6
@@ -34,7 +34,7 @@ function defaultCategoryQueryChips(page: CategoryHubPage): CategoryQueryChip[] {
     },
     {
       label: 'Find alternatives with AI',
-      href: MARKETING_TOOL_PAGES.alternativeFinder,
+      href: alternativeFinderUrl(page.slug),
     },
   ]
 }

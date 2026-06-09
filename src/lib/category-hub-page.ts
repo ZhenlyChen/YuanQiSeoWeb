@@ -6,7 +6,7 @@ import { enrichCategoryMostSearchedParts } from '@/lib/category-most-searched-fa
 import { useMockCategoryHub } from '@/lib/mock-seo-pages'
 import { categoryHubSeoMeta } from '@/lib/seo-meta'
 import { fetchCategoryHub } from '@/lib/seo-api'
-import { SEO_SITE_ORIGIN } from '@/lib/site'
+import { buildHubItemListFromParts } from '@/lib/hub-item-list-from-parts'
 import type { CategoryHubPage } from '@/types/seo-intelligence'
 
 async function fetchCategoryHubPage(
@@ -89,19 +89,8 @@ export async function buildCategoryHubProps(params: {
 
   page = await enrichCategoryMostSearchedParts(page, params.locale ?? 'en')
 
-  const itemListItems = page.mostSearchedParts.slice(0, 12).map((item) => ({
-    name: item.mpn,
-    url: `${SEO_SITE_ORIGIN}${item.href}`,
-  }))
-
   return {
     page,
-    itemList:
-      itemListItems.length > 0
-        ? {
-            name: `${page.name} components`,
-            items: itemListItems,
-          }
-        : undefined,
+    itemList: buildHubItemListFromParts(page.name, page.mostSearchedParts),
   }
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { resolvePopularPartHref } from '@/lib/category-hot-parts'
-import { MARKETING_TOOL_PAGES } from '@/lib/tool-urls'
+import { datasheetAiUrl, partFinderUrl } from '@/lib/tool-urls'
 import type { CategoryPopularPartRow } from '@/types/seo-intelligence'
 
 export function CategoryPopularPartsTable({
@@ -10,11 +10,13 @@ export function CategoryPopularPartsTable({
   intro,
   rows,
   catalogCtaLabel,
+  slug = 'category-hub',
 }: {
   title: string
   intro: string
   rows: CategoryPopularPartRow[]
   catalogCtaLabel: string
+  slug?: string
 }) {
   return (
     <section className="seo-page-section seo-page-section-anchor">
@@ -54,7 +56,7 @@ export function CategoryPopularPartsTable({
                         {row.alternativeHref ? <Link href={row.alternativeHref}>Find alternatives</Link> : null}
                         {row.compareHref ? <Link href={row.compareHref}>Compare</Link> : null}
                         <a
-                          href={row.chatQuery ? `${MARKETING_TOOL_PAGES.datasheetAi}?q=${encodeURIComponent(row.chatQuery)}` : MARKETING_TOOL_PAGES.datasheetAi}
+                          href={datasheetAiUrl(row.mpn, slug)}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -73,7 +75,7 @@ export function CategoryPopularPartsTable({
         )}
         <div className="seo-cat-parts-table__footer">
           <a
-            href={MARKETING_TOOL_PAGES.componentFinder}
+            href={partFinderUrl(slug)}
             className="seo-primary-cta seo-primary-cta--compact"
             target="_blank"
             rel="noopener noreferrer"

@@ -6,7 +6,8 @@ import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { getCompetitorComparePage } from '@/data/competitor-comparisons'
 import { getMockComparePage } from '@/data/mock'
 import { parseAppLocale } from '@/lib/page-locale'
-import { resolvePublicSeoMetadata } from '@/lib/resolve-seo-page-meta'
+import { SEO_DEFERRED, withDeferredRobots } from '@/lib/seo-indexing-policy'
+import { buildPageMetadata } from '@/lib/seo-meta'
 
 type PageProps = { params: Promise<{ locale: string; slug: string }> }
 
@@ -14,23 +15,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale: localeParam, slug } = await params
   const locale = parseAppLocale(localeParam)
   const competitorPage = getCompetitorComparePage(slug)
-  if (competitorPage) {
-    return resolvePublicSeoMetadata({
-      slug: competitorPage.slug,
-      locale,
-      pageType: 'compare',
-      fallbackMeta: competitorPage.meta,
-      notFoundTitle: 'Compare page not found | PartGenie',
-    })
+  const mockPage = getMockComparePage(slug)
+  const fallbackMeta = competitorPage?.meta ?? mockPage?.meta ?? null
+
+  if (!fallbackMeta) {
+    return { title: 'Compare page not found | PartGenie', robots: { index: false, follow: false } }
   }
-  const page = getMockComparePage(slug)
-  return resolvePublicSeoMetadata({
-    slug,
-    locale,
-    pageType: 'compare',
-    fallbackMeta: page?.meta ?? null,
-    notFoundTitle: 'Compare page not found | PartGenie',
-  })
+
+  const metadata = buildPageMetadata(fallbackMeta, locale)
+
+  if (SEO_DEFERRED.mpnCompare || (competitorPage && SEO_DEFERRED.competitorCompare)) {
+    return withDeferredRobots(metadata)
+  }
+
+  return metadata
 }
 
 export default async function ComparePage({ params }: PageProps) {

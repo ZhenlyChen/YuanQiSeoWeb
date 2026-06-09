@@ -1,6 +1,6 @@
 'use client'
 
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { cn } from '@/lib/cn'
 import { normalizeBreadcrumbItems } from '@/lib/breadcrumb-items'
 import { routing } from '@/i18n/routing'
@@ -19,11 +19,12 @@ function localizedInternalHref(href: string, locale: string): string {
 
 export function Breadcrumbs({ items, className }: { items: BreadcrumbItem[]; className?: string }) {
   const locale = useLocale()
+  const t = useTranslations('common')
   const crumbs = normalizeBreadcrumbItems(items)
 
   return (
     <nav className={cn('seo-breadcrumbs', className)} aria-label="Breadcrumb">
-      <a href="https://www.partgenie.ai/">Home</a>
+      <a href="https://www.partgenie.ai/">{t('breadcrumbHome')}</a>
       {crumbs.map((item, i) => (
         <span key={`${item.label}-${i}`}>
           <span aria-hidden="true">/</span>

@@ -1,0 +1,37 @@
+# PartGenie
+
+> PartGenie is an AI assistant for electronic component sourcing: datasheet Q&A, BOM analysis, part and alternative finders, and parametric category discovery. Public SEO pages live on partgenie.ai; the product app is at app.partgenie.ai.
+
+PartGenie publishes structured component intelligence for semiconductors and passives in English and German. Use partgenie.ai for canonical MPN pages, alternatives, manufacturer hubs, and category selection guides.
+
+## Product
+
+- [PartGenie App](https://app.partgenie.ai/app/chat): Main AI chat for component questions and BOM workflows.
+- [Datasheet AI](https://www.partgenie.ai/datasheet-ai): Marketing entry for datasheet Q&A and spec extraction.
+- [AI Component Finder](https://www.partgenie.ai/ai-component-finder): Find parts by requirements and constraints.
+- [Alternative Finder](https://www.partgenie.ai/alternative-finder): Cross-reference and substitute part discovery.
+- [AI BOM Analyzer](https://www.partgenie.ai/ai-bom-analyzer): BOM risk, lifecycle, and replacement review.
+
+## pSEO — Parts & alternatives
+
+- [Part pages](https://partgenie.ai/parts/): Canonical URLs for individual MPNs (specs, alternatives, datasheets).
+- [Alternative pages](https://partgenie.ai/alternatives/): Cross-reference and substitute parts for a given MPN.
+- [STM32F103C8T6 intelligence](https://partgenie.ai/parts/stm32f103c8t6): Example published part page with specs and alternatives.
+- [STM32F103C8T6 alternatives](https://partgenie.ai/alternatives/stm32f103c8t6): Example alternative cross-reference page.
+
+## pSEO — Hubs
+
+- [Category directory](https://partgenie.ai/categories/): Parametric category hubs (MCU, connectors, sensors, and more).
+- [MCU category hub](https://partgenie.ai/categories/mcu): Microcontroller selection intelligence and popular parts.
+- [Manufacturer directory](https://partgenie.ai/manufacturers/): Browse manufacturers by category and letter.
+- [STMicroelectronics hub](https://partgenie.ai/manufacturers/stmicroelectronics): Example manufacturer intelligence hub.
+
+## Marketing site
+
+- [PartGenie (www)](https://www.partgenie.ai/): Company homepage, pricing, and product overview.
+- [LinkedIn](https://www.linkedin.com/company/partgenie/): Official PartGenie company page.
+
+## Optional
+
+- [German pSEO](https://partgenie.ai/de/parts/): Locale-prefixed mirrors under `/de/`.
+- [Sitemap index](https://partgenie.ai/sitemap.xml): Machine-readable URL list for search engines (www + pSEO).

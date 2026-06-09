@@ -8,12 +8,16 @@ function absoluteUrl(path: string | undefined, locale: AppLocale): string | unde
   return `${SEO_SITE_ORIGIN}${localizePath(path, locale)}`
 }
 
-export function breadcrumbJsonLd(items: BreadcrumbItem[], locale: AppLocale = 'en'): object {
+export function breadcrumbJsonLd(
+  items: BreadcrumbItem[],
+  locale: AppLocale = 'en',
+  homeLabel = 'Home',
+): object {
   const list = [
     {
       '@type': 'ListItem',
       position: 1,
-      name: 'Home',
+      name: homeLabel,
       item: absoluteUrl('/', locale),
     },
     ...items.map((item, i) => ({
@@ -104,6 +108,17 @@ export function productJsonLd(input: ProductJsonLdInput, locale: AppLocale = 'en
 export function jsonLdScript(data: object | object[]): string {
   const payload = Array.isArray(data) ? data : [data]
   return JSON.stringify(payload.length === 1 ? payload[0] : payload)
+}
+
+export function organizationJsonLd(_locale: AppLocale = 'en'): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'PartGenie',
+    url: 'https://www.partgenie.ai',
+    logo: SEO_DEFAULT_OG_IMAGE,
+    sameAs: ['https://www.linkedin.com/company/partgenie/'],
+  }
 }
 
 export function localizeItemList(

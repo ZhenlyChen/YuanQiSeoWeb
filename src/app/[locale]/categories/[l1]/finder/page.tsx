@@ -10,6 +10,7 @@ import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
 import { getL1Category } from '@/lib/category-taxonomy'
 import { parseAppLocale } from '@/lib/page-locale'
+import { SEO_DEFERRED, withDeferredRobots } from '@/lib/seo-indexing-policy'
 import { buildPageMetadata, categoryFinderSeoMeta } from '@/lib/seo-meta'
 
 type FinderCategory = {
@@ -68,10 +69,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!l1Category || !category) {
     return { title: 'Category Finder Not Found | PartGenie', robots: { index: false, follow: false } }
   }
-  return buildPageMetadata(
+  const metadata = buildPageMetadata(
     await categoryFinderSeoMeta({ categoryLabel: category.label, slug: l1 }),
     locale,
   )
+
+  if (SEO_DEFERRED.categoryFinder) {
+    return withDeferredRobots(metadata)
+  }
+
+  return metadata
 }
 
 export default async function CategoryFinderPage({ params }: PageProps) {

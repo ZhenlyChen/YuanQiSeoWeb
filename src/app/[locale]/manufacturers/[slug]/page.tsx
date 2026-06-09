@@ -13,6 +13,7 @@ import { isMockManufacturerSlug } from '@/lib/mock-seo-pages'
 import { parseAppLocale } from '@/lib/page-locale'
 import { resolveManufacturerHeroSubtitle } from '@/lib/manufacturer-hero-subtitle'
 import { fetchSeoPage } from '@/lib/seo-api'
+import { buildHubItemListFromParts } from '@/lib/hub-item-list-from-parts'
 import { buildPageMetadata, buildPageMetadataFromApi } from '@/lib/seo-meta'
 
 type PageProps = {
@@ -44,6 +45,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     canonicalPath: apiPage.canonicalPath || `/manufacturers/${slug}`,
     slug,
     robots: apiPage.robots,
+    ogImage: apiPage.ogImage,
     locale,
   })
 }
@@ -57,11 +59,13 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
     const mockPage = getMockManufacturerPage(slug)
     if (!mockPage) notFound()
     const heroSubtitle = resolveManufacturerHeroSubtitle(mockPage)
+    const itemList = buildHubItemListFromParts(mockPage.name, mockPage.mostSearchedParts)
     return (
       <SeoPageShell
         breadcrumbs={mockPage.breadcrumbs}
         faq={mockPage.faq}
         hideBreadcrumbs
+        itemList={itemList}
         locale={locale}
         pageContext={{ slug: mockPage.slug, manufacturer: mockPage.name, kind: 'manufacturer' }}
         banner={
@@ -98,12 +102,14 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
   })
   const page = await enrichComparableManufacturerLogos(pageWithParts, locale)
   const heroSubtitle = resolveManufacturerHeroSubtitle(page)
+  const itemList = buildHubItemListFromParts(page.name, page.mostSearchedParts)
 
   return (
     <SeoPageShell
       breadcrumbs={page.breadcrumbs}
       faq={page.faq}
       hideBreadcrumbs
+      itemList={itemList}
       locale={locale}
       showPreviewBanner={Boolean(sp.preview)}
       pageContext={{ slug: page.slug, manufacturer: page.name, kind: 'manufacturer' }}

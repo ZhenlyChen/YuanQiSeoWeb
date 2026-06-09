@@ -5,9 +5,15 @@ import { buildHreflangAlternates, localizePath, openGraphAlternateLocale, openGr
 import type { SeoMeta } from '@/types/seo-intelligence'
 import { SEO_DEFAULT_OG_IMAGE, SEO_SITE_ORIGIN } from '@/lib/site'
 
+function resolveOgImage(meta: SeoMeta): string {
+  const custom = meta.ogImage?.trim()
+  return custom || SEO_DEFAULT_OG_IMAGE
+}
+
 export function buildPageMetadata(meta: SeoMeta, locale: AppLocale = 'en'): Metadata {
   const localizedPath = localizePath(meta.canonicalPath, locale)
   const canonical = `${SEO_SITE_ORIGIN}${localizedPath}`
+  const ogImage = resolveOgImage(meta)
 
   const metadata: Metadata = {
     title: { absolute: meta.title },
@@ -24,13 +30,13 @@ export function buildPageMetadata(meta: SeoMeta, locale: AppLocale = 'en'): Meta
       alternateLocale: [openGraphAlternateLocale(locale)],
       title: meta.title,
       description: meta.description,
-      images: [{ url: SEO_DEFAULT_OG_IMAGE, alt: meta.h1SecondLine ? `${meta.h1} ${meta.h1SecondLine}` : meta.h1 }],
+      images: [{ url: ogImage, alt: meta.h1SecondLine ? `${meta.h1} ${meta.h1SecondLine}` : meta.h1 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: meta.title,
       description: meta.description,
-      images: [SEO_DEFAULT_OG_IMAGE],
+      images: [ogImage],
     },
   }
 
@@ -55,6 +61,7 @@ export function buildPageMetadataFromApi(input: {
   canonicalPath: string
   slug: string
   robots?: string
+  ogImage?: string
   locale?: AppLocale
 }): Metadata {
   const locale = input.locale ?? 'en'
@@ -66,6 +73,7 @@ export function buildPageMetadataFromApi(input: {
       canonicalPath: input.canonicalPath || `/parts/${input.slug}`,
       keywords: [input.slug, input.title],
       robots: input.robots,
+      ogImage: input.ogImage,
     },
     locale,
   )

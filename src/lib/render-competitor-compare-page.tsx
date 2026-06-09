@@ -4,6 +4,7 @@ import { CompetitorCompareView } from '@/components/seo/competitor-compare-view'
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { getCompetitorComparePage } from '@/data/competitor-comparisons'
 import { parseAppLocale } from '@/lib/page-locale'
+import { SEO_DEFERRED, withDeferredRobots } from '@/lib/seo-indexing-policy'
 import { resolvePublicSeoMetadata } from '@/lib/resolve-seo-page-meta'
 
 export async function competitorCompareMetadata(input: {
@@ -20,16 +21,22 @@ export async function competitorCompareMetadata(input: {
     }
   }
 
-  return resolvePublicSeoMetadata({
+  const metadata = await resolvePublicSeoMetadata({
     slug: page.slug,
     locale,
     pageType: 'compare',
     fallbackMeta: page.meta,
     notFoundTitle: 'Compare page not found | PartGenie',
   })
+
+  if (SEO_DEFERRED.competitorCompare) {
+    return withDeferredRobots(metadata)
+  }
+
+  return metadata
 }
 
-export function CompetitorCompareRoute({
+export async function CompetitorCompareRoute({
   localeParam,
   slug,
 }: {

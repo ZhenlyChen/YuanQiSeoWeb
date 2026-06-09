@@ -1,27 +1,34 @@
 import { getL1Category } from '@/lib/category-taxonomy'
-import { MARKETING_TOOL_PAGES, categorySearchActionUrl } from '@/lib/tool-urls'
+import {
+  alternativeFinderUrl,
+  bomAnalyzerUrl,
+  categorySearchActionUrl,
+  datasheetAiUrl,
+  partFinderUrl,
+} from '@/lib/tool-urls'
 import type { CategoryHubPage } from '@/types/seo-intelligence'
 
 export function buildCategoryToolGrid(page: CategoryHubPage) {
+  const slug = page.slug
   return [
     {
       label: 'AI component finder',
-      href: MARKETING_TOOL_PAGES.componentFinder,
+      href: partFinderUrl(slug),
       icon: 'chip' as const,
     },
     {
       label: 'AI alternative finder',
-      href: MARKETING_TOOL_PAGES.alternativeFinder,
+      href: alternativeFinderUrl(slug),
       icon: 'list' as const,
     },
     {
       label: 'BOM analyzer',
-      href: MARKETING_TOOL_PAGES.bomAnalyzer,
+      href: bomAnalyzerUrl(slug),
       icon: 'hash02' as const,
     },
     {
       label: 'Datasheet AI',
-      href: MARKETING_TOOL_PAGES.datasheetAi,
+      href: datasheetAiUrl(slug, slug),
       icon: 'file06' as const,
     },
   ]

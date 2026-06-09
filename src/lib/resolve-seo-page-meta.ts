@@ -19,6 +19,7 @@ export async function resolvePublicSeoMetadata(input: {
       canonicalPath: apiPage.canonicalPath,
       slug: apiPage.slug,
       robots: apiPage.robots,
+      ogImage: apiPage.ogImage,
       locale: input.locale,
     })
   }
