@@ -82,6 +82,8 @@ export function getMockAlternativePage(mpn: string): AlternativeIntelligencePage
         'The best alternative to STM32F103C8T6 depends on whether you need pin-compatible cost reduction (GD32/CH32 paths) or a functional upgrade within STM32. Existing PCBs should prioritize pinout and firmware verification.',
       replacementVerdict: {
         canReplaceDirectly: false,
+        directReplacementAnswer:
+          'Direct replacement is not recommended without pinout and firmware verification on the target PCB.',
         bestReplacementType: 'Pin-compatible or functional within verified firmware matrix',
         mainRisk: 'Register maps and clock trees differ on clone MCUs',
         summary: 'Document match type and re-run hardware validation before mass substitution.',

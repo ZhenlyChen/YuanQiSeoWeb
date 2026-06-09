@@ -43,6 +43,16 @@ export type PublicPageContent = {
   }
   overviewTags?: string[]
   signals?: Record<string, unknown>
+  riskAnalysis?: Array<{ category?: string; level?: string; detail?: string }>
+  applicationFit?: Array<{ scenario?: string; guidance?: string }>
+  regionalNotes?: string[]
+  heroSummary?: string
+  aiReplacementInsight?: Record<string, unknown>
+  replacementVerdict?: Record<string, unknown>
+  compatibilityMatrix?: Array<Record<string, unknown>>
+  featureComparison?: Array<Record<string, unknown>>
+  featureComparisonHeaders?: Record<string, string>
+  compareLinks?: Array<{ label: string; href: string }>
 }
 
 export type PublicPageLinks = {
@@ -88,6 +98,25 @@ export type CategoryDirectoryApiPage = {
 }
 
 export type CategoryHubApiPage = import('@/types/seo-intelligence').CategoryHubPage
+
+export type ManufacturerProductCategoryChild = {
+  name: string
+  count: number
+}
+
+export type ManufacturerProductCategory = {
+  name: string
+  count: number
+  children: ManufacturerProductCategoryChild[]
+}
+
+export type ManufacturerProductsApiResponse = {
+  items: Array<Record<string, unknown>>
+  total: number
+  page: number
+  pageSize: number
+  categories: ManufacturerProductCategory[]
+}
 
 type ApiResponse<T> = { code: number; data: T; msg: string }
 
@@ -222,13 +251,108 @@ export async function fetchCategorySubcategories(
   }
 }
 
+async function fetchManufacturerProductsResponse(
+  manufacturerId: string,
+  options?: { pageSize?: number; previewToken?: string },
+): Promise<ManufacturerProductsApiResponse | null> {
+  const id = manufacturerId.trim()
+  if (!id) return null
+
+  const search = new URLSearchParams({
+    manufacturerId: id,
+    page: '1',
+    pageSize: String(options?.pageSize ?? 1),
+  })
+
+  try {
+    const res = await fetch(`${apiBase()}component/manufacturer/products?${search.toString()}`, {
+      cache: options?.previewToken ? 'no-store' : undefined,
+      next: options?.previewToken ? undefined : { revalidate: 86400 },
+    })
+    if (!res.ok) return null
+    const json = (await res.json()) as ApiResponse<ManufacturerProductsApiResponse>
+    if (json.code !== 200 || !json.data) return null
+    return json.data
+  } catch (error) {
+    console.error('[fetchManufacturerProductsResponse]', error)
+    return null
+  }
+}
+
+export async function fetchManufacturerProductCategories(
+  manufacturerId: string,
+  options?: { previewToken?: string },
+): Promise<ManufacturerProductCategory[]> {
+  const data = await fetchManufacturerProductsResponse(manufacturerId, {
+    pageSize: 1,
+    previewToken: options?.previewToken,
+  })
+  return data?.categories ?? []
+}
+
+/** ES catalog sample parts (code sort), same source as import-time ES fallback. */
+export async function fetchManufacturerProductItems(
+  manufacturerId: string,
+  options?: { pageSize?: number; previewToken?: string },
+): Promise<Array<Record<string, unknown>>> {
+  const data = await fetchManufacturerProductsResponse(manufacturerId, {
+    pageSize: options?.pageSize ?? 10,
+    previewToken: options?.previewToken,
+  })
+  return data?.items ?? []
+}
+
+type CategoryProductsApiResponse = {
+  items: Array<Record<string, unknown>>
+  total: number
+  page: number
+  pageSize: number
+}
+
+/** ES catalog samples for a taxonomy category (category hub SSR fallback). */
+export async function fetchCategoryProductItems(params: {
+  categoryL1: string
+  categoryL2?: string
+  pageSize?: number
+  locale?: string
+}): Promise<Array<Record<string, unknown>>> {
+  const categoryL1 = params.categoryL1.trim()
+  if (!categoryL1) return []
+
+  const search = new URLSearchParams({
+    categoryL1,
+    page: '1',
+    pageSize: String(params.pageSize ?? 12),
+  })
+  const categoryL2 = params.categoryL2?.trim()
+  if (categoryL2) search.set('categoryL2', categoryL2)
+  if (params.locale) search.set('locale', params.locale)
+
+  try {
+    const res = await fetch(`${apiBase()}component/category/products?${search.toString()}`, {
+      next: { revalidate: 86400 },
+    })
+    if (!res.ok) return []
+    const json = (await res.json()) as ApiResponse<CategoryProductsApiResponse>
+    if (json.code !== 200 || !json.data) return []
+    return json.data.items ?? []
+  } catch (error) {
+    console.error('[fetchCategoryProductItems]', error)
+    return []
+  }
+}
+
 export async function fetchCategoryHub(params: {
   l1Slug: string
   l2Slug?: string
   locale?: string
+  previewToken?: string
 }): Promise<CategoryHubApiPage | null> {
   const search = new URLSearchParams()
   search.set('locale', params.locale || 'en')
+  if (params.previewToken) {
+    search.set('token', params.previewToken)
+  }
   const path = params.l2Slug
     ? `seo/categories/${encodeURIComponent(params.l1Slug)}/${encodeURIComponent(params.l2Slug)}?${search.toString()}`
     : `seo/categories/${encodeURIComponent(params.l1Slug)}?${search.toString()}`

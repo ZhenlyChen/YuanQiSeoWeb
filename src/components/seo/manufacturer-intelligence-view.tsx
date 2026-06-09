@@ -9,9 +9,14 @@ import { ManufacturerCatalogTable } from '@/components/seo/manufacturer-catalog-
 import { ManufacturerSupplyInsights } from '@/components/seo/manufacturer-supply-insights'
 import { TypewriterText } from '@/components/seo/typewriter-text'
 import { buildManufacturerToolGrid, SidebarToolGrid } from '@/components/seo/sidebar-tool-grid'
+import { SEO_PUBLIC_BOUNDARY } from '@/lib/seo-copy'
 import type { ManufacturerIntelligencePage } from '@/types/seo-intelligence'
 
-export function ManufacturerIntelligenceView({ page }: { page: ManufacturerIntelligencePage }) {
+export function ManufacturerIntelligenceView({
+  page,
+}: {
+  page: ManufacturerIntelligencePage
+}) {
   const catalogManufacturerId = page.manufacturerId?.trim()
 
   return (
@@ -33,7 +38,14 @@ export function ManufacturerIntelligenceView({ page }: { page: ManufacturerIntel
               </div>
 
               <div id="parts" className="seo-page-section seo-page-section-anchor">
-                <TopSearchedPartsTable slug={page.slug} items={page.mostSearchedParts} />
+                <TopSearchedPartsTable
+                  slug={page.slug}
+                  items={page.mostSearchedParts}
+                  title={SEO_PUBLIC_BOUNDARY.manufacturerRepresentativePartsTitle}
+                  showLiveBadge={false}
+                  gateTitle={SEO_PUBLIC_BOUNDARY.manufacturerRepresentativePartsGateTitle}
+                  gateDescription={SEO_PUBLIC_BOUNDARY.manufacturerRepresentativePartsGateDescription}
+                />
               </div>
 
               {catalogManufacturerId ? (

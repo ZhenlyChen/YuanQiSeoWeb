@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter_Tight, Mozilla_Headline } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations } from 'next-intl/server'
+import { HtmlLang } from '@/components/html-lang'
 import { routing, type AppLocale } from '@/i18n/routing'
 import {
   SEO_DEFAULT_OG_IMAGE,
@@ -10,20 +10,6 @@ import {
   SEO_THEME_COLOR,
 } from '@/lib/site'
 import { openGraphAlternateLocale, openGraphLocale } from '@/lib/localized-path'
-import '../globals.css'
-
-const interTight = Inter_Tight({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter-tight',
-})
-
-const mozillaHeadline = Mozilla_Headline({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-mozilla-headline',
-  weight: ['400', '600', '700'],
-})
 
 type LayoutProps = {
   children: React.ReactNode
@@ -83,10 +69,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const messages = await getMessages()
 
   return (
-    <html lang={locale} className={`${interTight.variable} ${mozillaHeadline.variable}`}>
-      <body style={{ fontFamily: 'var(--font-inter-tight), var(--pg-font-sans)' }}>
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <HtmlLang />
+      {children}
+    </NextIntlClientProvider>
   )
 }

@@ -7,19 +7,26 @@ import { buildPageMetadata } from '@/lib/seo-meta'
 
 type PageProps = {
   params: Promise<{ locale: string; l1: string }>
+  searchParams: Promise<{ preview?: string }>
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { locale: localeParam, l1 } = await params
   const locale = parseAppLocale(localeParam)
-  const { page } = await buildCategoryHubProps({ l1Slug: l1, locale })
+  const sp = await searchParams
+  const { page } = await buildCategoryHubProps({ l1Slug: l1, locale, previewToken: sp.preview })
   return buildPageMetadata(page.meta, locale)
 }
 
-export default async function CategoryL1HubPage({ params }: PageProps) {
+export default async function CategoryL1HubPage({ params, searchParams }: PageProps) {
   const { locale: localeParam, l1 } = await params
   const locale = parseAppLocale(localeParam)
-  const { page, itemList } = await buildCategoryHubProps({ l1Slug: l1, locale })
+  const sp = await searchParams
+  const { page, itemList } = await buildCategoryHubProps({
+    l1Slug: l1,
+    locale,
+    previewToken: sp.preview,
+  })
 
   return (
     <SeoPageShell

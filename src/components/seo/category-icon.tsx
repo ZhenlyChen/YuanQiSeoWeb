@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import type { CategoryIconId } from '@/types/seo-intelligence'
 
 const common = {
@@ -10,19 +13,7 @@ const common = {
   'aria-hidden': true,
 }
 
-export function CategoryIcon({
-  iconId,
-  iconUrl,
-  className,
-}: {
-  iconId: CategoryIconId
-  iconUrl?: string
-  className?: string
-}) {
-  if (iconUrl?.trim()) {
-    return <img src={iconUrl} alt="" className={className} aria-hidden="true" />
-  }
-
+function CategoryIconSvg({ iconId, className }: { iconId: CategoryIconId; className?: string }) {
   const svg = (() => {
     switch (iconId) {
       case 'mcu':
@@ -125,4 +116,33 @@ export function CategoryIcon({
   })()
 
   return <span className={className}>{svg}</span>
+}
+
+export function CategoryIcon({
+  iconId,
+  iconUrl,
+  className,
+}: {
+  iconId: CategoryIconId
+  iconUrl?: string
+  className?: string
+}) {
+  const [imageFailed, setImageFailed] = useState(false)
+  const resolvedIconUrl = iconUrl?.trim()
+
+  if (resolvedIconUrl && !imageFailed) {
+    const imageClassName = ['seo-category-icon-image', className].filter(Boolean).join(' ')
+    return (
+      <img
+        src={resolvedIconUrl}
+        alt=""
+        className={imageClassName}
+        aria-hidden="true"
+        draggable={false}
+        onError={() => setImageFailed(true)}
+      />
+    )
+  }
+
+  return <CategoryIconSvg iconId={iconId} className={className} />
 }

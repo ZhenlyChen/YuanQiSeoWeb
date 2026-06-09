@@ -3,7 +3,6 @@ import type { AppLocale } from '@/i18n/routing'
 import { localizePath } from '@/lib/localized-path'
 import {
   getHelpCenterPages,
-  MARKETING_ORIGIN,
   MARKETING_PAGES,
   MARKETING_TOOL_PAGES,
   signUpUrl,
@@ -83,9 +82,9 @@ export function buildNavLinks(
     ],
     pricing: { label: labels.pricing, href: MARKETING_PAGES.pricing },
     compare: [
-      { label: labels.vsOctopart, href: `${MARKETING_ORIGIN}/compare/vs-octopart` },
-      { label: labels.vsFindchips, href: `${MARKETING_ORIGIN}/compare/vs-findchips` },
-      { label: labels.vsAlldatasheet, href: `${MARKETING_ORIGIN}/compare/vs-alldatasheet` },
+      { label: labels.vsOctopart, href: localizePath('/partgenie-vs-octopart', locale) },
+      { label: labels.vsFindchips, href: localizePath('/partgenie-vs-findchips', locale) },
+      { label: labels.vsAlldatasheet, href: localizePath('/partgenie-vs-alldatasheet', locale) },
     ],
     resources: [
       { label: labels.categoryDirectory, href: localizePath('/categories', locale) },

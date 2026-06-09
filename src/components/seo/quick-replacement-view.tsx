@@ -42,7 +42,6 @@ export function QuickReplacementView({
         <AiSummaryHeading title="AI replacement insight" />
         <div className="seo-replacement-panels">
           <div className="seo-replacement-panel seo-replacement-panel--risks">
-            <h3 className="seo-replacement-panel__heading">Replacement risk analysis</h3>
             <div className="seo-risk-grid seo-risk-grid--flat">
               {riskAnalysis.map((risk) => (
                 <div key={risk.category} className="seo-risk-grid__item">
@@ -65,16 +64,11 @@ export function QuickReplacementView({
 
           <div className="seo-replacement-panel seo-replacement-panel--verdict">
             <h3 className="seo-subheading">Can it be replaced directly?</h3>
-            <p className="seo-replacement-panel__copy">
-              {verdict.canReplaceDirectly
-                ? 'Possible only after electrical and firmware validation.'
-                : 'Not recommended without a structured substitution review.'}
-            </p>
+            <p className="seo-replacement-panel__copy">{verdict.directReplacementAnswer}</p>
             <h3 className="seo-subheading">Best replacement path</h3>
             <p className="seo-replacement-panel__copy">{verdict.bestReplacementType}</p>
             <h3 className="seo-subheading">Main risk</h3>
             <p className="seo-replacement-panel__copy">{verdict.mainRisk}</p>
-            <p className="seo-replacement-panel__summary">{verdict.summary}</p>
           </div>
         </div>
       </UICard>

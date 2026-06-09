@@ -15,6 +15,7 @@ export function buildCategoryDirectoryItems(
     letter: directoryLetterForCategory(category.name),
     href: `/categories/${category.slug}`,
     iconId: category.iconId,
+    iconUrl: category.iconUrl,
     subcategoryCount: category.l2.length,
     partCount: category.partCount,
     published: category.published,

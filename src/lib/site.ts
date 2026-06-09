@@ -4,6 +4,10 @@ export const SEO_SITE_ORIGIN = 'https://partgenie.ai'
 export const SEO_DEFAULT_OG_IMAGE =
   'https://web-static.partgenie.ai/img/partgenie.png'
 
+/** Same placeholder as YuanQiWeb `AppConst.cdnBaseUrl + /img/default_component.png`. */
+export const WEBAPP_DEFAULT_COMPONENT_IMAGE =
+  'https://web-static.partgenie.ai/img/default_component.png'
+
 export const SEO_DEFAULT_TITLE = 'PartGenie | Electronic Component Specs & Sourcing'
 
 export const SEO_DEFAULT_DESCRIPTION =

@@ -12,7 +12,7 @@ import { SidebarRelatedLinks } from '@/components/seo/sidebar-related-links'
 import { SidebarSourcingHelp } from '@/components/seo/sidebar-sourcing-help'
 import { SidebarToolGrid, buildComponentToolGrid } from '@/components/seo/sidebar-tool-grid'
 import { TypewriterText } from '@/components/seo/typewriter-text'
-import { partImageForMpn } from '@/lib/part-images'
+import { resolvePartImageUrl } from '@/lib/part-images'
 import { signUpUrl } from '@/lib/tool-urls'
 import type { ComponentIntelligencePage } from '@/types/seo-intelligence'
 
@@ -26,11 +26,12 @@ export function ComponentIntelligenceView({
   const relatedLinks = [
     page.relatedManufacturer,
     page.relatedCategory,
-    { label: `${page.mpn} alternatives`, href: `/alternatives/${page.slug}` },
+    { label: `${page.mpn} alternatives`, href: `/alternatives/${page.mpn.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}` },
     ...page.compareLinks,
     ...page.relatedAnswers,
   ]
   const hasDatasheet = Boolean(page.media.datasheetUrls?.length)
+  const partImageUrl = resolvePartImageUrl(page.mpn, page.media.imgUrls)
   const sectionNavItems = buildComponentSectionNavItems({
     alternativesCount: page.alternatives.length,
     hasApplications: page.applications.goodFit.length > 0,
@@ -52,8 +53,8 @@ export function ComponentIntelligenceView({
                 <div className="seo-model-visual seo-model-visual--embedded">
                   <div className="seo-model-visual__image-wrap">
                     <img
-                      src={partImageForMpn(page.mpn)}
-                      alt={`${page.mpn} package`}
+                      src={partImageUrl}
+                      alt={`${page.mpn} product`}
                       className="seo-model-visual__image"
                     />
                   </div>

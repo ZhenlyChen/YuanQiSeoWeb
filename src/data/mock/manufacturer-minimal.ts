@@ -14,7 +14,10 @@ export function createMinimalManufacturerMock(input: {
     slug: input.slug,
     name: input.name,
     shortName: input.shortName,
-    meta: manufacturerSeoMetaSync({ name: input.name, slug: input.slug }),
+    meta: {
+      ...manufacturerSeoMetaSync({ name: input.name, slug: input.slug }),
+      h1SecondLine: input.subtitle,
+    },
     breadcrumbs: [
       { label: 'Manufacturers', href: '/manufacturers' },
       { label: input.name },

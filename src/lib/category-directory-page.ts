@@ -22,11 +22,7 @@ async function fetchCategoryDirectoryPage(locale?: AppLocale): Promise<CategoryD
 
   const apiPage = await fetchCategoryDirectory({ locale })
   if (!apiPage?.items?.length) {
-    if (process.env.NODE_ENV === 'production') {
-      notFound()
-    }
-    const page = getMockCategoryDirectoryPage()
-    return { ...page, meta }
+    notFound()
   }
 
   const items = normalizeCategoryDirectoryItems(apiPage.items)

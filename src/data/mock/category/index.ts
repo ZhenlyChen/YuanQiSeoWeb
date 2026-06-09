@@ -28,13 +28,32 @@ const FULL_L2_HUBS: Record<string, CategoryHubPage> = {
   'power-management/dc-dc-converters': mockCategoryHubDcDcConverters,
 }
 
+function slugToDisplayName(slug: string): string {
+  return slug
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
 function buildDegradedCategoryHubPage(l1Slug: string, l2Slug?: string): CategoryHubPage | null {
-  const l1 = getL1Category(l1Slug)
-  if (!l1) return null
+  const l1 = getL1Category(l1Slug) ?? {
+    slug: l1Slug,
+    name: slugToDisplayName(l1Slug),
+    description: `Browse ${slugToDisplayName(l1Slug)} components and selection intelligence.`,
+    iconId: 'passives' as const,
+    sortRank: 999,
+    partCount: 0,
+    published: true,
+    l2: getL2Categories(l1Slug),
+  }
 
   if (l2Slug) {
-    const l2 = getL2Category(l1Slug, l2Slug)
-    if (!l2) return null
+    const l2 = getL2Category(l1Slug, l2Slug) ?? {
+      slug: l2Slug,
+      name: slugToDisplayName(l2Slug),
+      shortDescription: `Components in the ${slugToDisplayName(l2Slug)} subcategory.`,
+    }
 
     return {
       pageType: 'category',

@@ -1,8 +1,8 @@
 'use client'
 
 import { Link } from '@/i18n/navigation'
-import { useEffect, useState } from 'react'
 import { ArrowUpRightIcon } from '@/components/seo/arrow-up-right-icon'
+import { ManufacturerLogoAvatar } from '@/components/seo/manufacturer-logo-avatar'
 import { resolveManufacturerLogo } from '@/lib/manufacturer-logos'
 import { manufacturerDirectorySearchActionUrl } from '@/lib/tool-urls'
 import type { ManufacturerDirectoryItem } from '@/types/seo-intelligence'
@@ -20,35 +20,13 @@ function ManufacturerDirectoryLogo({
   item: ManufacturerDirectoryItem
   logo?: string
 }) {
-  const [failed, setFailed] = useState(false)
-  const [loaded, setLoaded] = useState(false)
-
-  useEffect(() => {
-    setFailed(false)
-    setLoaded(false)
-  }, [logo])
-
-  const monogram = (
-    <span className="seo-mfg-dir-card__monogram">{monogramFor(item)}</span>
-  )
-
-  if (!logo || failed) {
-    return monogram
-  }
-
   return (
-    <>
-      {!loaded ? monogram : null}
-      <img
-        src={logo}
-        alt=""
-        className="seo-mfg-dir-card__logo"
-        hidden={!loaded}
-        referrerPolicy="no-referrer"
-        onLoad={() => setLoaded(true)}
-        onError={() => setFailed(true)}
-      />
-    </>
+    <ManufacturerLogoAvatar
+      logo={logo}
+      monogram={monogramFor(item)}
+      imgClassName="seo-mfg-dir-card__logo"
+      monogramClassName="seo-mfg-dir-card__monogram"
+    />
   )
 }
 

@@ -6,6 +6,7 @@ export type CategoryL2Definition = {
   name: string
   shortDescription: string
   iconId?: CategoryIconId
+  iconUrl?: string
 }
 
 export type CategoryL1Definition = {
@@ -13,6 +14,7 @@ export type CategoryL1Definition = {
   name: string
   description: string
   iconId: CategoryIconId
+  iconUrl?: string
   sortRank: number
   partCount: number
   published: boolean
@@ -98,6 +100,7 @@ const L1_TAXONOMY: CategoryL1Definition[] = [
     name: 'Analog & Power ICs',
     description: 'Signal chain, amplification, and mixed analog functions alongside power support circuits.',
     iconId: 'power-management',
+    iconUrl: '/category-icons/analog-power-ic.png',
     sortRank: 6,
     partCount: 4520,
     published: true,
@@ -107,6 +110,7 @@ const L1_TAXONOMY: CategoryL1Definition[] = [
         name: 'Operational Amplifiers',
         shortDescription: 'Precision and general-purpose op amps for conditioning paths.',
         iconId: 'data-converters',
+        iconUrl: '/category-icons/operational-amplifiers.png',
       },
       {
         slug: 'voltage-references',
@@ -247,6 +251,7 @@ export function buildSubcategoryCards(l1Slug: string, excludeL2Slug?: string): C
       description: item.shortDescription,
       href: categoryHubPath(l1Slug, item.slug),
       iconId: resolveSubcategoryIconId(l1Slug, item.slug),
+      iconUrl: item.iconUrl,
     }))
 }
 

@@ -9,6 +9,10 @@ function compatRiskCell(row: CompatibilityRow) {
   return row.topAlternative
 }
 
+function normalizeFactorKey(value: string) {
+  return value.trim().toLowerCase()
+}
+
 export function AlternativeComparisonMatrix({
   compatibilityRows,
   featureRows,
@@ -18,6 +22,14 @@ export function AlternativeComparisonMatrix({
   featureRows: FeatureCompareRow[]
   headers: { original: string; alt1: string; alt2: string; alt3: string }
 }) {
+  const compatByFactor = new Map(
+    compatibilityRows.map((row) => [normalizeFactorKey(row.factor), row]),
+  )
+  const featureKeys = new Set(featureRows.map((row) => normalizeFactorKey(row.feature)))
+  const extraCompatRows = compatibilityRows.filter(
+    (row) => !featureKeys.has(normalizeFactorKey(row.factor)),
+  )
+
   return (
     <section className="seo-section seo-section--flat seo-alt-comparison-matrix">
       <div className="seo-section-block">
@@ -39,19 +51,24 @@ export function AlternativeComparisonMatrix({
               </tr>
             </thead>
             <tbody>
-              {featureRows.map((row) => (
-                <tr key={`feature-${row.feature}`}>
-                  <th scope="row" className="seo-alt-comparison-matrix__sticky-col">
-                    {row.feature}
-                  </th>
-                  <td>{row.original}</td>
-                  <td>{row.alt1}</td>
-                  <td>{row.alt2}</td>
-                  <td>{row.alt3}</td>
-                  <td className="seo-alt-comparison-matrix__compat-col">—</td>
-                </tr>
-              ))}
-              {compatibilityRows.map((row) => (
+              {featureRows.map((row) => {
+                const compat = compatByFactor.get(normalizeFactorKey(row.feature))
+                return (
+                  <tr key={`feature-${row.feature}`}>
+                    <th scope="row" className="seo-alt-comparison-matrix__sticky-col">
+                      {row.feature}
+                    </th>
+                    <td>{row.original}</td>
+                    <td>{row.alt1}</td>
+                    <td>{row.alt2}</td>
+                    <td>{row.alt3}</td>
+                    <td className="seo-alt-comparison-matrix__compat-col">
+                      {compat ? compatRiskCell(compat) : '—'}
+                    </td>
+                  </tr>
+                )
+              })}
+              {extraCompatRows.map((row) => (
                 <tr key={`compat-${row.factor}`}>
                   <th scope="row" className="seo-alt-comparison-matrix__sticky-col">
                     {row.factor}

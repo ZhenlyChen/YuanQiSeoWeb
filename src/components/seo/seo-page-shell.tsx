@@ -17,6 +17,7 @@ export function SeoPageShell({
   banner,
   itemList,
   hideBreadcrumbs = false,
+  hideFloatingCta = false,
   locale = 'en',
   product,
   includeFaqJsonLd = true,
@@ -28,6 +29,7 @@ export function SeoPageShell({
   pageContext?: SeoPageContext
   banner?: React.ReactNode
   hideBreadcrumbs?: boolean
+  hideFloatingCta?: boolean
   itemList?: { name: string; items: { name: string; url: string }[] }
   locale?: AppLocale
   product?: ProductJsonLdInput
@@ -43,7 +45,9 @@ export function SeoPageShell({
           {hideBreadcrumbs ? null : <Breadcrumbs items={breadcrumbs} />}
           {children}
         </div>
-        {pageContext?.slug !== 'manufacturer-directory' && pageContext?.slug !== 'category-directory' ? (
+        {!hideFloatingCta &&
+        pageContext?.slug !== 'manufacturer-directory' &&
+        pageContext?.slug !== 'category-directory' ? (
           <FloatingCtaDock pageContext={pageContext} />
         ) : null}
       </main>

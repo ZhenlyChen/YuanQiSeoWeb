@@ -1,20 +1,19 @@
 import { notFound } from 'next/navigation'
 import { getMockCategoryHubPage } from '@/data/mock/category'
-import { getL1Category, getL2Category } from '@/lib/category-taxonomy'
 import type { AppLocale } from '@/i18n/routing'
+import { enrichCategoryHubSubcategories } from '@/lib/category-hub-subcategories'
+import { enrichCategoryMostSearchedParts } from '@/lib/category-most-searched-fallback'
+import { useMockCategoryHub } from '@/lib/mock-seo-pages'
 import { categoryHubSeoMeta } from '@/lib/seo-meta'
 import { fetchCategoryHub } from '@/lib/seo-api'
 import { SEO_SITE_ORIGIN } from '@/lib/site'
 import type { CategoryHubPage } from '@/types/seo-intelligence'
 
-function useMockCategoryHub(): boolean {
-  return process.env.USE_MOCK_CATEGORY_HUB !== 'false'
-}
-
 async function fetchCategoryHubPage(
   l1Slug: string,
   l2Slug?: string,
   locale?: AppLocale,
+  previewToken?: string,
 ): Promise<CategoryHubPage | null> {
   if (useMockCategoryHub()) {
     const page = getMockCategoryHubPage(l1Slug, l2Slug)
@@ -29,27 +28,44 @@ async function fetchCategoryHubPage(
     }
   }
 
-  const apiPage = await fetchCategoryHub({ l1Slug, l2Slug, locale })
+  const apiPage = await fetchCategoryHub({ l1Slug, l2Slug, locale, previewToken })
   if (!apiPage) {
-    const page = getMockCategoryHubPage(l1Slug, l2Slug)
-    if (!page) return null
-    return {
-      ...page,
-      meta: await categoryHubSeoMeta({
-        name: page.name,
-        l1Slug: page.l1Slug,
-        l2Slug: page.l2Slug,
-      }),
-    }
+    return null
   }
+
+  const canonicalPath = l2Slug
+    ? `/categories/${l1Slug}/${l2Slug}`
+    : `/categories/${l1Slug}`
+  const seoTitle = typeof (apiPage as { seoTitle?: unknown }).seoTitle === 'string'
+    ? String((apiPage as { seoTitle?: string }).seoTitle)
+    : ''
+  const seoDescription = typeof (apiPage as { seoDescription?: unknown }).seoDescription === 'string'
+    ? String((apiPage as { seoDescription?: string }).seoDescription)
+    : ''
+  const robots = typeof (apiPage as { robots?: unknown }).robots === 'string'
+    ? String((apiPage as { robots?: string }).robots)
+    : undefined
 
   return {
     ...apiPage,
-    meta: await categoryHubSeoMeta({
-      name: apiPage.name,
-      l1Slug: apiPage.l1Slug,
-      l2Slug: apiPage.l2Slug,
-    }),
+    meta: seoTitle
+      ? {
+          title: seoTitle,
+          description: seoDescription || (await categoryHubSeoMeta({
+            name: apiPage.name,
+            l1Slug: apiPage.l1Slug,
+            l2Slug: apiPage.l2Slug,
+          })).description,
+          h1: apiPage.name,
+          canonicalPath,
+          keywords: [],
+          robots,
+        }
+      : await categoryHubSeoMeta({
+          name: apiPage.name,
+          l1Slug: apiPage.l1Slug,
+          l2Slug: apiPage.l2Slug,
+        }),
   }
 }
 
@@ -57,16 +73,21 @@ export async function buildCategoryHubProps(params: {
   l1Slug: string
   l2Slug?: string
   locale?: AppLocale
+  previewToken?: string
 }) {
-  const l1 = getL1Category(params.l1Slug)
-  if (!l1) notFound()
+  let page = await fetchCategoryHubPage(
+    params.l1Slug,
+    params.l2Slug,
+    params.locale,
+    params.previewToken,
+  )
+  if (!page) notFound()
 
-  if (params.l2Slug && !getL2Category(params.l1Slug, params.l2Slug)) {
-    notFound()
+  if (!params.l2Slug) {
+    page = await enrichCategoryHubSubcategories(page, params.locale)
   }
 
-  const page = await fetchCategoryHubPage(params.l1Slug, params.l2Slug, params.locale)
-  if (!page) notFound()
+  page = await enrichCategoryMostSearchedParts(page, params.locale ?? 'en')
 
   const itemListItems = page.mostSearchedParts.slice(0, 12).map((item) => ({
     name: item.mpn,

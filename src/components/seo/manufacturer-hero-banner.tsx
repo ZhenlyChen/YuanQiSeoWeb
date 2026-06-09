@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
+import { ManufacturerLogoAvatar } from '@/components/seo/manufacturer-logo-avatar'
 import { resolveManufacturerLogo } from '@/lib/manufacturer-logos'
 import type { BreadcrumbItem } from '@/types/seo-intelligence'
 
@@ -26,13 +27,13 @@ export function ManufacturerHeroBanner({
       <div className="seo-mfg-hero__layout">
         <div className="seo-mfg-hero__logo-slot">
           <div className="seo-mfg-hero__logo-card">
-            {resolvedLogo ? (
-              <img src={resolvedLogo} alt={`${name} logo`} className="seo-mfg-hero__logo" />
-            ) : (
-              <span className="seo-mfg-hero__monogram" aria-hidden="true">
-                {monogram}
-              </span>
-            )}
+            <ManufacturerLogoAvatar
+              logo={resolvedLogo}
+              monogram={monogram}
+              alt={`${name} logo`}
+              imgClassName="seo-mfg-hero__logo"
+              monogramClassName="seo-mfg-hero__monogram"
+            />
           </div>
         </div>
         <div className="seo-mfg-hero__copy">

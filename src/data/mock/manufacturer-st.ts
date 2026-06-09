@@ -9,7 +9,18 @@ export const mockManufacturerSt: ManufacturerIntelligencePage = {
   manufacturerId: 'MFG_003343',
   representativeMpn: 'STM32F103C8T6',
   logoUrl: '/manufacturers/stmicroelectronics.svg',
-  meta: manufacturerSeoMetaSync({ name: 'STMicroelectronics', slug: 'stmicroelectronics' }),
+  meta: {
+    ...manufacturerSeoMetaSync({ name: 'STMicroelectronics', slug: 'stmicroelectronics' }),
+    h1SecondLine: 'MCU, Power discrete, MEMS sensors',
+    keywords: [
+      'STMicroelectronics',
+      'STMicroelectronics components',
+      'STM32',
+      'MEMS sensors',
+      'automotive MCUs',
+    ],
+  },
+  expertiseAreas: ['MCU', 'Power discrete', 'MEMS sensors', 'Automotive IC'],
   breadcrumbs: [
     { label: 'Manufacturers', href: '/manufacturers' },
     { label: 'STMicroelectronics' },

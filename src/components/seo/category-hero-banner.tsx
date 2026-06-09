@@ -1,20 +1,27 @@
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { CategoryIcon } from '@/components/seo/category-icon'
 import { CategoryQueryCarousel } from '@/components/seo/category-query-carousel'
+import { resolveCategoryIconUrl } from '@/lib/category-icons'
 import { getL1Category } from '@/lib/category-taxonomy'
 import type { BreadcrumbItem, CategoryHubPage, CategoryIconId } from '@/types/seo-intelligence'
 
 export function CategoryHeroBanner({ page }: { page: CategoryHubPage }) {
   const l1 = getL1Category(page.l1Slug)
-  const iconId: CategoryIconId = l1?.iconId ?? 'mcu'
+  const iconId: CategoryIconId = l1?.iconId ?? 'passives'
+  const iconUrl = resolveCategoryIconUrl(page.l1Slug, l1?.iconUrl)
 
   return (
     <section className="seo-cat-hero" aria-label={`${page.name} overview`}>
       <div className="seo-cat-hero__split" aria-hidden="true" />
       <div className="seo-cat-hero__layout">
         <div className="seo-cat-hero__icon-slot">
-          <div className="seo-cat-hero__icon-card">
-            <CategoryIcon iconId={iconId} className="seo-cat-hero__icon" />
+          <div
+            className={[
+              'seo-cat-hero__icon-card',
+              iconUrl ? 'seo-cat-hero__icon-card--image' : '',
+            ].filter(Boolean).join(' ')}
+          >
+            <CategoryIcon iconId={iconId} iconUrl={iconUrl} className="seo-cat-hero__icon" />
           </div>
         </div>
         <div className="seo-cat-hero__copy">

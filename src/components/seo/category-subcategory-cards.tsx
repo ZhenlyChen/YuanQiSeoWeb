@@ -21,8 +21,18 @@ export function CategorySubcategoryCards({
             href={card.href}
             className="seo-cat-subcat-card"
           >
-            <span className="seo-cat-subcat-card__icon" aria-hidden="true">
-              <CategoryIcon iconId={card.iconId} className="seo-cat-subcat-card__category-icon" />
+            <span
+              className={[
+                'seo-cat-subcat-card__icon',
+                card.iconUrl ? 'seo-cat-subcat-card__icon--image' : '',
+              ].filter(Boolean).join(' ')}
+              aria-hidden="true"
+            >
+              <CategoryIcon
+                iconId={card.iconId}
+                iconUrl={card.iconUrl}
+                className="seo-cat-subcat-card__category-icon"
+              />
             </span>
             <span className="seo-cat-subcat-card__title">{card.name}</span>
             <span className="seo-cat-subcat-card__detail">{card.description}</span>

@@ -1,4 +1,5 @@
 import type { AppLocale } from '@/i18n/routing'
+import { competitorComparePages } from '@/data/competitor-comparisons'
 import { getL1Categories } from '@/lib/category-taxonomy'
 import { localizePath } from '@/lib/localized-path'
 import type { PublicSitemapEntry } from '@/lib/seo-api'
@@ -16,12 +17,12 @@ export function localizedSitemapUrl(path: string, locale: AppLocale): string {
 export function buildStaticHubPaths(): string[] {
   const paths = new Set<string>(['/categories', '/manufacturers'])
 
+  for (const page of competitorComparePages) {
+    paths.add(`/${page.slug}`)
+  }
+
   for (const l1 of getL1Categories()) {
     if (!l1.published) continue
-    paths.add(`/categories/${l1.slug}`)
-    for (const l2 of l1.l2) {
-      paths.add(`/categories/${l1.slug}/${l2.slug}`)
-    }
     paths.add(`/categories/${l1.slug}/finder`)
   }
 
@@ -68,7 +69,7 @@ export function partSitemapEntries(
 ): { url: string; lastModified?: Date }[] {
   return filterSitemapEntries(entries, {
     locale,
-    pageTypes: ['part', 'manufacturer', 'alternative', 'compare', 'query_answer'],
+    pageTypes: ['part', 'manufacturer', 'category', 'alternative', 'compare', 'query_answer'],
   }).map((entry) => ({
     url: localizedSitemapUrl(entry.canonicalPath, locale),
   }))

@@ -18,6 +18,11 @@ export function buildCategoryTopPartsGateStats(hiddenPartsCount: number): Altern
   return [{ value: moreParts, label: 'Trending parts in this category' }, ...GATE_STATS_TAIL]
 }
 
+/** First stat for gated tables outside the alternatives shortlist (catalog, representative parts, etc.). */
+export function buildGeneralGateStats(): AlternativesGateStat[] {
+  return [{ value: '100%', label: 'Verified specs and datasheets' }, ...GATE_STATS_TAIL]
+}
+
 export const SEO_PUBLIC_BOUNDARY = {
   gateModalTitle: 'Unlock the full alternative shortlist',
   gateModalDescription:
@@ -41,6 +46,10 @@ export const SEO_PUBLIC_BOUNDARY = {
   catalogGateDescription:
     'Sign in to unlock all product categories, filters, and rankings in PartGenie.',
   catalogGateCta: 'Start now for free',
+  manufacturerRepresentativePartsTitle: 'Representative parts',
+  manufacturerRepresentativePartsGateTitle: 'See the full representative parts list',
+  manufacturerRepresentativePartsGateDescription:
+    'Sign in to browse the complete manufacturer catalog with filters and rankings in PartGenie.',
   specsFooter: (mpn: string) =>
     `Full datasheet fields, test conditions, and source confidence for ${mpn} are available in PartGenie after sign-in.`,
   specsFooterCta: 'View full analysis',

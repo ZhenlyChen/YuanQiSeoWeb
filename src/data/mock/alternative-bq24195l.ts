@@ -38,6 +38,8 @@ export const mockAlternativeBq24195l: AlternativeIntelligencePage = {
     'The best alternative to BQ24195L depends on whether you need an exact replacement, pin-compatible option, or functional substitute. For existing PCB designs, prioritize package and pinout compatibility; for redesigns, compare charge profile, power-path behavior, thermal limits, and sourcing availability.',
   replacementVerdict: {
     canReplaceDirectly: false,
+    directReplacementAnswer:
+      'Direct replacement is not recommended without validating charge profile, OTG behavior, and I2C register compatibility.',
     bestReplacementType: 'Functional alternative with charge-profile verification',
     mainRisk: 'Charge algorithm, JEITA paths, and I2C register map differ across vendors',
     summary:

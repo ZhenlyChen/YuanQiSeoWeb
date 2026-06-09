@@ -25,7 +25,7 @@
   "subscribing": "Wird abonniert…",
   "subscriptionFailed": "Abonnement fehlgeschlagen. Bitte versuchen Sie es später erneut.",
   "subscriptionSuccess": "Vielen Dank! Ihre Anmeldung wurde empfangen!",
-  "newsletterDisclaimer": "Mit dem Abonnement stimmen Sie unserer {privacyLink} zu und willigen ein, Updates von unserem Unternehmen zu erhalten.",
+  "newsletterDisclaimer": "Mit dem Abonnement stimmen Sie unserer <privacyLink>Datenschutzrichtlinie</privacyLink> zu und willigen ein, Updates von unserem Unternehmen zu erhalten.",
   "privacyPolicy": "Datenschutzrichtlinie",
   "copyright": "© 2026 PartGenie. Alle Rechte vorbehalten.",
   "termsOfService": "Nutzungsbedingungen",

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRightIcon } from '@/components/seo/arrow-up-right-icon'
+import { ManufacturerLogoAvatar } from '@/components/seo/manufacturer-logo-avatar'
 import { resolveManufacturerLogo } from '@/lib/manufacturer-logos'
 import type { ManufacturerPeekLink } from '@/types/seo-intelligence'
 
@@ -39,11 +40,12 @@ export function ComparableManufacturersList({
             <li key={`${item.href}-${item.label}`}>
               <Link href={item.href} className="seo-mfr-peek__row">
                 <span className="seo-mfr-peek__avatar" aria-hidden="true">
-                  {logo ? (
-                    <img src={logo} alt="" className="seo-mfr-peek__logo" />
-                  ) : (
-                    <span className="seo-mfr-peek__monogram">{monogramFor(item)}</span>
-                  )}
+                  <ManufacturerLogoAvatar
+                    logo={logo}
+                    monogram={monogramFor(item)}
+                    imgClassName="seo-mfr-peek__logo"
+                    monogramClassName="seo-mfr-peek__monogram"
+                  />
                 </span>
                 <span className="seo-mfr-peek__copy">
                   <span className="seo-mfr-peek__name">{item.label}</span>

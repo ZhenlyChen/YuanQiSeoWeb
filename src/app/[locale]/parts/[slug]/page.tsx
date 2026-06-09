@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server'
 import { ComponentIntelligenceView } from '@/components/seo/component-intelligence-view'
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { getMockComponentPage } from '@/data/mock'
-import { isMockComponentSlug } from '@/lib/mock-registry'
+import { isMockComponentSlug } from '@/lib/mock-seo-pages'
 import {
   mapPublicSeoPageToComponentPage,
   productJsonLdFromPublicPage,

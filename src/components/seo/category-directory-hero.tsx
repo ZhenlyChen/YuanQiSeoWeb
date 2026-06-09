@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { CategoryIcon } from '@/components/seo/category-icon'
+import { Link } from '@/i18n/navigation'
 import { categoryDirectorySearchActionUrl } from '@/lib/tool-urls'
 import type { CategoryDirectoryItem } from '@/types/seo-intelligence'
 
@@ -28,13 +29,21 @@ export function CategoryDirectoryHero({
       </div>
 
       {marqueeItems.length > 0 ? (
-        <div className="seo-cat-dir-hero__marquee" aria-hidden="true">
+        <div className="seo-cat-dir-hero__marquee" aria-label={t('directory.heroMarqueeLabel')}>
           <div className="seo-cat-dir-hero__marquee-track">
             {[...marqueeItems, ...marqueeItems].map((item, index) => (
-              <span key={`${item.slug}-${index}`} className="seo-cat-dir-hero__marquee-chip">
-                <CategoryIcon iconId={item.iconId} className="seo-cat-dir-hero__marquee-icon" />
+              <Link
+                key={`${item.slug}-${index}`}
+                href={item.href}
+                className="seo-cat-dir-hero__marquee-chip"
+              >
+                <CategoryIcon
+                  iconId={item.iconId}
+                  iconUrl={item.iconUrl}
+                  className="seo-cat-dir-hero__marquee-icon"
+                />
                 {item.name}
-              </span>
+              </Link>
             ))}
           </div>
         </div>

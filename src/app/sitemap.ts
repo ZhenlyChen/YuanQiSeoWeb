@@ -6,8 +6,8 @@ export async function generateSitemaps() {
   return [{ id: 0 }, { id: 1 }, { id: 2 }]
 }
 
-export default async function sitemap(props: { id: Promise<number> }): Promise<MetadataRoute.Sitemap> {
-  const id = await props.id
+export default async function sitemap(props: { id: Promise<number | string> }): Promise<MetadataRoute.Sitemap> {
+  const id = Number(await props.id)
   const now = new Date()
 
   if (id === 0) {

@@ -334,6 +334,31 @@ export function compareSeoMetaSync(input: {
   }
 }
 
+export function competitorCompareSeoMetaSync(input: {
+  competitor: string
+  slug: string
+  title?: string
+  description?: string
+}): SeoMeta {
+  const { competitor, slug } = input
+  return {
+    title: input.title ?? `PartGenie vs ${competitor}: AI Component Search Comparison | PartGenie`,
+    description:
+      input.description ??
+      `Compare PartGenie and ${competitor} for electronics component search, BOM review, datasheet analysis, alternatives, and sourcing workflows.`,
+    h1: `PartGenie vs ${competitor}`,
+    canonicalPath: `/${slug}`,
+    keywords: [
+      `PartGenie vs ${competitor}`,
+      `${competitor} alternative`,
+      'AI component search',
+      'electronics BOM analysis',
+      'datasheet AI',
+      'component alternatives',
+    ],
+  }
+}
+
 export function manufacturerSeoMetaSync(input: { name: string; slug: string }): SeoMeta {
   const { name, slug } = input
   return {

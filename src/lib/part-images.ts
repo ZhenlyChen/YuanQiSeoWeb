@@ -1,16 +1,24 @@
-const DEFAULT_PART_IMAGE = '/images/parts/chip-main.png'
-const ALT_PART_IMAGE = '/images/parts/chip-alt-overlay.png'
+import { WEBAPP_DEFAULT_COMPONENT_IMAGE } from '@/lib/site'
 
-export function partImageForMpn(mpn: string): string {
-  const normalized = mpn.toUpperCase()
-
-  if (normalized.includes('GD32') || normalized.includes('CH32')) {
-    return ALT_PART_IMAGE
+function normalizeImageUrl(value: string): string | undefined {
+  const trimmed = value.trim()
+  if (!trimmed) return undefined
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')) {
+    return trimmed
   }
+  return undefined
+}
 
-  if (normalized.includes('STM32') || normalized.includes('BQ') || normalized.includes('STPS')) {
-    return DEFAULT_PART_IMAGE
+/** Default part placeholder — matches YuanQiWeb component cards / drawer. */
+export function partImageForMpn(_mpn: string): string {
+  return WEBAPP_DEFAULT_COMPONENT_IMAGE
+}
+
+/** Prefer catalog product image URLs from ES; fall back to webapp default component image. */
+export function resolvePartImageUrl(_mpn: string, imgUrls?: string[]): string {
+  for (const raw of imgUrls ?? []) {
+    const url = normalizeImageUrl(raw)
+    if (url) return url
   }
-
-  return DEFAULT_PART_IMAGE
+  return WEBAPP_DEFAULT_COMPONENT_IMAGE
 }

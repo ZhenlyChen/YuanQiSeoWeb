@@ -1,7 +1,8 @@
 import { directoryLetterForName } from '@/lib/manufacturer-directory'
 import { getL1Categories } from '@/lib/category-taxonomy'
-import type { CategoryDirectoryItem } from '@/types/seo-intelligence'
+import { resolveCategoryIconUrl } from '@/lib/category-icons'
 import type { CategoryDirectoryApiPage } from '@/lib/seo-api'
+import type { CategoryDirectoryItem, CategoryIconId } from '@/types/seo-intelligence'
 
 const taxonomyBySlug = new Map(getL1Categories().map((category) => [category.slug, category]))
 
@@ -19,11 +20,12 @@ export function normalizeCategoryDirectoryItems(
       description: item.description || taxonomy?.description || '',
       letter: item.letter || directoryLetterForName(item.name || taxonomy?.name || item.slug),
       href,
-      iconId: item.iconId || taxonomy?.iconId || 'passives',
-      subcategoryCount: item.subcategoryCount || taxonomy?.l2.length || 0,
-      partCount: Number(item.partCount) || taxonomy?.partCount || 0,
-      published: item.published ?? taxonomy?.published ?? true,
-      sortRank: item.sortRank ?? taxonomy?.sortRank,
+      iconId: (item.iconId || taxonomy?.iconId || 'passives') as CategoryIconId,
+      iconUrl: resolveCategoryIconUrl(item.slug, item.iconUrl || taxonomy?.iconUrl),
+      subcategoryCount: item.subcategoryCount ?? 0,
+      partCount: Number(item.partCount) || 0,
+      published: item.published ?? true,
+      sortRank: item.sortRank,
     }
   })
 }

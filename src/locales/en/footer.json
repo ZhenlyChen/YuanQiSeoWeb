@@ -25,7 +25,7 @@
   "subscribing": "Subscribing…",
   "subscriptionFailed": "Subscription failed. Please try again later.",
   "subscriptionSuccess": "Thank you! Your submission has been received!",
-  "newsletterDisclaimer": "By subscribing you agree to with our {privacyLink} and provide consent to receive updates from our company.",
+  "newsletterDisclaimer": "By subscribing you agree to our <privacyLink>Privacy Policy</privacyLink> and provide consent to receive updates from our company.",
   "privacyPolicy": "Privacy Policy",
   "copyright": "© 2026 PartGenie. All rights reserved.",
   "termsOfService": "Terms of Service",

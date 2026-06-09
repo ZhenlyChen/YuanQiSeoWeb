@@ -1,14 +1,22 @@
 import type { AppLocale } from '@/i18n/routing'
 import { normalizeBreadcrumbItems } from '@/lib/breadcrumb-items'
-import { componentSeoMetaSync } from '@/lib/seo-meta'
+import { componentSeoMetaSync, alternativeSeoMetaSync } from '@/lib/seo-meta'
+import { buildOverviewTagsFromEsComponent } from '@/lib/overview-tags-from-component'
 import type { PublicSeoPage } from '@/lib/seo-api'
 import type { ProductJsonLdInput } from '@/lib/json-ld'
+import { resolvePartImageUrl } from '@/lib/part-images'
+import type { ApplicationTagInput } from '@/lib/application-tags'
 import type {
-  ApplicationTagInput,
+  AlternativeIntelligencePage,
+  AlternativeItem,
   BreadcrumbItem,
   CommonPitfall,
   ComponentIntelligencePage,
+  DecisionLabel,
   FaqItem,
+  ReplacementDifficulty,
+  ReplacementVerdict,
+  RiskAnalysisItem,
 } from '@/types/seo-intelligence'
 
 function stringField(source: Record<string, unknown> | undefined, key: string): string {
@@ -104,6 +112,43 @@ function mapMechanical(component: Record<string, unknown>) {
   }
 }
 
+function mapSubstituteRows(raw?: Array<Record<string, unknown>>): AlternativeItem[] {
+  if (!raw?.length) return []
+  const items: AlternativeItem[] = []
+  for (const row of raw) {
+    const mpn = stringField(row, 'mpn') || stringField(row, 'candidate_code')
+    if (!mpn) continue
+    const manufacturer = stringField(row, 'manufacturer') || 'Manufacturer'
+    const matchType = (stringField(row, 'matchType') || 'functional') as DecisionLabel
+    const reason = stringField(row, 'reason') || stringField(row, 'displayLabel')
+    const href = stringField(row, 'href') || `/parts/${mpn.toLowerCase()}`
+    const compareHref = stringField(row, 'compareHref') || undefined
+    const riskLevel = (stringField(row, 'riskLevel') || 'medium') as ReplacementDifficulty
+    items.push({
+      mpn,
+      manufacturer,
+      matchType,
+      reason,
+      riskLevel,
+      href,
+      compareHref,
+    })
+  }
+  return items
+}
+
+function countSubstituteTypes(items: AlternativeItem[]) {
+  let dropInCount = 0
+  let functionalCount = 0
+  let alternateCount = 0
+  for (const item of items) {
+    if (item.matchType === 'pin-compatible' || item.matchType === 'exact') dropInCount += 1
+    else if (item.matchType === 'functional') functionalCount += 1
+    else alternateCount += 1
+  }
+  return { dropInCount, functionalCount, alternateCount }
+}
+
 function mapDatasheetUrls(component: Record<string, unknown>): string[] {
   const raw = component.datasheet_urls
   if (Array.isArray(raw)) {
@@ -119,7 +164,11 @@ function mapImageUrls(component: Record<string, unknown>): string[] {
     return raw.filter((item): item is string => typeof item === 'string' && Boolean(item.trim()))
   }
   const single = stringField(component, 'img_urls')
-  return single ? [single] : []
+  if (!single) return []
+  return single
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
 }
 
 export function mapPublicSeoPageToComponentPage(
@@ -134,6 +183,8 @@ export function mapPublicSeoPageToComponentPage(
   const packageName = stringField(component, 'package')
   const summary = apiPage.content.shortAnswerText || stringField(component, 'summary') || apiPage.description
   const qa = mapQaBlocks(apiPage.content.qaBlocks)
+  const substituteItems = mapSubstituteRows(apiPage.content.substitutes)
+  const substituteCounts = countSubstituteTypes(substituteItems)
   const meta = componentSeoMetaSync({
     mpn: code,
     manufacturer,
@@ -177,7 +228,10 @@ export function mapPublicSeoPageToComponentPage(
     categoryLabel,
     categorySlug,
     package: packageName,
-    overviewTags: apiPage.content.overviewTags,
+    overviewTags:
+      apiPage.content.overviewTags?.length
+        ? apiPage.content.overviewTags
+        : buildOverviewTagsFromEsComponent(component),
     meta,
     subtitle: {
       manufacturer,
@@ -209,7 +263,7 @@ export function mapPublicSeoPageToComponentPage(
     applications: mapApplications(apiPage.content.applications),
     designConsiderations: apiPage.content.designConsiderations ?? [],
     commonPitfalls: mapCommonPitfalls(apiPage.content.commonPitfalls),
-    alternatives: [],
+    alternatives: substituteItems,
     compareLinks: (apiPage.links.compare ?? []).map((link) => ({
       label: link.label,
       href: link.href,
@@ -264,11 +318,121 @@ export function mapPublicSeoPageToComponentPage(
       imgUrls,
     },
     substituteSummary: {
-      dropInCount: 0,
-      functionalCount: 0,
-      alternateCount: apiPage.content.substitutes?.length ?? 0,
-      requiresValidation: apiPage.content.degraded || apiPage.content.signals?.hasSubstitute !== false,
+      dropInCount: substituteCounts.dropInCount,
+      functionalCount: substituteCounts.functionalCount,
+      alternateCount: substituteCounts.alternateCount,
+      requiresValidation: apiPage.content.degraded || substituteItems.length === 0,
     },
+  }
+}
+
+export function mapPublicSeoPageToAlternativePage(
+  apiPage: PublicSeoPage,
+  locale: AppLocale,
+): AlternativeIntelligencePage {
+  const component = apiPage.component ?? {}
+  const signals = apiPage.content.signals ?? {}
+  const code = stringField(component, 'code') || stringField(signals as Record<string, unknown>, 'targetEntityKey').split('|')[0] || apiPage.slug.toUpperCase()
+  const { name: manufacturer } = manufacturerFromComponent(component)
+  const categoryLabel = stringField(component, 'category_str') || stringField(component, 'category') || 'Component'
+  const packageName = stringField(component, 'package')
+  const substitutes = mapSubstituteRows(apiPage.content.substitutes)
+  const insight = apiPage.content.aiReplacementInsight ?? {}
+  const verdictRaw = apiPage.content.replacementVerdict ?? {}
+  const replacementVerdict: ReplacementVerdict = {
+    canReplaceDirectly: Boolean(verdictRaw.canReplaceDirectly),
+    directReplacementAnswer:
+      stringField(verdictRaw as Record<string, unknown>, 'directReplacementAnswer') ||
+      stringField(insight as Record<string, unknown>, 'direct_replacement_answer') ||
+      'Treat substitution as an engineering review, not a simple MPN swap.',
+    bestReplacementType:
+      stringField(verdictRaw as Record<string, unknown>, 'bestReplacementType') ||
+      stringField(insight as Record<string, unknown>, 'best_replacement_path') ||
+      'Review ranked alternatives before substitution.',
+    mainRisk:
+      stringField(verdictRaw as Record<string, unknown>, 'mainRisk') ||
+      stringField(insight as Record<string, unknown>, 'main_risk') ||
+      'Validate package, pinout, and key electrical limits before substitution.',
+    summary:
+      stringField(verdictRaw as Record<string, unknown>, 'summary') ||
+      apiPage.content.heroSummary ||
+      apiPage.content.shortAnswerText ||
+      '',
+  }
+  const metaBase = alternativeSeoMetaSync({
+    mpn: code,
+    manufacturer,
+    category: categoryLabel,
+    slug: apiPage.slug,
+  })
+  const meta = {
+    ...metaBase,
+    title: apiPage.title || metaBase.title,
+    description: apiPage.description || metaBase.description,
+    canonicalPath: apiPage.canonicalPath || metaBase.canonicalPath,
+    robots: apiPage.robots || metaBase.robots,
+  }
+  const originalPartSlug = stringField(signals as Record<string, unknown>, 'originalPartSlug') || apiPage.slug
+  const riskAnalysis: RiskAnalysisItem[] = (apiPage.content.riskAnalysis ?? []).map((row) => ({
+    category: stringField(row, 'category') || 'Risk',
+    level: (stringField(row, 'level') || 'medium') as ReplacementDifficulty,
+    detail: stringField(row, 'detail'),
+  }))
+  const compatibilityMatrix = (apiPage.content.compatibilityMatrix ?? []).map((row) => ({
+    factor: stringField(row, 'factor'),
+    original: stringField(row, 'original'),
+    topAlternative: stringField(row, 'topAlternative'),
+    notes: stringField(row, 'notes') || undefined,
+  }))
+  const featureComparison = (apiPage.content.featureComparison ?? []).map((row) => ({
+    feature: stringField(row, 'feature'),
+    original: stringField(row, 'original'),
+    alt1: stringField(row, 'alt1'),
+    alt2: stringField(row, 'alt2'),
+    alt3: stringField(row, 'alt3'),
+  }))
+  const headers = apiPage.content.featureComparisonHeaders ?? {}
+  const top = substitutes.slice(0, 4)
+  return {
+    pageType: 'alternative',
+    slug: apiPage.slug,
+    mpn: code,
+    manufacturer,
+    category: categoryLabel,
+    overviewTags: buildOverviewTagsFromEsComponent(component),
+    subtitle: {
+      manufacturer,
+      category: categoryLabel,
+      package: packageName,
+    },
+    meta,
+    breadcrumbs: mapBreadcrumbs(apiPage.links),
+    shortAnswer: apiPage.content.shortAnswerText || apiPage.content.heroSummary || apiPage.description,
+    replacementVerdict,
+    alternatives: substitutes,
+    compatibilityMatrix,
+    riskAnalysis,
+    featureComparison,
+    featureComparisonHeaders: {
+      original: headers.original || code,
+      alt1: headers.alt1 || top[0]?.mpn || 'Alt 1',
+      alt2: headers.alt2 || top[1]?.mpn || 'Alt 2',
+      alt3: headers.alt3 || top[2]?.mpn || 'Alt 3',
+    },
+    applicationFit: (apiPage.content.applicationFit ?? []).map((row) => ({
+      scenario: stringField(row, 'scenario'),
+      guidance: stringField(row, 'guidance'),
+    })),
+    regionalNotes: apiPage.content.regionalNotes ?? [],
+    compareLinks: (apiPage.content.compareLinks ?? apiPage.links.compare ?? []).map((link) => ({
+      label: link.label,
+      href: link.href,
+    })),
+    faq: mapQaBlocks(apiPage.content.qaBlocks),
+    originalPartHref: `/parts/${originalPartSlug}`,
+    categoryLink: apiPage.links.category
+      ? { label: apiPage.links.category.label, href: apiPage.links.category.href }
+      : { label: categoryLabel, href: '/categories' },
   }
 }
 
@@ -277,7 +441,7 @@ export function productJsonLdFromPublicPage(apiPage: PublicSeoPage): ProductJson
   const code = stringField(component, 'code') || apiPage.slug
   const { name: manufacturer } = manufacturerFromComponent(component)
   const category = stringField(component, 'category_str') || stringField(component, 'category')
-  const image = stringField(component, 'img_urls') || undefined
+  const image = resolvePartImageUrl(code, mapImageUrls(component))
 
   return {
     name: code,

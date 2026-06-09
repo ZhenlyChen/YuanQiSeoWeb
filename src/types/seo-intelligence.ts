@@ -80,7 +80,15 @@ export type CompareLink = {
 
 export type EntityLink = { label: string; href: string }
 
-/** Row for manufacturer "most searched parts" — Part + category from PartGenie intelligence. */
+export type MpnDemandBreakdown = {
+  proxy?: number
+  chat?: number
+  rfq?: number
+  bom?: number
+  seo?: number
+}
+
+/** Row for manufacturer representative parts table (ES catalog samples, not live search trends). */
 export type TopSearchedPartItem = {
   mpn: string
   href: string
@@ -92,6 +100,10 @@ export type TopSearchedPartItem = {
   /** Relative search interest 0–100 (sort order). */
   interest: number
   changePercent?: number
+  /** PG demand score (preview / ops only). */
+  demandScore?: number
+  demandBreakdown?: MpnDemandBreakdown
+  computedAt?: string
 }
 
 /** Sidebar manufacturer row — logo/monogram + optional subtitle (Perplexity-style peek list). */
@@ -216,6 +228,7 @@ export type ComponentIntelligencePage = {
 
 export type ReplacementVerdict = {
   canReplaceDirectly: boolean
+  directReplacementAnswer: string
   bestReplacementType: string
   mainRisk: string
   summary: string
@@ -287,6 +300,7 @@ export type SpecCompareRow = {
 
 export type CompareIntelligencePage = {
   pageType: 'compare'
+  compareKind?: 'component'
   slug: string
   partA: ComparePartSummary
   partB: ComparePartSummary
@@ -306,6 +320,59 @@ export type CompareIntelligencePage = {
   alternativesToBoth: AlternativeItem[]
   relatedQueries: EntityLink[]
   faq: FaqItem[]
+}
+
+export type CompetitorCompareRow = {
+  feature: string
+  partgenie: string
+  competitor: string
+  emphasis?: 'partgenie' | 'competitor' | 'neutral'
+}
+
+export type CompetitorGapSection = {
+  title: string
+  summary: string
+  bullets: string[]
+}
+
+export type CompetitorTestimonial = {
+  quote: string
+  name: string
+  role: string
+}
+
+export type CompetitorComparePage = {
+  pageType: 'compare'
+  compareKind: 'competitor'
+  slug: string
+  compareSlug: string
+  competitor: {
+    name: string
+    shortName: string
+    category: string
+  }
+  meta: SeoMeta
+  breadcrumbs: BreadcrumbItem[]
+  hero: {
+    eyebrow: string
+    title: string
+    subtitle: string
+    primaryCtaLabel: string
+    secondaryCtaLabel: string
+  }
+  proofPoints: Array<{ value: string; label: string }>
+  shortAnswer: string
+  comparisonRows: CompetitorCompareRow[]
+  gapSections: CompetitorGapSection[]
+  workflowCards: Array<{ title: string; body: string }>
+  testimonials: CompetitorTestimonial[]
+  relatedComparisons: CompareLink[]
+  faq: FaqItem[]
+  cta: {
+    title: string
+    body: string
+    label: string
+  }
 }
 
 /** Category row for manufacturer catalog preview (merged families + catalog). */
@@ -334,6 +401,10 @@ export type ManufacturerIntelligencePage = {
   manufacturerId?: string
   representativeMpn?: string
   logoUrl?: string
+  /** Worker-resolved hero banner subtitle; overrides meta.h1SecondLine when set. */
+  heroSubtitle?: string
+  /** LLM product-family tags; used when meta.h1SecondLine is absent. */
+  expertiseAreas?: string[]
   meta: SeoMeta
   breadcrumbs: BreadcrumbItem[]
   shortAnswer: string
@@ -446,6 +517,7 @@ export type CategoryDirectoryItem = {
   letter: string
   href: string
   iconId: CategoryIconId
+  iconUrl?: string
   subcategoryCount: number
   partCount: number
   published: boolean
@@ -470,6 +542,7 @@ export type CategorySubcategoryCard = {
   description: string
   href: string
   iconId: CategoryIconId
+  iconUrl?: string
 }
 
 export type CategoryPopularPartRow = {
