@@ -99,7 +99,7 @@ function TopSearchedPartRow({
         )}
       </td>
       {showCategoryColumns ? (
-        <td className="seo-top-parts__manufacturer">{placeholder ? '\u00a0' : (item.manufacturer ?? '—')}</td>
+        <td className="seo-top-parts__category">{placeholder ? '\u00a0' : (formatCategoryLabel(item.category) || '—')}</td>
       ) : null}
       {showDemandScores ? (
         <td
@@ -195,8 +195,8 @@ export function TopSearchedPartsTable({
           Part
         </th>
         {showCategoryColumns ? (
-          <th className="seo-top-parts__th seo-top-parts__th--manufacturer" scope="col">
-            Manufacturer
+          <th className="seo-top-parts__th seo-top-parts__th--category" scope="col">
+            Category
           </th>
         ) : null}
         {showDemandScores ? (

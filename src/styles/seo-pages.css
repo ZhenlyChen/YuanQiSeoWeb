@@ -4528,27 +4528,16 @@ a.seo-datasheet-file__name:hover {
 
 .seo-top-parts--category .seo-top-parts__th--category,
 .seo-top-parts--category .seo-top-parts__category {
-  text-align: left;
-}
-
-.seo-top-parts__th--manufacturer,
-.seo-top-parts__manufacturer {
-  min-width: 0;
-  text-align: left;
-}
-
-.seo-top-parts--category .seo-top-parts__th--manufacturer,
-.seo-top-parts--category .seo-top-parts__manufacturer {
   text-align: right;
   justify-self: stretch;
   min-width: 0;
 }
 
-.seo-top-parts--category .seo-top-parts__th--manufacturer {
+.seo-top-parts--category .seo-top-parts__th--category {
   white-space: nowrap;
 }
 
-.seo-top-parts--category .seo-top-parts__manufacturer {
+.seo-top-parts--category .seo-top-parts__category {
   overflow-wrap: anywhere;
 }
 
