@@ -100,7 +100,7 @@ const L1_TAXONOMY: CategoryL1Definition[] = [
     name: 'Analog & Power ICs',
     description: 'Signal chain, amplification, and mixed analog functions alongside power support circuits.',
     iconId: 'power-management',
-    iconUrl: '/category-icons/analog-power-ic.png',
+    iconUrl: 'https://web-static.partgenie.ai/category-icons/analog-power-ic.webp',
     sortRank: 6,
     partCount: 4520,
     published: true,
@@ -110,7 +110,7 @@ const L1_TAXONOMY: CategoryL1Definition[] = [
         name: 'Operational Amplifiers',
         shortDescription: 'Precision and general-purpose op amps for conditioning paths.',
         iconId: 'data-converters',
-        iconUrl: '/category-icons/operational-amplifiers.png',
+        iconUrl: 'https://web-static.partgenie.ai/category-icons/operational-amplifiers.webp',
       },
       {
         slug: 'voltage-references',

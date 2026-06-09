@@ -1,9 +1,9 @@
-const CATEGORY_ICON_BASE = '/category-icons'
+const CATEGORY_ICON_CDN_BASE = 'https://web-static.partgenie.ai/category-icons'
 
 export function categoryIconPath(slug: string): string | undefined {
   const normalized = slug.trim()
   if (!normalized) return undefined
-  return `${CATEGORY_ICON_BASE}/${normalized}.png`
+  return `${CATEGORY_ICON_CDN_BASE}/${normalized}.webp`
 }
 
 export function subcategoryIconPath(l1Slug: string, l2Slug: string): string | undefined {
