@@ -13,8 +13,29 @@ export function subcategoryIconPath(l1Slug: string, l2Slug: string): string | un
   return categoryIconPath(`${parent}-${child}`)
 }
 
+/** Normalize API/static paths to CDN webp (colleague-uploaded assets use .webp on web-static). */
+function toCategoryIconCdnUrl(iconUrl: string): string | undefined {
+  const absoluteOnCdn = iconUrl.match(
+    /^https:\/\/web-static\.partgenie\.ai\/category-icons\/([^/?#]+)\.(png|webp|jpe?g)$/i,
+  )
+  if (absoluteOnCdn) {
+    return categoryIconPath(absoluteOnCdn[1])
+  }
+  if (/^https?:\/\//i.test(iconUrl)) {
+    return iconUrl
+  }
+  const relative = iconUrl.match(/^\/category-icons\/([^/?#]+)\.(png|webp|jpe?g)$/i)
+  if (relative) {
+    return categoryIconPath(relative[1])
+  }
+  return undefined
+}
+
 export function resolveCategoryIconUrl(slug: string, iconUrl?: string): string | undefined {
   const fromApi = iconUrl?.trim()
-  if (fromApi) return fromApi
+  if (fromApi) {
+    const cdnUrl = toCategoryIconCdnUrl(fromApi)
+    if (cdnUrl) return cdnUrl
+  }
   return categoryIconPath(slug)
 }
