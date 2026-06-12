@@ -1,3 +1,5 @@
+import { getPublicApiBase } from '@/lib/auth-api'
+
 export type SubscribeNewsletterResult = {
   ok: boolean
   message: string
@@ -9,7 +11,7 @@ export async function subscribeNewsletter(
   email: string,
   options?: { locale?: string; pageUrl?: string },
 ): Promise<SubscribeNewsletterResult> {
-  const response = await fetch('/api/v1/newsletter/subscribe', {
+  const response = await fetch(`${getPublicApiBase()}newsletter/subscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
