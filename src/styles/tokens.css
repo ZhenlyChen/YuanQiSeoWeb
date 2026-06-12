@@ -1,0 +1,21 @@
+/* Keep in sync with packages/partgenie-tokens/tokens.css */
+:root {
+  --pg-color-primary: #22808d;
+  --pg-color-brand-solid: #207883;
+  --pg-color-base-content: #101828;
+  --pg-color-text-secondary: #344054;
+  --pg-color-text-tertiary: #475467;
+  --pg-color-text-placeholder: #667085;
+  --pg-color-border-primary: #d0d5dd;
+  --pg-color-border-secondary: #e4e7ec;
+  --pg-color-bg-primary: #ffffff;
+  --pg-color-bg-success-secondary: #dcfae6;
+  --pg-color-bg-hover: #f0fafb;
+  --pg-radius-md: 8px;
+  --pg-radius-lg: 12px;
+  --pg-radius-xl: 12px;
+  --pg-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --pg-shadow-xl: 0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03);
+  --pg-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}

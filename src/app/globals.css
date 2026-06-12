@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import '../../../packages/partgenie-tokens/tokens.css';
+@import '../styles/tokens.css';
 @import '../styles/seo-tokens.css';
 @import '../styles/seo-pages.css';
 
