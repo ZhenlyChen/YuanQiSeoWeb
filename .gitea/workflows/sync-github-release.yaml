@@ -1,0 +1,38 @@
+name: Sync Release to GitHub
+
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch:
+
+jobs:
+  sync-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: https://git.kesongs.com/actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push Release Branch to GitHub
+        env:
+          GITHUB_PUSH_TOKEN: ${{ secrets.MY_GITHUB_PUSH_TOKEN }}
+          GITHUB_REMOTE_URL: https://github.com/ZhenlyChen/YuanQiSeoWeb.git
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GITHUB_PUSH_TOKEN}" ]; then
+            echo "ERROR: missing GITHUB_PUSH_TOKEN secret"
+            exit 1
+          fi
+
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+
+          git remote remove github 2>/dev/null || true
+          git remote add github "${GITHUB_REMOTE_URL}"
+
+          AUTH_HEADER=$(printf 'x-access-token:%s' "${GITHUB_PUSH_TOKEN}" | base64 | tr -d '\n')
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${AUTH_HEADER}" \
+            push github HEAD:refs/heads/release
