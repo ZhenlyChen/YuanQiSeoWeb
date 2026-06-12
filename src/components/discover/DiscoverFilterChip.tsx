@@ -53,7 +53,7 @@ export function DiscoverFilterChip({
         'inline-flex shrink-0 items-center whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-medium shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-all duration-200',
         selected
           ? 'border-[#2CA5B5] bg-white text-[#2CA5B5]'
-          : 'border-[#D0D5DD] bg-white text-[#667085] hover:border-[#98A2B3] hover:shadow-sm',
+          : 'border-[#D0D5DD] bg-white text-[#667085] hover:border-[#2CA5B5] hover:text-[#207883] hover:shadow-sm',
         className,
       )}
     >

@@ -57,3 +57,12 @@ a {
   background-size: 220% 100%;
   animation: discover-cover-shimmer 1.6s ease-in-out infinite;
 }
+
+.pg-hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.pg-hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

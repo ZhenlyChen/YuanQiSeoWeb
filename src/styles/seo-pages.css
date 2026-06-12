@@ -6458,6 +6458,15 @@ a.seo-datasheet-file__name:hover {
   margin-bottom: var(--pg-space-10);
 }
 
+.seo-insights-hub__filters .pg-hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.seo-insights-hub__filters .pg-hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .seo-insights-hub__content {
     padding-inline: var(--pg-space-6);

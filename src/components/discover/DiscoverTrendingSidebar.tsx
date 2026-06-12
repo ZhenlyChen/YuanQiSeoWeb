@@ -94,7 +94,7 @@ export function DiscoverTrendingMobileStrip({ trending }: { trending: PublicDisc
   ).slice(0, 8)
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 lg:hidden">
+    <div className="pg-hide-scrollbar flex gap-2 overflow-x-auto pb-2 lg:hidden">
       {entries.map(({ groupKey, item, index }) => (
         <Link
           key={trendingEntryKey(item, groupKey, index)}
