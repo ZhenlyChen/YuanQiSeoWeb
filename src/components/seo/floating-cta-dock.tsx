@@ -46,7 +46,14 @@ export function FloatingCtaDock({ pageContext }: { pageContext?: SeoPageContext 
   }, [primed, query])
 
   return (
-    <div ref={dockRef} className="seo-floating-chat-dock">
+    <div
+      ref={dockRef}
+      className={`seo-floating-chat-dock${
+        pageContext?.kind === 'insights' || pageContext?.kind === 'insight'
+          ? ' seo-floating-chat-dock--insights'
+          : ''
+      }`}
+    >
       <form
         className={`seo-floating-chat${primed ? ' seo-floating-chat--primed' : ''}`}
         action={seoChatDeepLinkUrl(slug)}

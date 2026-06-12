@@ -41,6 +41,28 @@ export function getHelpCenterPages(locale: string = 'en') {
   } as const
 }
 
+/** Temporary: top-nav links to live Webflow until tool/pricing/compare pages live on SeoWeb. */
+export const NAV_WEBFLOW_ORIGIN = (
+  process.env.NEXT_PUBLIC_NAV_WEBFLOW_ORIGIN?.trim() || 'https://www.partgenie.ai'
+).replace(/\/$/, '')
+
+export const NAV_MARKETING_TOOL_PAGES = {
+  componentFinder: `${NAV_WEBFLOW_ORIGIN}/ai-component-finder`,
+  alternativeFinder: `${NAV_WEBFLOW_ORIGIN}/alternative-finder`,
+  datasheetAi: `${NAV_WEBFLOW_ORIGIN}/datasheet-ai`,
+  bomAnalyzer: `${NAV_WEBFLOW_ORIGIN}/ai-bom-analyzer`,
+} as const
+
+export const NAV_MARKETING_PAGES = {
+  pricing: `${NAV_WEBFLOW_ORIGIN}/pricing`,
+} as const
+
+export const NAV_COMPARE_PAGES = {
+  vsOctopart: `${NAV_WEBFLOW_ORIGIN}/partgenie-vs-octopart`,
+  vsFindchips: `${NAV_WEBFLOW_ORIGIN}/partgenie-vs-findchips`,
+  vsAlldatasheet: `${NAV_WEBFLOW_ORIGIN}/partgenie-vs-alldatasheet`,
+} as const
+
 /** Public marketing tool landings (Webflow). */
 export const MARKETING_TOOL_PAGES = {
   componentFinder: `${MARKETING_ORIGIN}/ai-component-finder`,

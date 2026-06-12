@@ -16,7 +16,7 @@ export function CategoryDirectoryHero({
   const t = useTranslations('categories')
 
   return (
-    <section className="seo-cat-dir-hero" aria-labelledby="seo-cat-dir-hero-title">
+    <section className="seo-cat-dir-hero seo-dot-grid-bg" aria-labelledby="seo-cat-dir-hero-title">
       <div className="seo-cat-dir-hero__inner">
         <p className="seo-cat-dir-hero__eyebrow">
           <span className="seo-cat-dir-hero__dot" aria-hidden="true" />

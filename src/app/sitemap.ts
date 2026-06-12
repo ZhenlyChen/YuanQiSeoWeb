@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { fetchInsightSlugs, insightSitemapEntries } from '@/lib/discover-api'
 import { hubSitemapEntries, partSitemapEntries } from '@/lib/sitemap-urls'
 import { fetchSitemapPaths } from '@/lib/seo-api'
 
@@ -11,12 +12,20 @@ export default async function sitemap(props: { id: Promise<number | string> }): 
   const now = new Date()
 
   if (id === 0) {
-    return hubSitemapEntries(['en', 'de']).map((entry) => ({
+    const insightSlugs = await fetchInsightSlugs()
+    const hubRows = hubSitemapEntries(['en', 'de']).map((entry) => ({
       url: entry.url,
       lastModified: now,
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.9,
     }))
+    const insightRows = insightSitemapEntries(['en', 'de'], insightSlugs).map((entry) => ({
+      url: entry.url,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
+    }))
+    return [...hubRows, ...insightRows]
   }
 
   const { entries } = await fetchSitemapPaths()

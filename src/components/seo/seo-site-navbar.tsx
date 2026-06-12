@@ -228,6 +228,13 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
               {nav.pricing.label}
             </a>
             <NavDropdown label={t('compare')} links={nav.compare} openKey="compare" {...dropdownProps} />
+            <a
+              href={nav.insights.href}
+              className="seo-site-navbar__link"
+              onMouseEnter={() => openDesktopDropdown(null)}
+            >
+              {nav.insights.label}
+            </a>
             <NavDropdown label={t('resources')} links={nav.resources} openKey="resources" {...dropdownProps} />
           </div>
 
@@ -274,6 +281,9 @@ export function SeoSiteNavbar({ ctaSlug = 'seo-header' }: { ctaSlug?: string }) 
             activeKey={activeMobileDropdown}
             onToggle={toggleMobileDropdown}
           />
+          <a href={nav.insights.href} className="seo-site-navbar__mobile-link seo-site-navbar__mobile-link--top">
+            {nav.insights.label}
+          </a>
           <MobileDropdown
             label={t('resources')}
             links={nav.resources}

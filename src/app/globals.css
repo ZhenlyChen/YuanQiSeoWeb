@@ -1,3 +1,4 @@
+@import 'tailwindcss';
 @import '../../../packages/partgenie-tokens/tokens.css';
 @import '../styles/seo-tokens.css';
 @import '../styles/seo-pages.css';
@@ -33,4 +34,26 @@ body.seo-scroll-locked .seo-section-nav {
 
 a {
   color: inherit;
+}
+
+@keyframes discover-cover-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+.discover-cover-skeleton {
+  background-image: linear-gradient(
+    90deg,
+    #f2f4f7 0%,
+    #f2f4f7 38%,
+    #f9fafb 50%,
+    #f2f4f7 62%,
+    #f2f4f7 100%
+  );
+  background-size: 220% 100%;
+  animation: discover-cover-shimmer 1.6s ease-in-out infinite;
 }

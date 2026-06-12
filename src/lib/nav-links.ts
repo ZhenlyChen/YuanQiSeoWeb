@@ -3,8 +3,9 @@ import type { AppLocale } from '@/i18n/routing'
 import { localizePath } from '@/lib/localized-path'
 import {
   getHelpCenterPages,
-  MARKETING_PAGES,
-  MARKETING_TOOL_PAGES,
+  NAV_COMPARE_PAGES,
+  NAV_MARKETING_PAGES,
+  NAV_MARKETING_TOOL_PAGES,
   signUpUrl,
 } from '@/lib/tool-urls'
 
@@ -30,6 +31,7 @@ export type NavLabels = {
   vsAlldatasheet: string
   manufacturerDirectory: string
   categoryDirectory: string
+  insights: string
   helpCenter: string
   changelog: string
   getStarted: string
@@ -52,6 +54,7 @@ export function buildNavLinks(
   tools: NavLink[]
   pricing: { label: string; href: string }
   compare: NavLink[]
+  insights: { label: string; href: string }
   resources: NavLink[]
   cta: { label: string; href: string }
 } {
@@ -61,31 +64,32 @@ export function buildNavLinks(
     tools: [
       {
         label: labels.aiAlternativeFinder,
-        href: MARKETING_TOOL_PAGES.alternativeFinder,
+        href: NAV_MARKETING_TOOL_PAGES.alternativeFinder,
         icon: 'list',
       },
       {
         label: labels.aiComponentFinder,
-        href: MARKETING_TOOL_PAGES.componentFinder,
+        href: NAV_MARKETING_TOOL_PAGES.componentFinder,
         icon: 'chip',
       },
       {
         label: labels.datasheetAi,
-        href: MARKETING_TOOL_PAGES.datasheetAi,
+        href: NAV_MARKETING_TOOL_PAGES.datasheetAi,
         icon: 'file06',
       },
       {
         label: labels.bomAnalyzer,
-        href: MARKETING_TOOL_PAGES.bomAnalyzer,
+        href: NAV_MARKETING_TOOL_PAGES.bomAnalyzer,
         icon: 'hash02',
       },
     ],
-    pricing: { label: labels.pricing, href: MARKETING_PAGES.pricing },
+    pricing: { label: labels.pricing, href: NAV_MARKETING_PAGES.pricing },
     compare: [
-      { label: labels.vsOctopart, href: localizePath('/partgenie-vs-octopart', locale) },
-      { label: labels.vsFindchips, href: localizePath('/partgenie-vs-findchips', locale) },
-      { label: labels.vsAlldatasheet, href: localizePath('/partgenie-vs-alldatasheet', locale) },
+      { label: labels.vsOctopart, href: NAV_COMPARE_PAGES.vsOctopart },
+      { label: labels.vsFindchips, href: NAV_COMPARE_PAGES.vsFindchips },
+      { label: labels.vsAlldatasheet, href: NAV_COMPARE_PAGES.vsAlldatasheet },
     ],
+    insights: { label: labels.insights, href: localizePath('/insights', locale) },
     resources: [
       { label: labels.categoryDirectory, href: localizePath('/categories', locale) },
       { label: labels.manufacturerDirectory, href: localizePath('/manufacturers', locale) },
@@ -111,6 +115,7 @@ export function getNavLabelsFromTranslations(t: (key: string) => string): NavLab
     vsAlldatasheet: t('vsAlldatasheet'),
     manufacturerDirectory: t('manufacturerDirectory'),
     categoryDirectory: t('categoryDirectory'),
+    insights: t('insights'),
     helpCenter: t('helpCenter'),
     changelog: t('changelog'),
     getStarted: t('getStarted'),

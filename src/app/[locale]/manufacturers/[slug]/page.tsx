@@ -69,7 +69,7 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
         locale={locale}
         pageContext={{ slug: mockPage.slug, manufacturer: mockPage.name, kind: 'manufacturer' }}
         banner={
-          <div className="seo-mfg-hero-zone">
+          <div className="seo-mfg-hero-zone seo-dot-grid-bg">
             <ManufacturerHeroBanner
               slug={mockPage.slug}
               name={mockPage.name}
@@ -114,7 +114,7 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
       showPreviewBanner={Boolean(sp.preview)}
       pageContext={{ slug: page.slug, manufacturer: page.name, kind: 'manufacturer' }}
       banner={
-        <div className="seo-mfg-hero-zone">
+        <div className="seo-mfg-hero-zone seo-dot-grid-bg">
           <ManufacturerHeroBanner
             slug={page.slug}
             name={page.name}

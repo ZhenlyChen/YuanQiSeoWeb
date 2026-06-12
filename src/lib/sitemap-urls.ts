@@ -14,7 +14,7 @@ export function localizedSitemapUrl(path: string, locale: AppLocale): string {
 }
 
 export function buildStaticHubPaths(): string[] {
-  const paths = new Set<string>(['/categories', '/manufacturers'])
+  const paths = new Set<string>(['/categories', '/manufacturers', '/insights'])
 
   for (const l1 of getL1Categories()) {
     if (!l1.published) continue

@@ -1,7 +1,7 @@
 import { SeoSiteFooter } from '@/components/seo/seo-site-footer'
 import { SeoSiteNavbar } from '@/components/seo/seo-site-navbar'
 
-export type SeoPageKind = 'part' | 'alternative' | 'manufacturer' | 'compare' | 'answer' | 'category'
+export type SeoPageKind = 'part' | 'alternative' | 'manufacturer' | 'compare' | 'answer' | 'category' | 'insight' | 'insights'
 
 export type SeoPageContext = {
   slug: string

@@ -15,7 +15,7 @@ export function ManufacturerDirectoryHero({
   const t = useTranslations('directory')
 
   return (
-    <section className="seo-mfg-dir-hero" aria-labelledby="seo-mfg-dir-hero-title">
+    <section className="seo-mfg-dir-hero seo-dot-grid-bg" aria-labelledby="seo-mfg-dir-hero-title">
       <div className="seo-mfg-dir-hero__inner">
         <p className="seo-mfg-dir-hero__eyebrow">
           <span className="seo-mfg-dir-hero__dot" aria-hidden="true" />

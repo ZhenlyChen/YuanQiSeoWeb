@@ -13,6 +13,7 @@ export async function SeoPageShell({
   faq,
   children,
   showPreviewBanner = false,
+  previewBannerMessage,
   pageContext,
   banner,
   itemList,
@@ -26,6 +27,7 @@ export async function SeoPageShell({
   faq?: FaqItem[]
   children: React.ReactNode
   showPreviewBanner?: boolean
+  previewBannerMessage?: string
   pageContext?: SeoPageContext
   banner?: React.ReactNode
   hideBreadcrumbs?: boolean
@@ -41,7 +43,7 @@ export async function SeoPageShell({
     <SeoSiteChrome pageContext={pageContext} banner={banner}>
       <main className="seo-page__main">
         <div className="seo-page__body">
-          {showPreviewBanner ? <PreviewBanner /> : null}
+          {showPreviewBanner ? <PreviewBanner message={previewBannerMessage} /> : null}
           {hideBreadcrumbs ? null : <Breadcrumbs items={breadcrumbs} />}
           {children}
         </div>
