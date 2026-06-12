@@ -36,6 +36,27 @@ Draft: `/parts/{slug}?preview={token}` from Admin **SEO Pages → Preview**.
 |----------|-------------|
 | `YUANQI_API_BASE` | API base, e.g. `http://127.0.0.1:8080/api/v1` |
 
+## Cloudflare OpenNext
+
+This app deploys to Cloudflare with `@opennextjs/cloudflare`.
+
+```bash
+pnpm run cf:build
+pnpm run cf:preview
+pnpm run cf:deploy
+```
+
+Cloudflare production env vars:
+
+| Variable | Description |
+|----------|-------------|
+| `YUANQI_API_BASE` | Production SEO API base, e.g. `https://<service-prod>/api/v1` |
+| `NEXT_PUBLIC_YUANQI_API_BASE` | Public API base for client-side links/calls |
+| `REVALIDATE_SECRET` | Must match YuanQiService `seo.revalidate_secret` |
+| `NEXT_PUBLIC_APP_ORIGIN` | Product app origin, e.g. `https://app.partgenie.ai` |
+
+Use the deployed Worker URL as the pSEO origin for the routing Worker, for example `PSEO_PAGES_ORIGIN=https://yuanqi-seo-web.<account>.workers.dev`.
+
 ## Docs
 
 - [SEO_PSEO_PLAN.md](../docs/SEO_PSEO_PLAN.md) — engineering spec  
