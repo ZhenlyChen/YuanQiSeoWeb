@@ -100,51 +100,51 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
     locale,
     previewToken: sp.preview,
   })
-  if (!apiPage?.hubPage) {
-    await rejectUnavailableSeoPage({
-      slug,
-      locale,
-      kind: 'manufacturer',
-      expectedPageType: 'manufacturer',
-      path: `/manufacturers/${slug}`,
+  if (apiPage?.hubPage) {
+    const mappedPage = mapPublicSeoPageToManufacturerPage(apiPage, locale)
+    const pageWithCatalog = await enrichManufacturerCatalogCategories(mappedPage, locale, {
+      previewToken: sp.preview,
     })
+    const pageWithParts = await enrichManufacturerMostSearchedParts(pageWithCatalog, locale, {
+      previewToken: sp.preview,
+    })
+    const page = await enrichComparableManufacturerLogos(pageWithParts, locale)
+    const heroSubtitle = resolveManufacturerHeroSubtitle(page)
+    const itemList = buildHubItemListFromParts(page.name, page.mostSearchedParts)
+
+    return (
+      <SeoPageShell
+        breadcrumbs={page.breadcrumbs}
+        faq={page.faq}
+        hideBreadcrumbs
+        itemList={itemList}
+        locale={locale}
+        showPreviewBanner={Boolean(sp.preview)}
+        pageContext={{ slug: page.slug, manufacturer: page.name, kind: 'manufacturer' }}
+        banner={
+          <div className="seo-mfg-hero-zone seo-dot-grid-bg">
+            <ManufacturerHeroBanner
+              slug={page.slug}
+              name={page.name}
+              title={page.meta.h1}
+              subtitle={heroSubtitle}
+              logoUrl={page.logoUrl}
+              breadcrumbs={page.breadcrumbs}
+            />
+            <ManufacturerQueryCarousel page={page} />
+          </div>
+        }
+      >
+        <ManufacturerIntelligenceView page={page} />
+      </SeoPageShell>
+    )
   }
 
-  const mappedPage = mapPublicSeoPageToManufacturerPage(apiPage, locale)
-  const pageWithCatalog = await enrichManufacturerCatalogCategories(mappedPage, locale, {
-    previewToken: sp.preview,
+  await rejectUnavailableSeoPage({
+    slug,
+    locale,
+    kind: 'manufacturer',
+    expectedPageType: 'manufacturer',
+    path: `/manufacturers/${slug}`,
   })
-  const pageWithParts = await enrichManufacturerMostSearchedParts(pageWithCatalog, locale, {
-    previewToken: sp.preview,
-  })
-  const page = await enrichComparableManufacturerLogos(pageWithParts, locale)
-  const heroSubtitle = resolveManufacturerHeroSubtitle(page)
-  const itemList = buildHubItemListFromParts(page.name, page.mostSearchedParts)
-
-  return (
-    <SeoPageShell
-      breadcrumbs={page.breadcrumbs}
-      faq={page.faq}
-      hideBreadcrumbs
-      itemList={itemList}
-      locale={locale}
-      showPreviewBanner={Boolean(sp.preview)}
-      pageContext={{ slug: page.slug, manufacturer: page.name, kind: 'manufacturer' }}
-      banner={
-        <div className="seo-mfg-hero-zone seo-dot-grid-bg">
-          <ManufacturerHeroBanner
-            slug={page.slug}
-            name={page.name}
-            title={page.meta.h1}
-            subtitle={heroSubtitle}
-            logoUrl={page.logoUrl}
-            breadcrumbs={page.breadcrumbs}
-          />
-          <ManufacturerQueryCarousel page={page} />
-        </div>
-      }
-    >
-      <ManufacturerIntelligenceView page={page} />
-    </SeoPageShell>
-  )
 }

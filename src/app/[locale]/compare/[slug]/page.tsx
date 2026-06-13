@@ -6,6 +6,7 @@ import { getCompetitorComparePage } from '@/data/competitor-comparisons'
 import { getMockComparePage } from '@/data/mock'
 import { parseAppLocale } from '@/lib/page-locale'
 import { SEO_DEFERRED, withDeferredRobots } from '@/lib/seo-indexing-policy'
+import { buildPageMetadata } from '@/lib/seo-meta'
 import { seoNotFound } from '@/lib/seo-not-found'
 
 type PageProps = { params: Promise<{ locale: string; slug: string }> }

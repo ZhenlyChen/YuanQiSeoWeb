@@ -123,6 +123,7 @@ type ApiResponse<T> = { code: number; data: T; msg: string }
 function apiBase(): string {
   return (
     process.env.YUANQI_API_BASE?.replace(/\/?$/, '/') ||
+    process.env.NEXT_PUBLIC_YUANQI_API_BASE?.replace(/\/?$/, '/') ||
     'http://127.0.0.1:8080/api/v1/'
   )
 }
@@ -390,7 +391,8 @@ export async function fetchCategoryHub(params: {
 
   try {
     const res = await fetch(`${apiBase()}${path}`, {
-      next: { revalidate: 86400 },
+      cache: params.previewToken ? 'no-store' : undefined,
+      next: params.previewToken ? undefined : { revalidate: 86400 },
     })
     if (!res.ok) return null
     const json = (await res.json()) as ApiResponse<CategoryHubApiPage>

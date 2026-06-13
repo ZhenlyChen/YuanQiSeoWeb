@@ -89,29 +89,29 @@ export default async function PartPage({ params, searchParams }: PageProps) {
     locale,
     previewToken: sp.preview,
   })
-  if (!apiPage) {
-    await rejectUnavailableSeoPage({
-      slug,
-      locale,
-      kind: 'part',
-      expectedPageType: 'part',
-      path: `/parts/${slug}`,
-    })
+  if (apiPage) {
+    const page = mapPublicSeoPageToComponentPage(apiPage, locale)
+
+    return (
+      <SeoPageShell
+        breadcrumbs={page.breadcrumbs}
+        faq={page.faq}
+        locale={locale}
+        includeFaqJsonLd={false}
+        product={productJsonLdFromPublicPage(apiPage)}
+        showPreviewBanner={Boolean(sp.preview)}
+        pageContext={{ slug: page.slug, mpn: page.mpn, kind: 'part' }}
+      >
+        <ComponentIntelligenceView page={page} substitutesEmptyMessage={t('substitutesEmpty')} />
+      </SeoPageShell>
+    )
   }
 
-  const page = mapPublicSeoPageToComponentPage(apiPage, locale)
-
-  return (
-    <SeoPageShell
-      breadcrumbs={page.breadcrumbs}
-      faq={page.faq}
-      locale={locale}
-      includeFaqJsonLd={false}
-      product={productJsonLdFromPublicPage(apiPage)}
-      showPreviewBanner={Boolean(sp.preview)}
-      pageContext={{ slug: page.slug, mpn: page.mpn, kind: 'part' }}
-    >
-      <ComponentIntelligenceView page={page} substitutesEmptyMessage={t('substitutesEmpty')} />
-    </SeoPageShell>
-  )
+  await rejectUnavailableSeoPage({
+    slug,
+    locale,
+    kind: 'part',
+    expectedPageType: 'part',
+    path: `/parts/${slug}`,
+  })
 }

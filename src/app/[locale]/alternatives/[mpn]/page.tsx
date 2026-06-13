@@ -63,25 +63,25 @@ export default async function AlternativePage({ params, searchParams }: PageProp
     )
   }
 
-  const page = getMockAlternativePage(mpn)
-  if (!page) {
-    await rejectUnavailableSeoPage({
-      slug: mpn,
-      locale,
-      kind: 'alternative',
-      expectedPageType: 'alternative',
-      path: `/alternatives/${mpn}`,
-    })
+  const mockPage = getMockAlternativePage(mpn)
+  if (mockPage) {
+    return (
+      <SeoPageShell
+        breadcrumbs={mockPage.breadcrumbs}
+        faq={mockPage.faq}
+        locale={locale}
+        pageContext={{ slug: mockPage.slug, mpn: mockPage.mpn, kind: 'alternative' }}
+      >
+        <AlternativeIntelligenceView page={mockPage} />
+      </SeoPageShell>
+    )
   }
 
-  return (
-    <SeoPageShell
-      breadcrumbs={page.breadcrumbs}
-      faq={page.faq}
-      locale={locale}
-      pageContext={{ slug: page.slug, mpn: page.mpn, kind: 'alternative' }}
-    >
-      <AlternativeIntelligenceView page={page} />
-    </SeoPageShell>
-  )
+  await rejectUnavailableSeoPage({
+    slug: mpn,
+    locale,
+    kind: 'alternative',
+    expectedPageType: 'alternative',
+    path: `/alternatives/${mpn}`,
+  })
 }
