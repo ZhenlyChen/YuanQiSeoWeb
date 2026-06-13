@@ -1,7 +1,7 @@
 import type { AppLocale } from '@/i18n/routing'
-import { getL1Categories } from '@/lib/category-taxonomy'
+import { routing } from '@/i18n/routing'
 import { localizePath } from '@/lib/localized-path'
-import type { PublicSitemapEntry } from '@/lib/seo-api'
+import { fetchManufacturerDirectory, type PublicSitemapEntry } from '@/lib/seo-api'
 import { SEO_SITE_ORIGIN } from '@/lib/site'
 
 const MANUFACTURER_LETTERS = [
@@ -9,23 +9,52 @@ const MANUFACTURER_LETTERS = [
   'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0-9',
 ]
 
+/** Facets that exist in API but are not useful SEO landing pages. */
+const SITEMAP_EXCLUDED_CATEGORY_SLUGS = new Set(['uncategorized'])
+
 export function localizedSitemapUrl(path: string, locale: AppLocale): string {
   return `${SEO_SITE_ORIGIN}${localizePath(path, locale)}`
 }
 
-export function buildStaticHubPaths(): string[] {
+function buildBaseHubPaths(): string[] {
   const paths = new Set<string>(['/categories', '/manufacturers', '/insights'])
-
-  for (const l1 of getL1Categories()) {
-    if (!l1.published) continue
-    paths.add(`/manufacturers/category/${l1.slug}`)
-  }
 
   for (const letter of MANUFACTURER_LETTERS) {
     paths.add(`/manufacturers/letter/${letter}`)
   }
 
   return [...paths].sort()
+}
+
+async function fetchManufacturerCategoryHubPaths(locale: AppLocale = 'en'): Promise<string[]> {
+  const apiPage = await fetchManufacturerDirectory({ locale, pageSize: 1 })
+  if (!apiPage?.categoryFacets?.length) return []
+
+  return apiPage.categoryFacets
+    .filter((facet) => facet.slug && !SITEMAP_EXCLUDED_CATEGORY_SLUGS.has(facet.slug))
+    .map((facet) => `/manufacturers/category/${facet.slug}`)
+    .sort()
+}
+
+/** Hub index paths for sitemap/0 — category slugs from live API facets (not static taxonomy). */
+export async function buildHubPaths(locale: AppLocale = 'en'): Promise<string[]> {
+  const categoryPaths = await fetchManufacturerCategoryHubPaths(locale)
+  return [...new Set([...buildBaseHubPaths(), ...categoryPaths])].sort()
+}
+
+/** Hub sitemap locales: always default (en); add de only when API has published de pages. */
+export function resolveHubSitemapLocales(entries: PublicSitemapEntry[]): AppLocale[] {
+  const publishedLocales = new Set(
+    entries
+      .map((entry) => entry.locale)
+      .filter((locale): locale is AppLocale => routing.locales.includes(locale as AppLocale)),
+  )
+
+  const locales: AppLocale[] = [routing.defaultLocale]
+  if (publishedLocales.has('de') && routing.defaultLocale !== 'de') {
+    locales.push('de')
+  }
+  return locales
 }
 
 export function filterSitemapEntries(
@@ -40,8 +69,10 @@ export function filterSitemapEntries(
   })
 }
 
-export function hubSitemapEntries(locales: AppLocale[] = ['en', 'de']): { url: string; lastModified?: Date }[] {
-  const paths = buildStaticHubPaths()
+export async function hubSitemapEntries(
+  locales: AppLocale[],
+): Promise<{ url: string; lastModified?: Date }[]> {
+  const paths = await buildHubPaths('en')
   const rows: { url: string; lastModified?: Date }[] = []
 
   for (const locale of locales) {

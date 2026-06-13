@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { fetchInsightSlugs, insightSitemapEntries } from '@/lib/discover-api'
-import { hubSitemapEntries, partSitemapEntries } from '@/lib/sitemap-urls'
+import { hubSitemapEntries, partSitemapEntries, resolveHubSitemapLocales } from '@/lib/sitemap-urls'
 import { fetchSitemapPaths } from '@/lib/seo-api'
 
 export async function generateSitemaps() {
@@ -12,14 +12,16 @@ export default async function sitemap(props: { id: Promise<number | string> }): 
   const now = new Date()
 
   if (id === 0) {
+    const { entries } = await fetchSitemapPaths()
+    const hubLocales = resolveHubSitemapLocales(entries)
     const insightSlugs = await fetchInsightSlugs()
-    const hubRows = hubSitemapEntries(['en', 'de']).map((entry) => ({
+    const hubRows = (await hubSitemapEntries(hubLocales)).map((entry) => ({
       url: entry.url,
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     }))
-    const insightRows = insightSitemapEntries(['en', 'de'], insightSlugs).map((entry) => ({
+    const insightRows = insightSitemapEntries(hubLocales, insightSlugs).map((entry) => ({
       url: entry.url,
       lastModified: now,
       changeFrequency: 'weekly' as const,
