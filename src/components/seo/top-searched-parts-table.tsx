@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
 import { UIBadge } from '@/components/ui/ui-badge'
 import { resolveSeoCategoryLabel } from '@/lib/category-locale-label'
 import type { AppLocale } from '@/i18n/routing'
 import { cn } from '@/lib/cn'
-import { partImageForMpn } from '@/lib/part-images'
+import { partImageForMpn, resolvePartImageUrl } from '@/lib/part-images'
 import { SEO_PUBLIC_BOUNDARY, buildCategoryTopPartsGateStats, buildGeneralGateStats } from '@/lib/seo-copy'
 import { partFinderUrl, signUpUrl } from '@/lib/tool-urls'
 import type { TopSearchedPartItem } from '@/types/seo-intelligence'
@@ -58,6 +59,24 @@ function formatDemandTooltip(item: TopSearchedPartItem): string | undefined {
   return parts.join(' · ') + suffix
 }
 
+function PartThumbnail({ imageUrl, mpn }: { imageUrl?: string; mpn: string }) {
+  const [failed, setFailed] = useState(false)
+  const src = failed
+    ? partImageForMpn(mpn)
+    : resolvePartImageUrl(mpn, imageUrl ? [imageUrl] : undefined)
+
+  return (
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
+    />
+  )
+}
+
 function TopSearchedPartRow({
   item,
   rank,
@@ -73,7 +92,6 @@ function TopSearchedPartRow({
   locale?: AppLocale
   categoryFallback?: string
 }) {
-  const imageSrc = item.imageUrl?.trim() || partImageForMpn(item.mpn)
   const partHref = item.href?.trim() || '#'
   const showCategoryColumns = variant === 'category'
   const placeholder = isPlaceholderPart(item)
@@ -96,7 +114,7 @@ function TopSearchedPartRow({
         ) : (
           <div className="seo-top-parts__part-inner">
             <div className="seo-top-parts__thumb">
-              <img src={imageSrc} alt="" />
+              <PartThumbnail imageUrl={item.imageUrl} mpn={item.mpn} />
             </div>
             <Link href={partHref} className="seo-top-parts__part-link">
               {item.mpn}

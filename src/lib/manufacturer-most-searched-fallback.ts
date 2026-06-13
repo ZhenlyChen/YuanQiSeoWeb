@@ -5,6 +5,11 @@ import {
   resolveSeoCategoryLabelFromItem,
 } from '@/lib/category-locale-label'
 import { fetchManufacturerProductItems } from '@/lib/seo-api'
+import {
+  hydrateMostSearchedPartImages,
+  partsNeedImageHydration,
+} from '@/lib/catalog-part-images'
+import { partImageUrlFromEsItem } from '@/lib/part-images'
 import type {
   ManufacturerIntelligencePage,
   TopSearchedPartItem,
@@ -105,6 +110,7 @@ export function mapManufacturerProductItemsToMostSearchedParts(
       href: `/parts/${slugFromEntityKey(mpn, partManufacturerId)}`,
       category: resolveCategoryLabel(item, locale),
       manufacturer: manufacturerName,
+      imageUrl: partImageUrlFromEsItem(item),
       keySpecs: summary ? summary.slice(0, KEY_SPECS_MAX_LEN) : undefined,
       interest,
     })
@@ -114,7 +120,7 @@ export function mapManufacturerProductItemsToMostSearchedParts(
 }
 
 /**
- * Backfills empty representative parts and normalizes en/de category labels from ES catalog.
+ * Backfills empty representative parts and hydrates category labels + images from ES.
  */
 export async function enrichManufacturerMostSearchedParts(
   page: ManufacturerIntelligencePage,
@@ -124,7 +130,8 @@ export async function enrichManufacturerMostSearchedParts(
   const manufacturerId = page.manufacturerId?.trim()
   const needsBackfill = !hasMostSearchedParts(page.mostSearchedParts)
   const needsLabelPatch = prefersLatinCategoryLabels(locale)
-  if (!needsBackfill && !needsLabelPatch) return page
+  const needsImagePatch = partsNeedImageHydration(page.mostSearchedParts)
+  if (!needsBackfill && !needsLabelPatch && !needsImagePatch) return page
   if (!manufacturerId) return page
 
   try {
@@ -148,6 +155,10 @@ export async function enrichManufacturerMostSearchedParts(
       if (catalogParts.length > 0) {
         mostSearchedParts = catalogParts
       }
+    }
+
+    if (partsNeedImageHydration(mostSearchedParts)) {
+      mostSearchedParts = await hydrateMostSearchedPartImages(mostSearchedParts, { manufacturerId })
     }
 
     if (!mostSearchedParts.length) return page

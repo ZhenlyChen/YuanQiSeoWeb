@@ -5,6 +5,8 @@ import {
   resolveSeoCategoryLabelFromItem,
 } from '@/lib/category-locale-label'
 import { MIN_CATEGORY_HOT_PARTS, countCategoryHotParts } from '@/lib/category-hot-parts'
+import { hydrateMostSearchedPartImages, partsNeedImageHydration } from '@/lib/catalog-part-images'
+import { partImageUrlFromEsItem } from '@/lib/part-images'
 import { slugFromEntityKey } from '@/lib/manufacturer-most-searched-fallback'
 import { fetchCategoryProductItems } from '@/lib/seo-api'
 import type {
@@ -107,6 +109,7 @@ export function mapCategoryProductItemsToMostSearchedParts(
       href: `/parts/${slugFromEntityKey(mpn, manufacturerId)}`,
       category: resolveCategoryLabelFromCatalogItem(item, locale, fallback),
       manufacturer: resolveManufacturerName(item),
+      imageUrl: partImageUrlFromEsItem(item),
       keySpecs: summary ? summary.slice(0, KEY_SPECS_MAX_LEN) : undefined,
       interest,
     })
@@ -138,7 +141,8 @@ export async function enrichCategoryMostSearchedParts(
 
   const needsBackfill = countCategoryHotParts(page) < MIN_CATEGORY_HOT_PARTS
   const needsLabelPatch = prefersLatinCategoryLabels(locale)
-  if (!needsBackfill && !needsLabelPatch) return page
+  const needsImagePatch = partsNeedImageHydration(page.mostSearchedParts)
+  if (!needsBackfill && !needsLabelPatch && !needsImagePatch) return page
 
   try {
     const items = await fetchCategoryProductItems({
@@ -164,10 +168,26 @@ export async function enrichCategoryMostSearchedParts(
       }
     }
 
-    if (!needsBackfill) return nextPage
+    if (!needsBackfill) {
+      if (partsNeedImageHydration(nextPage.mostSearchedParts)) {
+        nextPage = {
+          ...nextPage,
+          mostSearchedParts: await hydrateMostSearchedPartImages(nextPage.mostSearchedParts, {}),
+        }
+      }
+      return nextPage
+    }
 
     const catalogParts = mapCategoryProductItemsToMostSearchedParts(items, locale, fallback)
-    if (!catalogParts.length) return nextPage
+    if (!catalogParts.length) {
+      if (partsNeedImageHydration(nextPage.mostSearchedParts)) {
+        nextPage = {
+          ...nextPage,
+          mostSearchedParts: await hydrateMostSearchedPartImages(nextPage.mostSearchedParts, {}),
+        }
+      }
+      return nextPage
+    }
 
     const seen = new Set<string>()
     for (const row of nextPage.popularParts) {
@@ -183,7 +203,12 @@ export async function enrichCategoryMostSearchedParts(
       ...catalogParts.filter((part) => !seen.has(part.mpn.trim().toLowerCase())),
     ].slice(0, MOST_SEARCHED_PARTS_LIMIT)
 
-    return { ...nextPage, mostSearchedParts: merged }
+    let mostSearchedParts = merged
+    if (partsNeedImageHydration(mostSearchedParts)) {
+      mostSearchedParts = await hydrateMostSearchedPartImages(mostSearchedParts, {})
+    }
+
+    return { ...nextPage, mostSearchedParts }
   } catch (error) {
     console.error('[enrichCategoryMostSearchedParts]', {
       slug: page.slug,

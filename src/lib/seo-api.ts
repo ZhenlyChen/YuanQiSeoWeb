@@ -402,6 +402,36 @@ export async function fetchCategoryHub(params: {
   }
 }
 
+/** Batch ES lookup for representative-part image hydration (exact MPN match). */
+export async function fetchComponentListItems(
+  queries: Array<{ code: string; manufacturerId?: string; manufacturerNameEn?: string }>,
+): Promise<Array<Record<string, unknown>>> {
+  const item = queries
+    .map((query) => ({
+      code: query.code.trim(),
+      manufacturerId: query.manufacturerId?.trim() || undefined,
+      manufacturerNameEn: query.manufacturerNameEn?.trim() || undefined,
+    }))
+    .filter((query) => query.code)
+  if (!item.length) return []
+
+  try {
+    const res = await fetch(`${apiBase()}component/list`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      body: JSON.stringify({ item }),
+    })
+    if (!res.ok) return []
+    const json = (await res.json()) as ApiResponse<Array<Record<string, unknown>>>
+    if (json.code !== 200 || !Array.isArray(json.data)) return []
+    return json.data
+  } catch (error) {
+    console.error('[fetchComponentListItems]', error)
+    return []
+  }
+}
+
 export function utmForSlug(slug: string): string {
   const params = new URLSearchParams({
     utm_source: 'seo',
