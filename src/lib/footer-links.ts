@@ -21,11 +21,15 @@ export type FooterLabels = {
   product: string
   resources: string
   tools: string
+  compare: string
   bestPractice: string
   features: string
   pricing: string
   changelog: string
   insights: string
+  vsOctopart: string
+  vsFindchips: string
+  vsAlldatasheet: string
   manufacturerDirectory: string
   categoryDirectory: string
   helpCenter: string
@@ -46,11 +50,15 @@ export function getFooterLabelsFromTranslations(t: (key: string) => string): Foo
     product: t('product'),
     resources: t('resources'),
     tools: t('tools'),
+    compare: t('compare'),
     bestPractice: t('bestPractice'),
     features: t('features'),
     pricing: t('pricing'),
     changelog: t('changelog'),
     insights: t('insights'),
+    vsOctopart: t('vsOctopart'),
+    vsFindchips: t('vsFindchips'),
+    vsAlldatasheet: t('vsAlldatasheet'),
     manufacturerDirectory: t('manufacturerDirectory'),
     categoryDirectory: t('categoryDirectory'),
     helpCenter: t('helpCenter'),
@@ -97,6 +105,14 @@ export function buildFooterColumns(labels: FooterLabels, locale: AppLocale = 'en
         { label: labels.alternativeFinder, href: MARKETING_TOOL_PAGES.alternativeFinder },
         { label: labels.bomAnalyzer, href: MARKETING_TOOL_PAGES.bomAnalyzer },
         { label: labels.datasheetAi, href: MARKETING_TOOL_PAGES.datasheetAi },
+      ],
+    },
+    {
+      title: labels.compare,
+      links: [
+        { label: labels.vsOctopart, href: localizePath('/partgenie-vs-octopart', locale) },
+        { label: labels.vsFindchips, href: localizePath('/partgenie-vs-findchips', locale) },
+        { label: labels.vsAlldatasheet, href: localizePath('/partgenie-vs-alldatasheet', locale) },
       ],
     },
     {

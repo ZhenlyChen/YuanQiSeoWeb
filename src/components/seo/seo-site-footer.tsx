@@ -170,18 +170,20 @@ export function SeoSiteFooter() {
             </a>
             <SeoLocaleSwitcher variant="footer" />
           </div>
-          {footerColumns.map((column) => (
-            <div key={column.title} className="seo-site-footer__column">
-              <p className="seo-site-footer__column-title">{column.title}</p>
-              <ul className="seo-site-footer__column-links">
-                {column.links.map((link) => (
-                  <li key={link.label}>
-                    <a href={link.href}>{link.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="seo-site-footer__links-grid">
+            {footerColumns.map((column) => (
+              <div key={column.title} className="seo-site-footer__column">
+                <p className="seo-site-footer__column-title">{column.title}</p>
+                <ul className="seo-site-footer__column-links">
+                  {column.links.map((link) => (
+                    <li key={link.label}>
+                      <a href={link.href}>{link.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="seo-site-footer__divider" aria-hidden="true" />

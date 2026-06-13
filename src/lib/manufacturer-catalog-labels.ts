@@ -6,11 +6,57 @@ import {
 } from '@/lib/category-display'
 import {
   resolveTaxonomyL1,
+  resolveSeoCategoryLabel,
+  resolveZhCategoryDisplayLabel,
   stripCatalogQuotes,
 } from '@/lib/category-locale-label'
 import type { ManufacturerCatalogCategory } from '@/types/seo-intelligence'
 
 export { resolveTaxonomyL1, resolveSeoCategoryLabel, resolveSeoCategoryLabelFromItem } from '@/lib/category-locale-label'
+
+function resolveCatalogL2(rawL2: string, categoryL1: string, locale: AppLocale): string {
+  const text = stripCatalogQuotes(rawL2.trim())
+  if (!text) return ''
+
+  if (!prefersLatinCategoryLabels(locale) || !containsCJK(text)) {
+    return text
+  }
+
+  const fromAlias = resolveZhCategoryDisplayLabel(text, locale)
+  if (fromAlias && !containsCJK(fromAlias)) {
+    return fromAlias
+  }
+
+  const fromPath = formatCategoryLabel(
+    categoryL1 ? `${categoryL1},${text}` : text,
+    { locale, fallback: categoryL1 },
+  )
+  if (fromPath && !containsCJK(fromPath)) {
+    return fromPath
+  }
+
+  return fromAlias || text
+}
+
+/** Prefer structured categoryL1/categoryL2 from ES tree over comma-joined path parsing. */
+export function normalizeManufacturerCatalogRow(
+  row: Pick<ManufacturerCatalogCategory, 'label' | 'categoryL1' | 'categoryL2'>,
+  locale: AppLocale,
+): { label: string; categoryL1: string; categoryL2: string } {
+  const rawL1 = row.categoryL1?.trim() || ''
+  const rawL2 = row.categoryL2?.trim() || ''
+
+  if (rawL1 || rawL2) {
+    const categoryL1 = rawL1 ? resolveTaxonomyL1(rawL1, locale) : ''
+    const categoryL2 = rawL2 ? resolveCatalogL2(rawL2, categoryL1, locale) : ''
+    const label = categoryL2
+      || categoryL1
+      || resolveSeoCategoryLabel(row.label, locale, row.label)
+    return { label, categoryL1, categoryL2 }
+  }
+
+  return normalizeManufacturerCatalogLabel(row.label.trim(), locale)
+}
 
 export function normalizeManufacturerCatalogLabel(
   rawLabel: string,
@@ -26,12 +72,11 @@ export function normalizeManufacturerCatalogLabel(
       .filter(Boolean)
     if (parts.length >= 2) {
       const categoryL1 = resolveTaxonomyL1(parts[0], locale)
-      const label = formatCategoryLabel(text, { locale, fallback: categoryL1 })
-        || formatCategoryLabel(`${categoryL1},${parts[1]}`, { locale, fallback: categoryL1 })
+      const rawL2 = parts[parts.length - 1] ?? parts[1]
+      const categoryL2 = resolveCatalogL2(rawL2, categoryL1, locale)
+      const label = categoryL2
+        || formatCategoryLabel(text, { locale, fallback: categoryL1 })
         || categoryL1
-      const categoryL2 = prefersLatinCategoryLabels(locale) && containsCJK(parts[1])
-        ? (formatCategoryLabel(`${categoryL1},${parts[1]}`, { locale }) || '')
-        : parts[1]
       return {
         label,
         categoryL1,
@@ -56,10 +101,7 @@ export function rollupManufacturerCatalogCategories(
   const merged = new Map<string, ManufacturerCatalogCategory>()
 
   for (const row of rows) {
-    const rawLabel = row.categoryL2
-      ? `${row.categoryL1?.trim() || ''},${row.categoryL2.trim()}`.replace(/^,/, '')
-      : row.categoryL1?.trim() || row.label.trim()
-    const normalized = normalizeManufacturerCatalogLabel(rawLabel, locale)
+    const normalized = normalizeManufacturerCatalogRow(row, locale)
     if (!normalized.label) continue
 
     const nextRow: ManufacturerCatalogCategory = {

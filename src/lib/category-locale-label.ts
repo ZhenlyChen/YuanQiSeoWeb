@@ -1,5 +1,6 @@
 import type { AppLocale } from '@/i18n/routing'
 import zhL1Aliases from '@/data/category-l1-zh-aliases.json'
+import zhDisplayAliases from '@/data/category-zh-display-aliases.json'
 import {
   containsCJK,
   formatCategoryLabel,
@@ -26,6 +27,7 @@ export function stripCatalogQuotes(value: string): string {
 }
 
 let zhL1Index: Map<string, string> | null = null
+let zhDisplayIndex: Map<string, string> | null = null
 
 function getZhL1Index(): Map<string, string> {
   if (zhL1Index) return zhL1Index
@@ -42,6 +44,37 @@ function getZhL1Index(): Map<string, string> {
     zhL1Index.set(normKey(zh), en)
   }
   return zhL1Index
+}
+
+function getZhDisplayIndex(): Map<string, string> {
+  if (zhDisplayIndex) return zhDisplayIndex
+
+  zhDisplayIndex = new Map<string, string>()
+  for (const [zh, en] of Object.entries(zhDisplayAliases)) {
+    const canonical = en.trim()
+    if (!zh.trim() || !canonical) continue
+    zhDisplayIndex.set(normKey(zh), canonical)
+  }
+  return zhDisplayIndex
+}
+
+/** Map zh LCSC / catalog leaf labels to English (mirrors YuanQiWeb LcscCategory on en locale). */
+export function resolveZhCategoryDisplayLabel(raw: string, locale?: AppLocale): string {
+  const text = stripCatalogQuotes(raw.trim())
+  if (!text || !locale || !prefersLatinCategoryLabels(locale) || !containsCJK(text)) {
+    return text
+  }
+
+  const direct = getZhDisplayIndex().get(normKey(text))
+  if (direct) return direct
+
+  const paren = text.replace(/\([^)]*\)/g, '').trim()
+  if (paren && paren !== text) {
+    const resolved = getZhDisplayIndex().get(normKey(paren))
+    if (resolved) return resolved
+  }
+
+  return text
 }
 
 /** Map zh DigiKey L1 bucket keys to canonical English taxonomy labels. */
@@ -84,6 +117,16 @@ export function resolveSeoCategoryLabel(
 ): string {
   const text = readCategoryRaw(raw)
   if (!text) return fallback.trim() || 'Component'
+
+  if (locale && prefersLatinCategoryLabels(locale) && containsCJK(text)) {
+    const leaf = text.includes(',') || text.includes('?')
+      ? text.split(/[,??]/).map((part) => stripCatalogQuotes(part.trim())).filter(Boolean).at(-1) ?? text
+      : text
+    const fromZhAlias = resolveZhCategoryDisplayLabel(leaf, locale)
+    if (fromZhAlias && fromZhAlias !== leaf && !containsCJK(fromZhAlias)) {
+      return fromZhAlias
+    }
+  }
 
   const fromPath = formatCategoryLabel(text, { locale, fallback })
   if (fromPath && (!locale || !prefersLatinCategoryLabels(locale) || !containsCJK(fromPath))) {
