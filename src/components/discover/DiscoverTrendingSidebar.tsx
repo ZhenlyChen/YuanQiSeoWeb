@@ -8,6 +8,10 @@ import { resolveManufacturerLogo } from '@/lib/manufacturer-logos'
 import type { PublicDiscoverTrending } from '@/lib/discover-api'
 import { signUpUrl } from '@/lib/tool-urls'
 
+function visibleTrendingGroups(trending: PublicDiscoverTrending) {
+  return trending.groups.filter((group) => group.key !== 'hot_alternatives')
+}
+
 function formatChange(value?: number) {
   if (value == null || Number.isNaN(value)) return null
   const sign = value >= 0 ? '+' : ''
@@ -68,7 +72,7 @@ export function DiscoverTrendingSidebar({
 }) {
   return (
     <aside className={clsx('space-y-4', className)}>
-      {trending.groups.map((group) => (
+      {visibleTrendingGroups(trending).map((group) => (
         <section key={group.key} className="space-y-2">
           <h3 className="text-base font-medium text-[#101828] [font-family:var(--seo-heading-font)]">
             {group.title}
@@ -89,7 +93,7 @@ export function DiscoverTrendingSidebar({
 }
 
 export function DiscoverTrendingMobileStrip({ trending }: { trending: PublicDiscoverTrending }) {
-  const entries = trending.groups.flatMap((group) =>
+  const entries = visibleTrendingGroups(trending).flatMap((group) =>
     group.items.map((item, index) => ({ groupKey: group.key, item, index })),
   ).slice(0, 8)
 

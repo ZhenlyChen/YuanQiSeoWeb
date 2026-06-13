@@ -7,7 +7,7 @@ import { parseAppLocale } from '@/lib/page-locale'
 import { rejectUnavailableSeoPage } from '@/lib/resolve-seo-unavailable'
 import { resolvePublicSeoMetadata } from '@/lib/resolve-seo-page-meta'
 import { fetchSeoPage } from '@/lib/seo-api'
-import { buildPageMetadataFromApi } from '@/lib/seo-meta'
+import { buildPageMetadataFromApi, resolvePreviewRobots } from '@/lib/seo-meta'
 
 type PageProps = {
   params: Promise<{ locale: string; mpn: string }>
@@ -26,7 +26,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
       description: apiPage.description,
       canonicalPath: apiPage.canonicalPath || `/alternatives/${mpn}`,
       slug: mpn,
-      robots: apiPage.robots,
+      robots: resolvePreviewRobots(sp.preview, apiPage.robots),
       ogImage: apiPage.ogImage,
       locale,
     })

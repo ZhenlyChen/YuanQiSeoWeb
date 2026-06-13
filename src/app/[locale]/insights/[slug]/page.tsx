@@ -12,7 +12,7 @@ import { InsightDiscoverMore } from '@/components/insights/InsightDiscoverMore'
 import { formatDiscoverCategoryLabel } from '@/lib/discover-label'
 import { localizePath } from '@/lib/localized-path'
 import { parseAppLocale } from '@/lib/page-locale'
-import { buildPageMetadataFromApi } from '@/lib/seo-meta'
+import { buildPageMetadataFromApi, resolvePreviewRobots } from '@/lib/seo-meta'
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>
@@ -33,7 +33,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     canonicalPath: `/${locale}/insights/${slug}`,
     slug,
     locale,
-    robots: sp.preview ? 'noindex,nofollow' : undefined,
+    robots: resolvePreviewRobots(sp.preview),
   })
 }
 

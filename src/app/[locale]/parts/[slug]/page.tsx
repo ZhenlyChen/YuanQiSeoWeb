@@ -12,7 +12,7 @@ import { parseAppLocale } from '@/lib/page-locale'
 import { rejectUnavailableSeoPage } from '@/lib/resolve-seo-unavailable'
 import { seoNotFound } from '@/lib/seo-not-found'
 import { fetchSeoPage } from '@/lib/seo-api'
-import { buildPageMetadata, buildPageMetadataFromApi } from '@/lib/seo-meta'
+import { buildPageMetadata, buildPageMetadataFromApi, resolvePreviewRobots } from '@/lib/seo-meta'
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>
@@ -42,7 +42,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     description: page.description,
     canonicalPath: page.canonicalPath || `/parts/${slug}`,
     slug,
-    robots: page.robots,
+    robots: resolvePreviewRobots(sp.preview, page.robots),
     ogImage: page.ogImage,
     locale,
   })

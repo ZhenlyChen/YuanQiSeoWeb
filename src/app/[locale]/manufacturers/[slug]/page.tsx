@@ -15,7 +15,7 @@ import { seoNotFound } from '@/lib/seo-not-found'
 import { resolveManufacturerHeroSubtitle } from '@/lib/manufacturer-hero-subtitle'
 import { fetchSeoPage } from '@/lib/seo-api'
 import { buildHubItemListFromParts } from '@/lib/hub-item-list-from-parts'
-import { buildPageMetadata, buildPageMetadataFromApi } from '@/lib/seo-meta'
+import { buildPageMetadata, buildPageMetadataFromApi, resolvePreviewRobots } from '@/lib/seo-meta'
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>
@@ -45,7 +45,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     description: apiPage.description,
     canonicalPath: apiPage.canonicalPath || `/manufacturers/${slug}`,
     slug,
-    robots: apiPage.robots,
+    robots: resolvePreviewRobots(sp.preview, apiPage.robots),
     ogImage: apiPage.ogImage,
     locale,
   })

@@ -55,6 +55,19 @@ function parseRobots(value: string): Metadata['robots'] {
   }
 }
 
+/** Force noindex on Admin preview URLs even when the underlying page is published. */
+export const PREVIEW_ROBOTS = 'noindex,nofollow'
+
+export function resolvePreviewRobots(
+  previewToken: string | undefined,
+  robots?: string,
+): string | undefined {
+  if (previewToken) {
+    return PREVIEW_ROBOTS
+  }
+  return robots
+}
+
 export function buildPageMetadataFromApi(input: {
   title: string
   description: string
