@@ -3,6 +3,8 @@
 import { useLocale } from 'next-intl'
 import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
+import type { AppLocale } from '@/i18n/routing'
+import { catalogCategoryDisplayLabel } from '@/lib/manufacturer-catalog-fallback'
 import { cn } from '@/lib/cn'
 import { SEO_PUBLIC_BOUNDARY, buildGeneralGateStats } from '@/lib/seo-copy'
 import {
@@ -75,13 +77,15 @@ function CatalogCategoryRow({
   category,
   href,
   interactive = true,
+  locale,
 }: {
   category: ManufacturerCatalogCategory
   href: string
   interactive?: boolean
+  locale: AppLocale
 }) {
-  const locale = useLocale()
   const placeholder = isPlaceholderCategory(category)
+  const label = catalogCategoryDisplayLabel(category, locale)
 
   return (
     <tr
@@ -96,10 +100,10 @@ function CatalogCategoryRow({
           '\u00a0'
         ) : interactive ? (
           <a href={href} className="seo-mfg-catalog__category-link">
-            {category.label}
+            {label}
           </a>
         ) : (
-          category.label
+          label
         )}
       </td>
       <td className="seo-mfg-catalog__count">{placeholder ? '\u00a0' : formatPartCount(category.partCount, locale)}</td>
@@ -111,19 +115,22 @@ function CatalogCategoryRows({
   categories,
   resolveHref,
   interactive = true,
+  locale,
 }: {
   categories: ManufacturerCatalogCategory[]
   resolveHref: (category: ManufacturerCatalogCategory) => string
   interactive?: boolean
+  locale: AppLocale
 }) {
   return (
     <>
       {categories.map((category) => (
         <CatalogCategoryRow
-          key={category.label}
+          key={`${category.label}-${category.partCount}-${category.categoryL1 ?? ''}-${category.categoryL2 ?? ''}`}
           category={category}
           href={resolveHref(category)}
           interactive={interactive}
+          locale={locale}
         />
       ))}
     </>
@@ -139,6 +146,7 @@ export function ManufacturerCatalogTable({
   manufacturerId: string
   categories: ManufacturerCatalogCategory[]
 }) {
+  const locale = useLocale() as AppLocale
   const { isLoggedIn, isReady } = useSeoNavUser()
   const showGated = !isReady || !isLoggedIn
   const isEmpty = categories.length === 0
@@ -166,7 +174,7 @@ export function ManufacturerCatalogTable({
             <table className="seo-mfg-catalog__table">
               <CatalogTableHead />
               <tbody>
-                <CatalogCategoryRows categories={preview} resolveHref={resolveHref} />
+                <CatalogCategoryRows categories={preview} resolveHref={resolveHref} locale={locale} />
               </tbody>
             </table>
             <div className="seo-mfg-catalog-gated-locked">
@@ -177,6 +185,7 @@ export function ManufacturerCatalogTable({
                       categories={locked}
                       resolveHref={resolveHref}
                       interactive={false}
+                      locale={locale}
                     />
                   </tbody>
                 </table>
@@ -198,6 +207,7 @@ export function ManufacturerCatalogTable({
               <CatalogCategoryRows
                 categories={padCategories(visible, MAX_VISIBLE)}
                 resolveHref={resolveHref}
+                locale={locale}
               />
             </tbody>
           </table>

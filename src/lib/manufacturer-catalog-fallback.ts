@@ -1,5 +1,10 @@
 import type { AppLocale } from '@/i18n/routing'
 import {
+  normalizeManufacturerCatalogLabel,
+  rollupManufacturerCatalogCategories,
+} from '@/lib/manufacturer-catalog-labels'
+import { prefersLatinCategoryLabels } from '@/lib/category-display'
+import {
   fetchManufacturerProductCategories,
   type ManufacturerProductCategory,
 } from '@/lib/seo-api'
@@ -16,14 +21,15 @@ function hasCatalogCategories(categories: ManufacturerCatalogCategory[] | undefi
 
 export function mapManufacturerCategoryTreeToCatalogCategories(
   categories: ManufacturerProductCategory[],
-  options?: { limit?: number },
+  options?: { limit?: number; locale?: AppLocale },
 ): ManufacturerCatalogCategory[] {
   const limit = options?.limit ?? CATALOG_CATEGORY_LIMIT
+  const locale = options?.locale ?? 'en'
   const rows: ManufacturerCatalogCategory[] = []
 
   for (const l1 of categories) {
-    const categoryL1 = l1.name?.trim()
-    if (!categoryL1) continue
+    const l1Name = l1.name?.trim()
+    if (!l1Name) continue
 
     const children = Array.isArray(l1.children) ? l1.children : []
     if (children.length > 0) {
@@ -33,7 +39,7 @@ export function mapManufacturerCategoryTreeToCatalogCategories(
         rows.push({
           label: categoryL2,
           partCount: child.count ?? 0,
-          categoryL1,
+          categoryL1: l1Name,
           categoryL2,
         })
       }
@@ -41,38 +47,64 @@ export function mapManufacturerCategoryTreeToCatalogCategories(
     }
 
     rows.push({
-      label: categoryL1,
+      label: l1Name,
       partCount: l1.count ?? 0,
-      categoryL1,
+      categoryL1: l1Name,
     })
   }
 
-  return rows
-    .sort((left, right) => right.partCount - left.partCount)
-    .slice(0, limit)
+  return rollupManufacturerCatalogCategories(rows, locale, limit)
 }
 
-/** SSR fallback when hub content_json has empty catalogCategories but ES has products. */
+function normalizeStoredCatalogCategories(
+  categories: ManufacturerCatalogCategory[],
+  locale: AppLocale,
+): ManufacturerCatalogCategory[] {
+  return rollupManufacturerCatalogCategories(categories, locale, CATALOG_CATEGORY_LIMIT)
+}
+
+/**
+ * Backfills empty catalog rows and normalizes en/de labels to taxonomy English.
+ * Re-fetches ES category tree when possible so zh L1 buckets merge with English rows.
+ */
 export async function enrichManufacturerCatalogCategories(
   page: ManufacturerIntelligencePage,
   locale: AppLocale,
   options?: { previewToken?: string },
 ): Promise<ManufacturerIntelligencePage> {
-  if (hasCatalogCategories(page.catalogCategories)) return page
-
   const manufacturerId = page.manufacturerId?.trim()
-  if (!manufacturerId) return page
+  const shouldNormalize = prefersLatinCategoryLabels(locale)
 
-  try {
-    const categories = await fetchManufacturerProductCategories(manufacturerId, {
-      previewToken: options?.previewToken,
-    })
-    const catalogCategories = mapManufacturerCategoryTreeToCatalogCategories(categories)
-    if (!catalogCategories.length) return page
-
-    return { ...page, catalogCategories }
-  } catch (error) {
-    console.error('[enrichManufacturerCatalogCategories]', { slug: page.slug, locale, error })
-    return page
+  if (manufacturerId) {
+    try {
+      const categories = await fetchManufacturerProductCategories(manufacturerId, {
+        previewToken: options?.previewToken,
+      })
+      const catalogCategories = mapManufacturerCategoryTreeToCatalogCategories(categories, { locale })
+      if (catalogCategories.length) {
+        return { ...page, catalogCategories }
+      }
+    } catch (error) {
+      console.error('[enrichManufacturerCatalogCategories]', { slug: page.slug, locale, error })
+    }
   }
+
+  if (!hasCatalogCategories(page.catalogCategories)) return page
+  if (!shouldNormalize) return page
+
+  const catalogCategories = normalizeStoredCatalogCategories(page.catalogCategories, locale)
+  return catalogCategories.length ? { ...page, catalogCategories } : page
+}
+
+export function catalogCategoryDisplayLabel(
+  category: ManufacturerCatalogCategory,
+  locale: AppLocale,
+): string {
+  const normalized = normalizeManufacturerCatalogLabel(
+    category.categoryL2
+      ? `${category.categoryL1 || ''},${category.categoryL2}`
+      : category.categoryL1 || category.label,
+    locale,
+  )
+  return normalized.label || category.label
 }

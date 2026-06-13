@@ -14,7 +14,7 @@ import { Stars02Icon } from '@/components/seo/stars-02-icon'
 import { TopSearchedPartsTable } from '@/components/seo/top-searched-parts-table'
 import { TypewriterText } from '@/components/seo/typewriter-text'
 import { buildCategorySectionNavItems } from '@/lib/category-section-nav-items'
-import { buildRelatedL1CategoryLinks } from '@/lib/category-taxonomy'
+import { buildCategoryHubRelatedLinks } from '@/lib/category-taxonomy'
 import { resolveCategoryHotParts } from '@/lib/category-hot-parts'
 import { buildCategoryToolGrid } from '@/lib/category-tool-links'
 import type { AppLocale } from '@/i18n/routing'
@@ -146,7 +146,7 @@ export function CategoryIntelligenceView({ page }: { page: CategoryHubPage }) {
             <>
               <SidebarToolGrid tools={buildCategoryToolGrid(page)} />
               <SidebarRelatedLinks
-                links={buildRelatedL1CategoryLinks(page.l1Slug)}
+                links={buildCategoryHubRelatedLinks(page)}
                 title={t('hub.relatedLinksTitle')}
               />
             </>

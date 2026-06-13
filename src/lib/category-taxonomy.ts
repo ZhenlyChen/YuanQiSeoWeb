@@ -1,5 +1,5 @@
 import { directoryLetterForName } from '@/lib/manufacturer-directory'
-import type { CategoryIconId, CategorySubcategoryCard } from '@/types/seo-intelligence'
+import type { CategoryHubPage, CategoryIconId, CategorySubcategoryCard } from '@/types/seo-intelligence'
 
 export type CategoryL2Definition = {
   slug: string
@@ -269,11 +269,62 @@ export function categoryFinderPath(l1Slug: string): string {
 }
 
 export function buildRelatedL1CategoryLinks(excludeL1Slug: string, limit = 5) {
-  return getL1Categories()
-    .filter((item) => item.published && item.slug !== excludeL1Slug)
-    .slice(0, limit)
-    .map((item) => ({
-      label: item.name,
-      href: categoryHubPath(item.slug),
-    }))
+  return buildAdjacentL1CategoryLinks(excludeL1Slug, limit)
+}
+
+function buildAdjacentL1CategoryLinks(excludeL1Slug: string, limit = 5) {
+  const published = getL1Categories().filter((item) => item.published)
+  const currentIndex = published.findIndex((item) => item.slug === excludeL1Slug)
+
+  const rotated = currentIndex === -1
+    ? published.filter((item) => item.slug !== excludeL1Slug)
+    : [
+        ...published.slice(currentIndex + 1),
+        ...published.slice(0, currentIndex),
+      ]
+
+  return rotated.slice(0, limit).map((item) => ({
+    label: item.name,
+    href: categoryHubPath(item.slug),
+  }))
+}
+
+/** Contextual sidebar links: subcategories, L2 siblings, or adjacent L1 hubs — not always the top 5. */
+export function buildCategoryHubRelatedLinks(
+  page: Pick<CategoryHubPage, 'level' | 'l1Slug' | 'l2Slug' | 'parentName' | 'subcategories'>,
+  limit = 5,
+) {
+  if (page.level === 'l2' && page.l1Slug) {
+    const links: { label: string; href: string }[] = []
+    if (page.parentName?.trim()) {
+      links.push({
+        label: page.parentName.trim(),
+        href: categoryHubPath(page.l1Slug),
+      })
+    }
+
+    for (const sibling of getL2Categories(page.l1Slug)) {
+      if (sibling.slug === page.l2Slug) continue
+      links.push({
+        label: sibling.name,
+        href: categoryHubPath(page.l1Slug, sibling.slug),
+      })
+      if (links.length >= limit) return links.slice(0, limit)
+    }
+
+    if (links.length > 0) return links.slice(0, limit)
+  }
+
+  if (page.subcategories.length > 0) {
+    const links = page.subcategories
+      .slice(0, limit)
+      .map((item) => ({
+        label: item.name,
+        href: item.href?.trim() || categoryHubPath(page.l1Slug, item.slug),
+      }))
+      .filter((item) => item.label.trim() && item.href.trim())
+    if (links.length > 0) return links
+  }
+
+  return buildAdjacentL1CategoryLinks(page.l1Slug, limit)
 }
