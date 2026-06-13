@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { ComponentIntelligenceView } from '@/components/seo/component-intelligence-view'
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
@@ -10,6 +9,8 @@ import {
   productJsonLdFromPublicPage,
 } from '@/lib/map-public-seo-page'
 import { parseAppLocale } from '@/lib/page-locale'
+import { rejectUnavailableSeoPage } from '@/lib/resolve-seo-unavailable'
+import { seoNotFound } from '@/lib/seo-not-found'
 import { fetchSeoPage } from '@/lib/seo-api'
 import { buildPageMetadata, buildPageMetadataFromApi } from '@/lib/seo-meta'
 
@@ -55,7 +56,15 @@ export default async function PartPage({ params, searchParams }: PageProps) {
 
   if (isMockComponentSlug(slug)) {
     const mockPage = getMockComponentPage(slug)
-    if (!mockPage) notFound()
+    if (!mockPage) {
+      seoNotFound({
+        kind: 'part',
+        reason: 'not_found',
+        slug,
+        locale,
+        path: `/parts/${slug}`,
+      })
+    }
     return (
       <SeoPageShell
         breadcrumbs={mockPage.breadcrumbs}
@@ -80,7 +89,15 @@ export default async function PartPage({ params, searchParams }: PageProps) {
     locale,
     previewToken: sp.preview,
   })
-  if (!apiPage) notFound()
+  if (!apiPage) {
+    await rejectUnavailableSeoPage({
+      slug,
+      locale,
+      kind: 'part',
+      expectedPageType: 'part',
+      path: `/parts/${slug}`,
+    })
+  }
 
   const page = mapPublicSeoPageToComponentPage(apiPage, locale)
 

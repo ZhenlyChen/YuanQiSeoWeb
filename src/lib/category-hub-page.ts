@@ -1,8 +1,8 @@
-import { notFound } from 'next/navigation'
 import { getMockCategoryHubPage } from '@/data/mock/category'
 import type { AppLocale } from '@/i18n/routing'
 import { enrichCategoryHubSubcategories } from '@/lib/category-hub-subcategories'
 import { enrichCategoryMostSearchedParts } from '@/lib/category-most-searched-fallback'
+import { seoNotFound } from '@/lib/seo-not-found'
 import { useMockCategoryHub } from '@/lib/mock-seo-pages'
 import { categoryHubSeoMeta } from '@/lib/seo-meta'
 import { fetchCategoryHub } from '@/lib/seo-api'
@@ -75,13 +75,42 @@ export async function buildCategoryHubProps(params: {
   locale?: AppLocale
   previewToken?: string
 }) {
+  const categoryPath = params.l2Slug
+    ? `/categories/${params.l1Slug}/${params.l2Slug}`
+    : `/categories/${params.l1Slug}`
+  const categorySlug = params.l2Slug
+    ? `${params.l1Slug}/${params.l2Slug}`
+    : params.l1Slug
+
   let page = await fetchCategoryHubPage(
     params.l1Slug,
     params.l2Slug,
     params.locale,
     params.previewToken,
   )
-  if (!page) notFound()
+  if (!page) {
+    seoNotFound({
+      kind: 'category_hub',
+      reason: 'not_found',
+      slug: categorySlug,
+      locale: params.locale,
+      path: categoryPath,
+      hint: 'Confirm the L1/L2 slug against the category directory catalog and YuanQiService category hub API.',
+    })
+  }
+
+  if (!params.previewToken && page.degraded && !useMockCategoryHub()) {
+    seoNotFound({
+      kind: 'category_hub',
+      reason: 'category_degraded',
+      slug: categorySlug,
+      locale: params.locale,
+      path: categoryPath,
+      pageType: 'category',
+      status: 'draft_or_missing',
+      hint: 'Publish the category hub SEO page in YuanQiAdmin (pageType: category), or open with ?preview=TOKEN.',
+    })
+  }
 
   if (!params.l2Slug) {
     page = await enrichCategoryHubSubcategories(page, params.locale)

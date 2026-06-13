@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { CompetitorCompareView } from '@/components/seo/competitor-compare-view'
 import { CompareIntelligenceView } from '@/components/seo/compare-intelligence-view'
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
@@ -7,7 +6,7 @@ import { getCompetitorComparePage } from '@/data/competitor-comparisons'
 import { getMockComparePage } from '@/data/mock'
 import { parseAppLocale } from '@/lib/page-locale'
 import { SEO_DEFERRED, withDeferredRobots } from '@/lib/seo-indexing-policy'
-import { buildPageMetadata } from '@/lib/seo-meta'
+import { seoNotFound } from '@/lib/seo-not-found'
 
 type PageProps = { params: Promise<{ locale: string; slug: string }> }
 
@@ -54,7 +53,15 @@ export default async function ComparePage({ params }: PageProps) {
   }
 
   const page = getMockComparePage(slug)
-  if (!page) notFound()
+  if (!page) {
+    seoNotFound({
+      kind: 'compare',
+      reason: 'not_found',
+      slug,
+      locale,
+      path: `/compare/${slug}`,
+    })
+  }
 
   return (
     <SeoPageShell

@@ -120,6 +120,10 @@ function mapSubstituteRows(raw?: Array<Record<string, unknown>>): AlternativeIte
     if (!mpn) continue
     const manufacturer = stringField(row, 'manufacturer') || 'Manufacturer'
     const matchType = (stringField(row, 'matchType') || 'functional') as DecisionLabel
+    const matchLabel = stringField(row, 'matchLabel') || undefined
+    const displayLabel = stringField(row, 'displayLabel') || undefined
+    const publishTier = stringField(row, 'publishTier') || undefined
+    const pdfCheckStatus = stringField(row, 'pdfCheckStatus') || undefined
     const reason = stringField(row, 'reason') || stringField(row, 'displayLabel')
     const href = stringField(row, 'href') || `/parts/${mpn.toLowerCase()}`
     const compareHref = stringField(row, 'compareHref') || undefined
@@ -128,6 +132,10 @@ function mapSubstituteRows(raw?: Array<Record<string, unknown>>): AlternativeIte
       mpn,
       manufacturer,
       matchType,
+      matchLabel,
+      displayLabel,
+      publishTier,
+      pdfCheckStatus,
       reason,
       riskLevel,
       href,

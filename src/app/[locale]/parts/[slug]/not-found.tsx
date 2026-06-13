@@ -1,8 +1,7 @@
-export default function NotFound() {
-  return (
-    <main className="not-found">
-      <h1>Part page not found</h1>
-      <p>This slug is not published or does not exist.</p>
-    </main>
-  )
+import { SeoUnavailableScreen } from '@/components/seo/seo-unavailable-screen'
+import { consumeSeoUnavailableContext } from '@/lib/seo-not-found'
+
+export default function PartNotFound() {
+  const context = consumeSeoUnavailableContext()
+  return <SeoUnavailableScreen context={context} />
 }

@@ -24,7 +24,7 @@ export function normalizeCategoryDirectoryItems(
       iconUrl: resolveCategoryIconUrl(item.slug, item.iconUrl || taxonomy?.iconUrl),
       subcategoryCount: item.subcategoryCount ?? 0,
       partCount: Number(item.partCount) || 0,
-      published: item.published ?? true,
+      published: item.published ?? false,
       sortRank: item.sortRank,
     }
   })

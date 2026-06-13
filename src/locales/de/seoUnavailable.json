@@ -1,0 +1,42 @@
+{
+  "fallbackTitle": "Seite nicht verfügbar",
+  "fallbackBody": "Diese SEO-Seite kann öffentlich nicht angezeigt werden.",
+  "titles": {
+    "not_published": "{kind} nicht veröffentlicht",
+    "not_found": "{kind} nicht gefunden",
+    "category_degraded": "Category Hub nicht veröffentlicht",
+    "wrong_page_type": "Falscher Seitentyp für diese URL",
+    "invalid_slug": "Ungültige URL",
+    "api_error": "Seitenstatus konnte nicht geladen werden"
+  },
+  "bodies": {
+    "not_published": "Im Admin existiert ein SEO-Seiten-Datensatz, er ist aber noch nicht veröffentlicht.",
+    "not_found": "Für diesen Slug und diese Locale wurde kein SEO-Seiten-Datensatz gefunden.",
+    "category_degraded": "Die Kategorie existiert im Verzeichnis, aber es gibt noch keine veröffentlichte Category-Hub-Intelligence-Seite.",
+    "wrong_page_type": "Dieser Slug gehört zu einem anderen Seitentyp als die geöffnete Route.",
+    "invalid_slug": "Das URL-Segment ist für diesen Site-Bereich ungültig.",
+    "api_error": "Die Verfügbarkeitsprüfung konnte YuanQiService nicht erreichen. API-Verbindung und Slug prüfen."
+  },
+  "kinds": {
+    "part": "Part-Seite",
+    "alternative": "Alternativen-Seite",
+    "manufacturer": "Manufacturer Hub",
+    "category_hub": "Category Hub",
+    "compare": "Vergleichsseite",
+    "answer": "Answer-Seite",
+    "insights": "Insights-Artikel",
+    "finder": "Category Finder",
+    "generic": "SEO-Seite"
+  },
+  "reasonLabel": "Grund",
+  "slugLabel": "Slug",
+  "pathLabel": "Pfad",
+  "localeLabel": "Locale",
+  "pageTypeLabel": "Seitentyp",
+  "expectedPageTypeLabel": "Erwarteter Seitentyp",
+  "statusLabel": "Admin-Status",
+  "entityKeyLabel": "Entity key",
+  "hintLabel": "Was prüfen",
+  "defaultHint": "YuanQiAdmin ? SEO Pages öffnen, Slug/Locale prüfen und Seite veröffentlichen (oder ?preview=TOKEN für Draft-Vorschau).",
+  "homeLink": "Zurück zur PartGenie-Startseite"
+}

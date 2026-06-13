@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { ArrowUpRightIcon } from '@/components/seo/arrow-up-right-icon'
 import { ManufacturerLogoAvatar } from '@/components/seo/manufacturer-logo-avatar'
 import { resolveManufacturerLogo } from '@/lib/manufacturer-logos'

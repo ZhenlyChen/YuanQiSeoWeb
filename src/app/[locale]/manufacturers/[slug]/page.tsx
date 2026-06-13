@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { ManufacturerHeroBanner } from '@/components/seo/manufacturer-hero-banner'
 import { ManufacturerQueryCarousel } from '@/components/seo/manufacturer-query-carousel'
 import { ManufacturerIntelligenceView } from '@/components/seo/manufacturer-intelligence-view'
@@ -11,6 +10,8 @@ import { enrichManufacturerCatalogCategories } from '@/lib/manufacturer-catalog-
 import { enrichManufacturerMostSearchedParts } from '@/lib/manufacturer-most-searched-fallback'
 import { isMockManufacturerSlug } from '@/lib/mock-seo-pages'
 import { parseAppLocale } from '@/lib/page-locale'
+import { rejectUnavailableSeoPage } from '@/lib/resolve-seo-unavailable'
+import { seoNotFound } from '@/lib/seo-not-found'
 import { resolveManufacturerHeroSubtitle } from '@/lib/manufacturer-hero-subtitle'
 import { fetchSeoPage } from '@/lib/seo-api'
 import { buildHubItemListFromParts } from '@/lib/hub-item-list-from-parts'
@@ -57,7 +58,15 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
 
   if (isMockManufacturerSlug(slug) && !sp.preview) {
     const mockPage = getMockManufacturerPage(slug)
-    if (!mockPage) notFound()
+    if (!mockPage) {
+      seoNotFound({
+        kind: 'manufacturer',
+        reason: 'not_found',
+        slug,
+        locale,
+        path: `/manufacturers/${slug}`,
+      })
+    }
     const heroSubtitle = resolveManufacturerHeroSubtitle(mockPage)
     const itemList = buildHubItemListFromParts(mockPage.name, mockPage.mostSearchedParts)
     return (
@@ -91,7 +100,15 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
     locale,
     previewToken: sp.preview,
   })
-  if (!apiPage?.hubPage) notFound()
+  if (!apiPage?.hubPage) {
+    await rejectUnavailableSeoPage({
+      slug,
+      locale,
+      kind: 'manufacturer',
+      expectedPageType: 'manufacturer',
+      path: `/manufacturers/${slug}`,
+    })
+  }
 
   const mappedPage = mapPublicSeoPageToManufacturerPage(apiPage, locale)
   const pageWithCatalog = await enrichManufacturerCatalogCategories(mappedPage, locale, {

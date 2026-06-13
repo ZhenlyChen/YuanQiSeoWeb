@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { AlternativeIntelligenceView } from '@/components/seo/alternative-intelligence-view'
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
 import { getMockAlternativePage } from '@/data/mock'
 import { mapPublicSeoPageToAlternativePage } from '@/lib/map-public-seo-page'
 import { parseAppLocale } from '@/lib/page-locale'
+import { rejectUnavailableSeoPage } from '@/lib/resolve-seo-unavailable'
 import { resolvePublicSeoMetadata } from '@/lib/resolve-seo-page-meta'
 import { fetchSeoPage } from '@/lib/seo-api'
 import { buildPageMetadataFromApi } from '@/lib/seo-meta'
@@ -64,7 +64,15 @@ export default async function AlternativePage({ params, searchParams }: PageProp
   }
 
   const page = getMockAlternativePage(mpn)
-  if (!page) notFound()
+  if (!page) {
+    await rejectUnavailableSeoPage({
+      slug: mpn,
+      locale,
+      kind: 'alternative',
+      expectedPageType: 'alternative',
+      path: `/alternatives/${mpn}`,
+    })
+  }
 
   return (
     <SeoPageShell

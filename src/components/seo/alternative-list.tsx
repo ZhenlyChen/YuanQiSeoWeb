@@ -1,11 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import { useState, type CSSProperties } from 'react'
+import { Link } from '@/i18n/navigation'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 import type { AlternativeItem } from '@/types/seo-intelligence'
 import { AlternativesViewToggle } from '@/components/seo/alternatives-view-toggle'
 import { SectionTitle } from '@/components/seo/section-title'
-import { alternativeMatchLabel } from '@/lib/alternative-match-labels'
+import { alternativeMatchBadgeLabel } from '@/lib/alternative-match-labels'
 import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { SEO_PUBLIC_BOUNDARY } from '@/lib/seo-copy'
 import { partImageForMpn } from '@/lib/part-images'
@@ -25,7 +25,7 @@ function AlternativeListRow({ alt }: { alt: AlternativeItem }) {
         </div>
         <p className="seo-alt-row__reason">{alt.reason}</p>
       </div>
-      <span className="seo-alt-row__badge">{alternativeMatchLabel(alt.matchType)}</span>
+      <span className="seo-alt-row__badge">{alternativeMatchBadgeLabel(alt)}</span>
     </div>
   )
 }
@@ -50,7 +50,7 @@ function AlternativeTableRow({ alt }: { alt: AlternativeItem }) {
         <p className="seo-alt-table__reason">{alt.reason}</p>
       </td>
       <td className="seo-alt-table__cell-match">
-        <span className="seo-alt-row__badge">{alternativeMatchLabel(alt.matchType)}</span>
+        <span className="seo-alt-row__badge">{alternativeMatchBadgeLabel(alt)}</span>
       </td>
     </tr>
   )
@@ -90,26 +90,56 @@ function AlternativesGatedTable({ items }: { items: AlternativeItem[] }) {
   )
 }
 
+function GraphPartNode({
+  href,
+  className,
+  style,
+  children,
+}: {
+  href?: string
+  className: string
+  style?: CSSProperties
+  children: ReactNode
+}) {
+  if (href) {
+    return (
+      <Link href={href} className={className} style={style} title={typeof children === 'string' ? children : undefined}>
+        {children}
+      </Link>
+    )
+  }
+
+  return (
+    <div className={className} style={style}>
+      {children}
+    </div>
+  )
+}
+
 export function AlternativesGraphPlaceholder({
   items,
   centerMpn,
+  centerHref,
   blurred = false,
 }: {
   items: AlternativeItem[]
   centerMpn?: string
+  centerHref?: string
   blurred?: boolean
 }) {
   const satellites = items.slice(0, 8)
   const center = centerMpn ?? 'Target part'
+  const resolvedCenterHref =
+    centerHref ??
+    (centerMpn ? `/parts/${centerMpn.trim().toLowerCase()}` : undefined)
 
   return (
     <div
       className={`seo-alt-view seo-alt-graph-placeholder${blurred ? ' seo-alt-graph-placeholder--blurred' : ''}`}
       aria-label="Alternatives graph preview"
-      role="img"
     >
       <div className="seo-alt-graph-placeholder__canvas">
-        <svg className="seo-alt-graph-placeholder__lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg className="seo-alt-graph-placeholder__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           {satellites.map((_, index) => {
             const angle = (index / satellites.length) * Math.PI * 2 - Math.PI / 2
             const x = 50 + Math.cos(angle) * 38
@@ -117,19 +147,25 @@ export function AlternativesGraphPlaceholder({
             return <line key={index} x1="50" y1="50" x2={x} y2={y} />
           })}
         </svg>
-        <div className="seo-alt-graph-placeholder__node seo-alt-graph-placeholder__node--center">{center}</div>
+        <GraphPartNode
+          href={resolvedCenterHref}
+          className="seo-alt-graph-placeholder__node seo-alt-graph-placeholder__node--center"
+        >
+          {center}
+        </GraphPartNode>
         {satellites.map((alt, index) => {
           const angle = (index / satellites.length) * Math.PI * 2 - Math.PI / 2
           const left = 50 + Math.cos(angle) * 38
           const top = 50 + Math.sin(angle) * 36
           return (
-            <div
+            <GraphPartNode
               key={alt.mpn}
+              href={alt.href}
               className="seo-alt-graph-placeholder__node seo-alt-graph-placeholder__node--sat"
               style={{ left: `${left}%`, top: `${top}%` }}
             >
               {alt.mpn}
-            </div>
+            </GraphPartNode>
           )
         })}
       </div>
@@ -168,6 +204,7 @@ export function AlternativeList({
   const { isLoggedIn, isReady } = useSeoNavUser()
   const showGated = gated && (!isReady || !isLoggedIn)
   const resolvedGateHref = gatedCtaHref ?? (slug ? signUpUrl(slug) : undefined)
+  const centerPartHref = slug ? `/parts/${slug}` : mpn ? `/parts/${mpn.trim().toLowerCase()}` : undefined
   const useToggle = showViewToggle
   const showGraph = useToggle && viewMode === 'graph'
 
@@ -222,7 +259,7 @@ export function AlternativeList({
               aria-label={showGraph ? 'Alternatives graph view' : 'Alternatives list view'}
             >
               {showGraph ? (
-                <AlternativesGraphPlaceholder items={items} centerMpn={mpn} blurred />
+                <AlternativesGraphPlaceholder items={items} centerMpn={mpn} centerHref={centerPartHref} blurred />
               ) : (
                 <AlternativesGatedTable items={items} />
               )}
@@ -234,7 +271,7 @@ export function AlternativeList({
               aria-label={showGraph ? 'Alternatives graph view' : 'Alternatives list view'}
             >
               {showGraph ? (
-                <AlternativesGraphPlaceholder items={items} centerMpn={mpn} />
+                <AlternativesGraphPlaceholder items={items} centerMpn={mpn} centerHref={centerPartHref} />
               ) : (
                 <div className="seo-alt-view seo-alt-list" aria-label={`${items.length} alternative components`}>
                   {items.map((alt) => (

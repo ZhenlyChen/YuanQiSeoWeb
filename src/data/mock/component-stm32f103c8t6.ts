@@ -34,12 +34,12 @@ export const mockComponentStm32: ComponentIntelligencePage = {
     manufacturer: 'STMicroelectronics',
     manufacturerHref: '/manufacturers/stmicroelectronics',
     category: '32-bit ARM Cortex-M3 Microcontroller',
-    categoryHref: '/categories/mcu/finder',
+    categoryHref: '/categories/mcu',
     package: 'LQFP-48',
   },
   breadcrumbs: [
     { label: 'STMicroelectronics', href: '/manufacturers/stmicroelectronics' },
-    { label: '32-bit ARM Cortex-M3 Microcontroller', href: '/categories/mcu/finder' },
+    { label: '32-bit ARM Cortex-M3 Microcontroller', href: '/categories/mcu' },
     { label: MPN },
   ],
   shortAnswer:
@@ -250,8 +250,8 @@ export const mockComponentStm32: ComponentIntelligencePage = {
     },
   ],
   relatedCategory: {
-    label: 'MCU component finder',
-    href: '/categories/mcu/finder',
+    label: 'MCU category hub',
+    href: '/categories/mcu',
   },
   relatedManufacturer: {
     label: 'STMicroelectronics component intelligence',

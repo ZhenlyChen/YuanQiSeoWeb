@@ -5,6 +5,7 @@ import footer from './footer.json'
 import insights from './insights.json'
 import nav from './nav.json'
 import seoMeta from './seoMeta.json'
+import seoUnavailable from './seoUnavailable.json'
 import shell from './shell.json'
 
 export default {
@@ -15,5 +16,6 @@ export default {
   insights,
   nav,
   seoMeta,
+  seoUnavailable,
   shell,
 } as const

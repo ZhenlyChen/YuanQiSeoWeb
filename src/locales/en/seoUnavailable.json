@@ -1,0 +1,42 @@
+{
+  "fallbackTitle": "Page unavailable",
+  "fallbackBody": "This SEO page cannot be shown publicly.",
+  "titles": {
+    "not_published": "{kind} not published",
+    "not_found": "{kind} not found",
+    "category_degraded": "Category hub not published",
+    "wrong_page_type": "Wrong page type for this URL",
+    "invalid_slug": "Invalid URL",
+    "api_error": "Could not load page status"
+  },
+  "bodies": {
+    "not_published": "A SEO page record exists in Admin but is not published for public traffic.",
+    "not_found": "No matching SEO page record was found for this slug and locale.",
+    "category_degraded": "The category exists in the directory catalog, but no published category hub intelligence page is available yet.",
+    "wrong_page_type": "This slug belongs to a different page type than the route you opened.",
+    "invalid_slug": "The URL segment is not valid for this site section.",
+    "api_error": "The availability check could not reach YuanQiService. Confirm API connectivity and slug spelling."
+  },
+  "kinds": {
+    "part": "Part page",
+    "alternative": "Alternative page",
+    "manufacturer": "Manufacturer hub",
+    "category_hub": "Category hub",
+    "compare": "Compare page",
+    "answer": "Answer page",
+    "insights": "Insights article",
+    "finder": "Category finder",
+    "generic": "SEO page"
+  },
+  "reasonLabel": "Reason",
+  "slugLabel": "Slug",
+  "pathLabel": "Path",
+  "localeLabel": "Locale",
+  "pageTypeLabel": "Page type",
+  "expectedPageTypeLabel": "Expected page type",
+  "statusLabel": "Admin status",
+  "entityKeyLabel": "Entity key",
+  "hintLabel": "What to check",
+  "defaultHint": "Open YuanQiAdmin ? SEO Pages, confirm slug/locale, and publish the page (or use ?preview=TOKEN for draft preview).",
+  "homeLink": "Back to PartGenie home"
+}

@@ -219,6 +219,6 @@ export const mockAlternativeBq24195l: AlternativeIntelligencePage = {
   originalPartHref: '/parts/bq24195l',
   categoryLink: {
     label: 'Battery charger IC alternatives in PartGenie',
-    href: '/categories/battery-charger/finder',
+    href: '/categories/power-management',
   },
 }

@@ -8,9 +8,13 @@ import type { CategoryDirectoryItem } from '@/types/seo-intelligence'
 
 function CategoryDirectoryCard({ item }: { item: CategoryDirectoryItem }) {
   const t = useTranslations('categories')
+  const hoverLabel = item.published
+    ? t('directory.viewIntelligence')
+    : t('directory.hubComingSoon')
   const cardClassName = [
     'seo-cat-dir-card',
     item.iconUrl ? 'seo-cat-dir-card--image' : '',
+    item.published ? '' : 'seo-cat-dir-card--soon',
   ].filter(Boolean).join(' ')
   const contentClassName = [
     'seo-cat-dir-card__content',
@@ -21,8 +25,8 @@ function CategoryDirectoryCard({ item }: { item: CategoryDirectoryItem }) {
     item.iconUrl ? 'seo-cat-dir-card__icon-wrap--image' : '',
   ].filter(Boolean).join(' ')
 
-  return (
-    <Link href={item.href} className={cardClassName}>
+  const inner = (
+    <>
       <div className={contentClassName}>
         <div className="seo-cat-dir-card__head">
           <span className={iconWrapClassName} aria-hidden="true">
@@ -44,10 +48,24 @@ function CategoryDirectoryCard({ item }: { item: CategoryDirectoryItem }) {
       </div>
       <div className="seo-cat-dir-card__hover" aria-hidden="true">
         <span className="seo-cat-dir-card__hover-cta">
-          <span className="seo-cat-dir-card__hover-text">{t('directory.viewIntelligence')}</span>
-          <ArrowUpRightIcon className="seo-cat-dir-card__hover-arrow" />
+          <span className="seo-cat-dir-card__hover-text">{hoverLabel}</span>
+          {item.published ? <ArrowUpRightIcon className="seo-cat-dir-card__hover-arrow" /> : null}
         </span>
       </div>
+    </>
+  )
+
+  if (!item.published) {
+    return (
+      <div className={cardClassName} aria-disabled="true">
+        {inner}
+      </div>
+    )
+  }
+
+  return (
+    <Link href={item.href} className={cardClassName}>
+      {inner}
     </Link>
   )
 }

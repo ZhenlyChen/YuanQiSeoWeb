@@ -14,6 +14,7 @@ import { partImageForMpn } from '@/lib/part-images'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
 import { buildCompareChatQuery, fillSeoFloatingChat } from '@/lib/seo-floating-chat'
 import { signUpUrl } from '@/lib/tool-urls'
+import { alternativeMatchBadgeLabel } from '@/lib/alternative-match-labels'
 
 const GATED_BACKDROP_MIN_ROWS = 4
 const GATED_BLURRED_MIN_ROWS = 3
@@ -73,7 +74,7 @@ function AlternativeRichListItem({
                     : 'danger'
             }
           >
-            {alt.matchType.replace('-', ' ')}
+            {alternativeMatchBadgeLabel(alt)}
           </UIBadge>
           {alt.riskLevel ? (
             <UIBadge tone={alt.riskLevel === 'high' ? 'danger' : alt.riskLevel === 'medium' ? 'warning' : 'success'}>
@@ -192,6 +193,7 @@ export function AlternativeRichList({
   const showGated = gated && (!isReady || !isLoggedIn)
   const showGraph = showViewToggle && viewMode === 'graph'
   const resolvedGateHref = gatedCtaHref ?? (slug ? signUpUrl(slug) : undefined)
+  const centerPartHref = slug ? `/parts/${slug}` : mpn ? `/parts/${mpn.trim().toLowerCase()}` : undefined
   const gatedWrapClass = [
     'seo-alt-gated-wrap',
     'seo-alt-gated-wrap--active',
@@ -241,7 +243,7 @@ export function AlternativeRichList({
             aria-label={showGraph ? 'Alternatives graph view' : 'Alternatives list view'}
           >
             {showGraph ? (
-              <AlternativesGraphPlaceholder items={items} centerMpn={mpn} blurred />
+              <AlternativesGraphPlaceholder items={items} centerMpn={mpn} centerHref={centerPartHref} blurred />
             ) : (
               <AlternativesGatedRichList items={items} sourceMpn={mpn} />
             )}
@@ -253,7 +255,7 @@ export function AlternativeRichList({
             aria-label={showGraph ? 'Alternatives graph view' : 'Alternatives list view'}
           >
             {showGraph ? (
-              <AlternativesGraphPlaceholder items={items} centerMpn={mpn} />
+              <AlternativesGraphPlaceholder items={items} centerMpn={mpn} centerHref={centerPartHref} />
             ) : (
               <div
                 className="seo-alt-view seo-alt-rich-list-wrap"

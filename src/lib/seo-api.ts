@@ -127,6 +127,37 @@ function apiBase(): string {
   )
 }
 
+export type SeoPageAvailability = {
+  exists: boolean
+  published: boolean
+  status?: string
+  pageType?: string
+  slug: string
+  locale: string
+  entityKey?: string
+}
+
+export async function fetchSeoPageAvailability(
+  slug: string,
+  locale?: string,
+): Promise<SeoPageAvailability | null> {
+  const search = new URLSearchParams()
+  search.set('locale', locale || 'en')
+
+  try {
+    const res = await fetch(
+      `${apiBase()}seo/pages/${encodeURIComponent(slug)}/availability?${search.toString()}`,
+      { cache: 'no-store' },
+    )
+    if (!res.ok) return null
+    const json = (await res.json()) as ApiResponse<SeoPageAvailability>
+    if (json.code !== 200 || !json.data) return null
+    return json.data
+  } catch {
+    return null
+  }
+}
+
 export async function fetchSeoPage(
   slug: string,
   options?: { locale?: string; previewToken?: string },

@@ -67,6 +67,10 @@ export type AlternativeItem = {
   mpn: string
   manufacturer: string
   matchType: DecisionLabel
+  matchLabel?: string
+  displayLabel?: string
+  publishTier?: string
+  pdfCheckStatus?: string
   reason: string
   riskLevel?: ReplacementDifficulty
   href: string
