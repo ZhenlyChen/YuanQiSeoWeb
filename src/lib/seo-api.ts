@@ -298,8 +298,7 @@ async function fetchManufacturerProductsResponse(
 
   try {
     const res = await fetch(`${apiBase()}component/manufacturer/products?${search.toString()}`, {
-      cache: options?.previewToken ? 'no-store' : undefined,
-      next: options?.previewToken ? undefined : { revalidate: 86400 },
+      cache: 'no-store',
     })
     if (!res.ok) return null
     const json = (await res.json()) as ApiResponse<ManufacturerProductsApiResponse>

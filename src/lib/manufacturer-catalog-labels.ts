@@ -14,6 +14,7 @@ const ZH_L1_SHORT_ALIASES: Record<string, string> = {
   '\u8fde\u63a5\u5668': 'Connectors, Interconnects',
   '\u7535\u611f': 'Inductors, Coils, Chokes',
   '\u534a\u5bfc\u4f53': 'Semiconductors',
+  '\u5c04\u9891\u82af\u7247/\u5929\u7ebf': 'RF/IF and RFID',
 }
 
 function normKey(value: string): string {
@@ -94,10 +95,8 @@ export function normalizeManufacturerCatalogLabel(
   return { label: categoryL1, categoryL1, categoryL2: '' }
 }
 
-function catalogMergeKey(row: Pick<ManufacturerCatalogCategory, 'categoryL1' | 'categoryL2' | 'label'>): string {
-  const l1 = row.categoryL1?.trim() || row.label.trim()
-  const l2 = row.categoryL2?.trim() || ''
-  return `${l1.toLowerCase()}||${l2.toLowerCase()}`
+function catalogMergeKey(row: Pick<ManufacturerCatalogCategory, 'label'>): string {
+  return normKey(stripCatalogQuotes(row.label.trim()))
 }
 
 export function rollupManufacturerCatalogCategories(

@@ -3,7 +3,7 @@ import {
   normalizeManufacturerCatalogLabel,
   rollupManufacturerCatalogCategories,
 } from '@/lib/manufacturer-catalog-labels'
-import { prefersLatinCategoryLabels } from '@/lib/category-display'
+import { containsCJK, prefersLatinCategoryLabels } from '@/lib/category-display'
 import {
   fetchManufacturerProductCategories,
   type ManufacturerProductCategory,
@@ -56,10 +56,12 @@ export function mapManufacturerCategoryTreeToCatalogCategories(
   return rollupManufacturerCatalogCategories(rows, locale, limit)
 }
 
-function normalizeStoredCatalogCategories(
+function finalizeCatalogCategories(
   categories: ManufacturerCatalogCategory[],
   locale: AppLocale,
 ): ManufacturerCatalogCategory[] {
+  if (!categories.length) return categories
+  if (!prefersLatinCategoryLabels(locale)) return categories.slice(0, CATALOG_CATEGORY_LIMIT)
   return rollupManufacturerCatalogCategories(categories, locale, CATALOG_CATEGORY_LIMIT)
 }
 
@@ -73,27 +75,30 @@ export async function enrichManufacturerCatalogCategories(
   options?: { previewToken?: string },
 ): Promise<ManufacturerIntelligencePage> {
   const manufacturerId = page.manufacturerId?.trim()
-  const shouldNormalize = prefersLatinCategoryLabels(locale)
+  let catalogCategories = page.catalogCategories ?? []
 
   if (manufacturerId) {
     try {
       const categories = await fetchManufacturerProductCategories(manufacturerId, {
         previewToken: options?.previewToken,
       })
-      const catalogCategories = mapManufacturerCategoryTreeToCatalogCategories(categories, { locale })
-      if (catalogCategories.length) {
-        return { ...page, catalogCategories }
+      if (categories.length > 0) {
+        const fromEs = mapManufacturerCategoryTreeToCatalogCategories(categories, { locale })
+        if (fromEs.length > 0) {
+          catalogCategories = fromEs
+        }
       }
     } catch (error) {
       console.error('[enrichManufacturerCatalogCategories]', { slug: page.slug, locale, error })
     }
   }
 
-  if (!hasCatalogCategories(page.catalogCategories)) return page
-  if (!shouldNormalize) return page
+  if (!hasCatalogCategories(catalogCategories)) return page
 
-  const catalogCategories = normalizeStoredCatalogCategories(page.catalogCategories, locale)
-  return catalogCategories.length ? { ...page, catalogCategories } : page
+  catalogCategories = finalizeCatalogCategories(catalogCategories, locale)
+  if (!catalogCategories.length) return page
+
+  return { ...page, catalogCategories }
 }
 
 export function catalogCategoryDisplayLabel(
@@ -106,5 +111,10 @@ export function catalogCategoryDisplayLabel(
       : category.categoryL1 || category.label,
     locale,
   )
-  return normalized.label || category.label
+  const label = normalized.label || category.label
+  if (prefersLatinCategoryLabels(locale) && containsCJK(label)) {
+    const l1 = normalized.categoryL1?.trim()
+    if (l1 && !containsCJK(l1)) return l1
+  }
+  return label
 }
