@@ -25,6 +25,7 @@ export type FooterLabels = {
   features: string
   pricing: string
   changelog: string
+  insights: string
   manufacturerDirectory: string
   categoryDirectory: string
   helpCenter: string
@@ -49,6 +50,7 @@ export function getFooterLabelsFromTranslations(t: (key: string) => string): Foo
     features: t('features'),
     pricing: t('pricing'),
     changelog: t('changelog'),
+    insights: t('insights'),
     manufacturerDirectory: t('manufacturerDirectory'),
     categoryDirectory: t('categoryDirectory'),
     helpCenter: t('helpCenter'),
@@ -75,6 +77,7 @@ export function buildFooterColumns(labels: FooterLabels, locale: AppLocale = 'en
         { label: labels.features, href: `${MARKETING_ORIGIN}/#features` },
         { label: labels.pricing, href: MARKETING_PAGES.pricing },
         { label: labels.changelog, href: helpCenter.changelog },
+        { label: labels.insights, href: localizePath('/insights', locale) },
       ],
     },
     {
