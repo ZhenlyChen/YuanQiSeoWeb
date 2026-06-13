@@ -15,7 +15,8 @@
     "YUANQI_API_BASE": "https://app.partgenie.ai/api/v1",
     "NEXT_PUBLIC_NAV_WEBFLOW_ORIGIN": "https://www.partgenie.ai",
     "NEXT_PUBLIC_APP_ORIGIN": "https://app.partgenie.ai",
-    "NEXT_PUBLIC_YUANQI_API_BASE": "https://app.partgenie.ai/api/v1"
+    "NEXT_PUBLIC_YUANQI_API_BASE": "https://app.partgenie.ai/api/v1",
+    "REVALIDATE_SECRET": "revalidate_secret"
   },
   "services": [
     {
