@@ -1,21 +1,21 @@
 {
-  "fallbackTitle": "Seite nicht verfügbar",
-  "fallbackBody": "Diese SEO-Seite kann öffentlich nicht angezeigt werden.",
+  "fallbackTitle": "Seite nicht verfÃ¼gbar",
+  "fallbackBody": "Diese SEO-Seite kann Ã¶ffentlich nicht angezeigt werden.",
   "titles": {
-    "not_published": "{kind} nicht veröffentlicht",
+    "not_published": "{kind} nicht verÃ¶ffentlicht",
     "not_found": "{kind} nicht gefunden",
-    "category_degraded": "Category Hub nicht veröffentlicht",
-    "wrong_page_type": "Falscher Seitentyp für diese URL",
-    "invalid_slug": "Ungültige URL",
+    "category_degraded": "Category Hub nicht verÃ¶ffentlicht",
+    "wrong_page_type": "Falscher Seitentyp fÃ¼r diese URL",
+    "invalid_slug": "UngÃ¼ltige URL",
     "api_error": "Seitenstatus konnte nicht geladen werden"
   },
   "bodies": {
-    "not_published": "Im Admin existiert ein SEO-Seiten-Datensatz, er ist aber noch nicht veröffentlicht.",
-    "not_found": "Für diesen Slug und diese Locale wurde kein SEO-Seiten-Datensatz gefunden.",
-    "category_degraded": "Die Kategorie existiert im Verzeichnis, aber es gibt noch keine veröffentlichte Category-Hub-Intelligence-Seite.",
-    "wrong_page_type": "Dieser Slug gehört zu einem anderen Seitentyp als die geöffnete Route.",
-    "invalid_slug": "Das URL-Segment ist für diesen Site-Bereich ungültig.",
-    "api_error": "Die Verfügbarkeitsprüfung konnte YuanQiService nicht erreichen. API-Verbindung und Slug prüfen."
+    "not_published": "Im Admin existiert ein SEO-Seiten-Datensatz, er ist aber noch nicht verÃ¶ffentlicht.",
+    "not_found": "FÃ¼r diesen Slug und diese Locale wurde kein SEO-Seiten-Datensatz gefunden.",
+    "category_degraded": "Die Kategorie existiert im Verzeichnis, aber es gibt noch keine verÃ¶ffentlichte Category-Hub-Intelligence-Seite.",
+    "wrong_page_type": "Dieser Slug gehÃ¶rt zu einem anderen Seitentyp als die geÃ¶ffnete Route.",
+    "invalid_slug": "Das URL-Segment ist fÃ¼r diesen Site-Bereich ungÃ¼ltig.",
+    "api_error": "Die VerfÃ¼gbarkeitsprÃ¼fung konnte YuanQiService nicht erreichen. API-Verbindung und Slug prÃ¼fen."
   },
   "kinds": {
     "part": "Part-Seite",
@@ -36,7 +36,7 @@
   "expectedPageTypeLabel": "Erwarteter Seitentyp",
   "statusLabel": "Admin-Status",
   "entityKeyLabel": "Entity key",
-  "hintLabel": "Was prüfen",
-  "defaultHint": "YuanQiAdmin ? SEO Pages öffnen, Slug/Locale prüfen und Seite veröffentlichen (oder ?preview=TOKEN für Draft-Vorschau).",
-  "homeLink": "Zurück zur PartGenie-Startseite"
+  "hintLabel": "Was prÃ¼fen",
+  "defaultHint": "YuanQiAdmin ? SEO Pages Ã¶ffnen, Slug/Locale prÃ¼fen und Seite verÃ¶ffentlichen (oder ?preview=TOKEN fÃ¼r Draft-Vorschau).",
+  "homeLink": "ZurÃ¼ck zur PartGenie-Startseite"
 }
