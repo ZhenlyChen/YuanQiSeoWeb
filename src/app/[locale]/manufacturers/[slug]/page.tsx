@@ -67,7 +67,7 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
         path: `/manufacturers/${slug}`,
       })
     }
-    const heroSubtitle = resolveManufacturerHeroSubtitle(mockPage)
+    const heroSubtitle = resolveManufacturerHeroSubtitle({ ...mockPage, locale })
     const itemList = buildHubItemListFromParts(mockPage.name, mockPage.mostSearchedParts)
     return (
       <SeoPageShell
@@ -109,7 +109,7 @@ export default async function ManufacturerPage({ params, searchParams }: PagePro
       previewToken: sp.preview,
     })
     const page = await enrichComparableManufacturerLogos(pageWithParts, locale)
-    const heroSubtitle = resolveManufacturerHeroSubtitle(page)
+    const heroSubtitle = resolveManufacturerHeroSubtitle({ ...page, locale })
     const itemList = buildHubItemListFromParts(page.name, page.mostSearchedParts)
 
     return (

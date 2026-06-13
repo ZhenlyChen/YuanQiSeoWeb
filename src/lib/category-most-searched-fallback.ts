@@ -1,9 +1,9 @@
 import type { AppLocale } from '@/i18n/routing'
+import { prefersLatinCategoryLabels } from '@/lib/category-display'
 import {
-  formatCategoryLabel,
-  formatCategoryLabelForDisplay,
-  prefersLatinCategoryLabels,
-} from '@/lib/category-display'
+  patchSeoCategoryLabels,
+  resolveSeoCategoryLabelFromItem,
+} from '@/lib/category-locale-label'
 import { MIN_CATEGORY_HOT_PARTS, countCategoryHotParts } from '@/lib/category-hot-parts'
 import { slugFromEntityKey } from '@/lib/manufacturer-most-searched-fallback'
 import { fetchCategoryProductItems } from '@/lib/seo-api'
@@ -47,13 +47,7 @@ export function resolveCategoryLabelFromCatalogItem(
   locale: AppLocale,
   fallback = '',
 ): string {
-  const categoryRaw = firstNonEmpty(item.category_str, item.category)
-  return (
-    formatCategoryLabel(categoryRaw || item.category, { locale, fallback })
-    || formatCategoryLabelForDisplay(firstNonEmpty(item.category), { locale, fallback })
-    || fallback
-    || 'Component'
-  )
+  return resolveSeoCategoryLabelFromItem(item, locale, fallback || 'Component')
 }
 
 function categoryHubCategoryFallback(page: CategoryHubPage): string {
@@ -69,36 +63,27 @@ function buildCatalogCategoryLabels(
   for (const item of items) {
     const mpn = firstNonEmpty(item.code, item.mpn).toLowerCase()
     if (!mpn) continue
-    const label = resolveCategoryLabelFromCatalogItem(item, locale, fallback)
-    if (label) labels.set(mpn, label)
+    labels.set(mpn, resolveCategoryLabelFromCatalogItem(item, locale, fallback))
   }
   return labels
 }
 
-function patchPopularPartCategory(
-  row: CategoryPopularPartRow,
+function patchPopularPartCategories(
+  rows: CategoryPopularPartRow[],
   locale: AppLocale,
   labels: Map<string, string>,
   fallback: string,
-): CategoryPopularPartRow {
-  const mpnKey = row.mpn.trim().toLowerCase()
-  const category = labels.get(mpnKey)
-    || formatCategoryLabelForDisplay(row.category, { locale, fallback })
-    || row.category
-  return category === row.category ? row : { ...row, category }
+): CategoryPopularPartRow[] {
+  return patchSeoCategoryLabels(rows, locale, labels, (row) => row.mpn, fallback)
 }
 
-function patchMostSearchedPartCategory(
-  part: TopSearchedPartItem,
+function patchMostSearchedPartCategories(
+  parts: TopSearchedPartItem[],
   locale: AppLocale,
   labels: Map<string, string>,
   fallback: string,
-): TopSearchedPartItem {
-  const mpnKey = part.mpn.trim().toLowerCase()
-  const category = labels.get(mpnKey)
-    || formatCategoryLabelForDisplay(part.category, { locale, fallback })
-    || part.category
-  return category === part.category ? part : { ...part, category }
+): TopSearchedPartItem[] {
+  return patchSeoCategoryLabels(parts, locale, labels, (part) => part.mpn, fallback)
 }
 
 export function mapCategoryProductItemsToMostSearchedParts(
@@ -169,11 +154,12 @@ export async function enrichCategoryMostSearchedParts(
     if (needsLabelPatch && labels.size > 0) {
       nextPage = {
         ...nextPage,
-        popularParts: nextPage.popularParts.map((row) =>
-          patchPopularPartCategory(row, locale, labels, fallback),
-        ),
-        mostSearchedParts: nextPage.mostSearchedParts.map((part) =>
-          patchMostSearchedPartCategory(part, locale, labels, fallback),
+        popularParts: patchPopularPartCategories(nextPage.popularParts, locale, labels, fallback),
+        mostSearchedParts: patchMostSearchedPartCategories(
+          nextPage.mostSearchedParts,
+          locale,
+          labels,
+          fallback,
         ),
       }
     }

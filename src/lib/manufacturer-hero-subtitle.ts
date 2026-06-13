@@ -1,3 +1,5 @@
+import type { AppLocale } from '@/i18n/routing'
+import { resolveSeoCategoryLabel } from '@/lib/category-locale-label'
 import type { ManufacturerCatalogCategory, SeoMeta } from '@/types/seo-intelligence'
 
 const DEFAULT_FALLBACK = 'Manufacturer intelligence hub'
@@ -7,7 +9,18 @@ export type ManufacturerHeroSubtitleInput = {
   heroSubtitle?: string
   meta: Pick<SeoMeta, 'h1SecondLine'>
   expertiseAreas?: string[]
-  catalogCategories: Pick<ManufacturerCatalogCategory, 'label'>[]
+  catalogCategories: Pick<ManufacturerCatalogCategory, 'label' | 'categoryL1' | 'categoryL2'>[]
+  locale?: AppLocale
+}
+
+function catalogCategoryLabel(
+  category: Pick<ManufacturerCatalogCategory, 'label' | 'categoryL1' | 'categoryL2'>,
+  locale?: AppLocale,
+): string {
+  const raw = category.categoryL2
+    ? `${category.categoryL1 || ''},${category.categoryL2}`
+    : category.categoryL1 || category.label
+  return resolveSeoCategoryLabel(raw, locale, category.label)
 }
 
 /** Matches manufacturer hub enrichment Worker merge order. */
@@ -27,7 +40,7 @@ export function resolveManufacturerHeroSubtitle(input: ManufacturerHeroSubtitleI
   }
 
   const fromCatalog = input.catalogCategories
-    .map((category) => category.label.trim())
+    .map((category) => catalogCategoryLabel(category, input.locale))
     .filter(Boolean)
     .slice(0, 3)
   if (fromCatalog.length > 0) {

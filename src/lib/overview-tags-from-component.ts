@@ -1,3 +1,6 @@
+import type { AppLocale } from '@/i18n/routing'
+import { resolveSeoCategoryLabelFromItem } from '@/lib/category-locale-label'
+
 function stringField(source: Record<string, unknown> | undefined, key: string): string {
   const value = source?.[key]
   return typeof value === 'string' ? value.trim() : ''
@@ -16,14 +19,6 @@ function manufacturerName(component: Record<string, unknown>): string {
   return ''
 }
 
-function categoryChipLabel(category: string): string {
-  const parts = category
-    .split(',')
-    .map((part) => part.trim())
-    .filter(Boolean)
-  return parts[parts.length - 1] ?? category
-}
-
 function attributeChip(attr: Record<string, unknown>): string {
   const name = stringField(attr, 'name')
   const value = stringField(attr, 'value')
@@ -33,7 +28,10 @@ function attributeChip(attr: Record<string, unknown>): string {
 }
 
 /** Build header chips from basic-enrich ES document fields (package, mfg, category, key attributes). */
-export function buildOverviewTagsFromEsComponent(component: Record<string, unknown>): string[] {
+export function buildOverviewTagsFromEsComponent(
+  component: Record<string, unknown>,
+  locale?: AppLocale,
+): string[] {
   const tags: string[] = []
   const seen = new Set<string>()
 
@@ -52,8 +50,8 @@ export function buildOverviewTagsFromEsComponent(component: Record<string, unkno
   const manufacturer = manufacturerName(component)
   if (manufacturer) push(manufacturer)
 
-  const category = stringField(component, 'category_str') || stringField(component, 'category')
-  if (category) push(categoryChipLabel(category))
+  const categoryLabel = resolveSeoCategoryLabelFromItem(component, locale)
+  if (categoryLabel) push(categoryLabel)
 
   const attributes = component.attributes
   if (Array.isArray(attributes)) {

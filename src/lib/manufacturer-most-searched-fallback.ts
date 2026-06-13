@@ -1,5 +1,9 @@
 import type { AppLocale } from '@/i18n/routing'
-import { formatCategoryLabel, formatCategoryLabelForDisplay } from '@/lib/category-display'
+import { prefersLatinCategoryLabels } from '@/lib/category-display'
+import {
+  patchSeoCategoryLabels,
+  resolveSeoCategoryLabelFromItem,
+} from '@/lib/category-locale-label'
 import { fetchManufacturerProductItems } from '@/lib/seo-api'
 import type {
   ManufacturerIntelligencePage,
@@ -35,8 +39,33 @@ function firstNonEmpty(...values: unknown[]): string {
 }
 
 function resolveCategoryLabel(item: Record<string, unknown>, locale?: AppLocale): string {
-  const categoryRaw = firstNonEmpty(item.category_str, item.category)
-  return formatCategoryLabel(categoryRaw || item.category, { locale }) || 'Component'
+  return resolveSeoCategoryLabelFromItem(item, locale, 'Component')
+}
+
+function buildCatalogLabelMap(
+  items: Array<Record<string, unknown>>,
+  locale: AppLocale,
+): Map<string, string> {
+  const labels = new Map<string, string>()
+  for (const item of items) {
+    const mpn = firstNonEmpty(item.code, item.mpn).toLowerCase()
+    if (!mpn) continue
+    labels.set(mpn, resolveCategoryLabel(item, locale))
+  }
+  return labels
+}
+
+function patchMostSearchedPartCategories(
+  parts: TopSearchedPartItem[],
+  locale: AppLocale,
+  labelsByMpn: Map<string, string>,
+): TopSearchedPartItem[] {
+  return patchSeoCategoryLabels(
+    parts,
+    locale,
+    labelsByMpn,
+    (part) => part.mpn,
+  )
 }
 
 function readManufacturerInfo(item: Record<string, unknown>): Record<string, unknown> | null {
@@ -85,32 +114,43 @@ export function mapManufacturerProductItemsToMostSearchedParts(
 }
 
 /**
- * SSR fallback when hub content_json has empty mostSearchedParts but ES has products.
- * Data source: GET component/manufacturer/products (code.keyword asc) - same semantic as
- * import-time ES representative_part_context, not PG manufacturer_mpn_demand_score.
+ * Backfills empty representative parts and normalizes en/de category labels from ES catalog.
  */
 export async function enrichManufacturerMostSearchedParts(
   page: ManufacturerIntelligencePage,
   locale: AppLocale,
   options?: { previewToken?: string },
 ): Promise<ManufacturerIntelligencePage> {
-  if (hasMostSearchedParts(page.mostSearchedParts)) return page
-
   const manufacturerId = page.manufacturerId?.trim()
+  const needsBackfill = !hasMostSearchedParts(page.mostSearchedParts)
+  const needsLabelPatch = prefersLatinCategoryLabels(locale)
+  if (!needsBackfill && !needsLabelPatch) return page
   if (!manufacturerId) return page
 
   try {
     const items = await fetchManufacturerProductItems(manufacturerId, {
-      pageSize: MOST_SEARCHED_PARTS_LIMIT,
+      pageSize: needsLabelPatch ? 50 : MOST_SEARCHED_PARTS_LIMIT,
       previewToken: options?.previewToken,
     })
-    const mostSearchedParts = mapManufacturerProductItemsToMostSearchedParts(items, {
-      manufacturerName: page.name,
-      manufacturerId,
-      locale,
-    })
-    if (!mostSearchedParts.length) return page
+    const labelsByMpn = buildCatalogLabelMap(items, locale)
 
+    let mostSearchedParts = page.mostSearchedParts
+    if (needsLabelPatch && mostSearchedParts.length > 0) {
+      mostSearchedParts = patchMostSearchedPartCategories(mostSearchedParts, locale, labelsByMpn)
+    }
+
+    if (needsBackfill) {
+      const catalogParts = mapManufacturerProductItemsToMostSearchedParts(items, {
+        manufacturerName: page.name,
+        manufacturerId,
+        locale,
+      })
+      if (catalogParts.length > 0) {
+        mostSearchedParts = catalogParts
+      }
+    }
+
+    if (!mostSearchedParts.length) return page
     return { ...page, mostSearchedParts }
   } catch (error) {
     console.error('[enrichManufacturerMostSearchedParts]', { slug: page.slug, locale, error })

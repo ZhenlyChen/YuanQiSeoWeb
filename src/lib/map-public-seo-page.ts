@@ -2,6 +2,7 @@ import type { AppLocale } from '@/i18n/routing'
 import { normalizeBreadcrumbItems } from '@/lib/breadcrumb-items'
 import { componentSeoMetaSync, alternativeSeoMetaSync } from '@/lib/seo-meta'
 import { buildOverviewTagsFromEsComponent } from '@/lib/overview-tags-from-component'
+import { resolveSeoCategoryLabel } from '@/lib/category-locale-label'
 import type { PublicSeoPage } from '@/lib/seo-api'
 import type { ProductJsonLdInput } from '@/lib/json-ld'
 import { resolvePartImageUrl } from '@/lib/part-images'
@@ -186,7 +187,11 @@ export function mapPublicSeoPageToComponentPage(
   const component = apiPage.component ?? {}
   const code = stringField(component, 'code') || apiPage.slug
   const { name: manufacturer, slug: manufacturerSlug } = manufacturerFromComponent(component)
-  const categoryLabel = stringField(component, 'category_str') || stringField(component, 'category') || 'Component'
+  const categoryLabel = resolveSeoCategoryLabel(
+    stringField(component, 'category_str') || stringField(component, 'category'),
+    locale,
+    'Component',
+  )
   const categorySlug = apiPage.links.category?.href?.split('/').filter(Boolean)[1] ?? 'components'
   const packageName = stringField(component, 'package')
   const summary = apiPage.content.shortAnswerText || stringField(component, 'summary') || apiPage.description
@@ -239,7 +244,7 @@ export function mapPublicSeoPageToComponentPage(
     overviewTags:
       apiPage.content.overviewTags?.length
         ? apiPage.content.overviewTags
-        : buildOverviewTagsFromEsComponent(component),
+        : buildOverviewTagsFromEsComponent(component, locale),
     meta,
     subtitle: {
       manufacturer,
@@ -342,7 +347,11 @@ export function mapPublicSeoPageToAlternativePage(
   const signals = apiPage.content.signals ?? {}
   const code = stringField(component, 'code') || stringField(signals as Record<string, unknown>, 'targetEntityKey').split('|')[0] || apiPage.slug.toUpperCase()
   const { name: manufacturer } = manufacturerFromComponent(component)
-  const categoryLabel = stringField(component, 'category_str') || stringField(component, 'category') || 'Component'
+  const categoryLabel = resolveSeoCategoryLabel(
+    stringField(component, 'category_str') || stringField(component, 'category'),
+    locale,
+    'Component',
+  )
   const packageName = stringField(component, 'package')
   const substitutes = mapSubstituteRows(apiPage.content.substitutes)
   const insight = apiPage.content.aiReplacementInsight ?? {}
@@ -407,7 +416,7 @@ export function mapPublicSeoPageToAlternativePage(
     mpn: code,
     manufacturer,
     category: categoryLabel,
-    overviewTags: buildOverviewTagsFromEsComponent(component),
+    overviewTags: buildOverviewTagsFromEsComponent(component, locale),
     subtitle: {
       manufacturer,
       category: categoryLabel,
@@ -444,11 +453,17 @@ export function mapPublicSeoPageToAlternativePage(
   }
 }
 
-export function productJsonLdFromPublicPage(apiPage: PublicSeoPage): ProductJsonLdInput {
+export function productJsonLdFromPublicPage(
+  apiPage: PublicSeoPage,
+  locale?: AppLocale,
+): ProductJsonLdInput {
   const component = apiPage.component ?? {}
   const code = stringField(component, 'code') || apiPage.slug
   const { name: manufacturer } = manufacturerFromComponent(component)
-  const category = stringField(component, 'category_str') || stringField(component, 'category')
+  const category = resolveSeoCategoryLabel(
+    stringField(component, 'category_str') || stringField(component, 'category'),
+    locale,
+  )
   const image = resolvePartImageUrl(code, mapImageUrls(component))
 
   return {

@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import type { AppLocale } from '@/i18n/routing'
 import { resolvePopularPartHref } from '@/lib/category-hot-parts'
+import { resolveSeoCategoryLabel } from '@/lib/category-locale-label'
 import { datasheetAiUrl, partFinderUrl } from '@/lib/tool-urls'
 import type { CategoryPopularPartRow } from '@/types/seo-intelligence'
 
@@ -11,12 +13,16 @@ export function CategoryPopularPartsTable({
   rows,
   catalogCtaLabel,
   slug = 'category-hub',
+  locale,
+  categoryFallback,
 }: {
   title: string
   intro: string
   rows: CategoryPopularPartRow[]
   catalogCtaLabel: string
   slug?: string
+  locale?: AppLocale
+  categoryFallback?: string
 }) {
   return (
     <section className="seo-page-section seo-page-section-anchor">
@@ -47,7 +53,7 @@ export function CategoryPopularPartsTable({
                       </Link>
                     </td>
                     <td>{row.manufacturer}</td>
-                    <td>{row.category}</td>
+                    <td>{resolveSeoCategoryLabel(row.category, locale, categoryFallback)}</td>
                     <td>{row.keySpecs}</td>
                     <td>{row.commonUse}</td>
                     <td>

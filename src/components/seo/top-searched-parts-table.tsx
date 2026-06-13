@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
 import { UIBadge } from '@/components/ui/ui-badge'
-import { formatCategoryLabelForDisplay } from '@/lib/category-display'
+import { resolveSeoCategoryLabel } from '@/lib/category-locale-label'
 import type { AppLocale } from '@/i18n/routing'
 import { cn } from '@/lib/cn'
 import { partImageForMpn } from '@/lib/part-images'
@@ -77,10 +77,7 @@ function TopSearchedPartRow({
   const partHref = item.href?.trim() || '#'
   const showCategoryColumns = variant === 'category'
   const placeholder = isPlaceholderPart(item)
-  const categoryLabel = formatCategoryLabelForDisplay(item.category, {
-    locale,
-    fallback: categoryFallback,
-  }) || '—'
+  const categoryLabel = resolveSeoCategoryLabel(item.category, locale, categoryFallback) || '—'
 
   return (
     <tr className={cn('seo-top-parts__row', placeholder && 'seo-top-parts__row--placeholder')}>

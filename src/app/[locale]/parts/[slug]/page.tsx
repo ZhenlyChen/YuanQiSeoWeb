@@ -98,7 +98,7 @@ export default async function PartPage({ params, searchParams }: PageProps) {
         faq={page.faq}
         locale={locale}
         includeFaqJsonLd={false}
-        product={productJsonLdFromPublicPage(apiPage)}
+        product={productJsonLdFromPublicPage(apiPage, locale)}
         showPreviewBanner={Boolean(sp.preview)}
         pageContext={{ slug: page.slug, mpn: page.mpn, kind: 'part' }}
       >

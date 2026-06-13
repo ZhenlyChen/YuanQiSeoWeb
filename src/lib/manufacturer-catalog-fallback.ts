@@ -1,9 +1,9 @@
 import type { AppLocale } from '@/i18n/routing'
 import {
-  normalizeManufacturerCatalogLabel,
   rollupManufacturerCatalogCategories,
 } from '@/lib/manufacturer-catalog-labels'
-import { containsCJK, prefersLatinCategoryLabels } from '@/lib/category-display'
+import { prefersLatinCategoryLabels } from '@/lib/category-display'
+import { resolveSeoCategoryLabel } from '@/lib/category-locale-label'
 import {
   fetchManufacturerProductCategories,
   type ManufacturerProductCategory,
@@ -105,16 +105,8 @@ export function catalogCategoryDisplayLabel(
   category: ManufacturerCatalogCategory,
   locale: AppLocale,
 ): string {
-  const normalized = normalizeManufacturerCatalogLabel(
-    category.categoryL2
-      ? `${category.categoryL1 || ''},${category.categoryL2}`
-      : category.categoryL1 || category.label,
-    locale,
-  )
-  const label = normalized.label || category.label
-  if (prefersLatinCategoryLabels(locale) && containsCJK(label)) {
-    const l1 = normalized.categoryL1?.trim()
-    if (l1 && !containsCJK(l1)) return l1
-  }
-  return label
+  const raw = category.categoryL2
+    ? `${category.categoryL1 || ''},${category.categoryL2}`
+    : category.categoryL1 || category.label
+  return resolveSeoCategoryLabel(raw, locale, category.label)
 }
