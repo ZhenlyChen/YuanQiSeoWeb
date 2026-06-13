@@ -70,7 +70,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <>
-      <NextIntlClientProvider messages={messages}>
+      <NextIntlClientProvider locale={locale} messages={messages}>
         {children}
       </NextIntlClientProvider>
       <OrganizationJsonLd locale={locale as AppLocale} />

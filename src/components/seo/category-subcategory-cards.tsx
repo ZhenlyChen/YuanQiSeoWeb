@@ -15,10 +15,12 @@ export function CategorySubcategoryCards({
     <section className="seo-page-section seo-page-section-anchor seo-cat-subcat-section">
       <h2 className="seo-card__title">{title}</h2>
       <div className="seo-cat-subcat-grid">
-        {cards.map((card) => (
+        {cards.map((card) => {
+          const href = card.href?.trim() || (card.slug ? `#${card.slug}` : '#')
+          return (
           <Link
             key={card.slug}
-            href={card.href}
+            href={href}
             className="seo-cat-subcat-card"
           >
             <span
@@ -37,7 +39,8 @@ export function CategorySubcategoryCards({
             <span className="seo-cat-subcat-card__title">{card.name}</span>
             <span className="seo-cat-subcat-card__detail">{card.description}</span>
           </Link>
-        ))}
+          )
+        })}
       </div>
     </section>
   )

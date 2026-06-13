@@ -33,6 +33,27 @@ export function normalizeCategorySubcategoryItems(
   }))
 }
 
+/** SEO page content_json may ship slug/name/description without href — always normalize before render. */
+export function ensureCategorySubcategoryHrefs(
+  l1Slug: string,
+  items: CategorySubcategoryCard[],
+): CategorySubcategoryCard[] {
+  return items.map((item) => {
+    const slug = item.slug?.trim()
+    const href = item.href?.trim()
+      || (slug ? `/categories/${l1Slug}/${slug}` : '')
+    return {
+      ...item,
+      href,
+      iconId: (item.iconId || 'passives') as CategoryIconId,
+      iconUrl: resolveCategoryIconUrl(
+        slug ? `${l1Slug}-${slug}` : l1Slug,
+        item.iconUrl || (slug ? subcategoryIconPath(l1Slug, slug) : undefined),
+      ),
+    }
+  })
+}
+
 const TEMPLATE_SUBCATEGORY_DESCRIPTION =
   /Browse .+ components, subcategories, and selection intelligence\./i
 
@@ -55,12 +76,18 @@ export async function enrichCategoryHubSubcategories(
   }
 
   if (hasEnrichedSubcategoryCopy(page)) {
-    return page
+    return {
+      ...page,
+      subcategories: ensureCategorySubcategoryHrefs(page.l1Slug, page.subcategories),
+    }
   }
 
   const apiPage = await fetchCategorySubcategories(page.l1Slug, { locale })
   if (!apiPage?.items?.length) {
-    return page
+    return {
+      ...page,
+      subcategories: ensureCategorySubcategoryHrefs(page.l1Slug, page.subcategories),
+    }
   }
 
   const subcategories = normalizeCategorySubcategoryItems(page.l1Slug, apiPage.items)
