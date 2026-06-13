@@ -1,11 +1,20 @@
 import type { AppLocale } from '@/i18n/routing'
-import { formatCategoryLabel } from '@/lib/category-display'
+import {
+  formatCategoryLabel,
+  formatCategoryLabelForDisplay,
+  prefersLatinCategoryLabels,
+} from '@/lib/category-display'
 import { MIN_CATEGORY_HOT_PARTS, countCategoryHotParts } from '@/lib/category-hot-parts'
 import { slugFromEntityKey } from '@/lib/manufacturer-most-searched-fallback'
 import { fetchCategoryProductItems } from '@/lib/seo-api'
-import type { CategoryHubPage, TopSearchedPartItem } from '@/types/seo-intelligence'
+import type {
+  CategoryHubPage,
+  CategoryPopularPartRow,
+  TopSearchedPartItem,
+} from '@/types/seo-intelligence'
 
 const MOST_SEARCHED_PARTS_LIMIT = 12
+const CATALOG_FETCH_SIZE = 50
 const KEY_SPECS_MAX_LEN = 160
 
 function firstNonEmpty(...values: unknown[]): string {
@@ -33,13 +42,69 @@ function resolveManufacturerName(item: Record<string, unknown>): string {
   )
 }
 
-function resolveCategoryLabel(item: Record<string, unknown>): string {
+export function resolveCategoryLabelFromCatalogItem(
+  item: Record<string, unknown>,
+  locale: AppLocale,
+  fallback = '',
+): string {
   const categoryRaw = firstNonEmpty(item.category_str, item.category)
-  return formatCategoryLabel(categoryRaw || item.category) || 'Component'
+  return (
+    formatCategoryLabel(categoryRaw || item.category, { locale, fallback })
+    || formatCategoryLabelForDisplay(firstNonEmpty(item.category), { locale, fallback })
+    || fallback
+    || 'Component'
+  )
+}
+
+function categoryHubCategoryFallback(page: CategoryHubPage): string {
+  return page.name.trim()
+}
+
+function buildCatalogCategoryLabels(
+  items: Array<Record<string, unknown>>,
+  locale: AppLocale,
+  fallback: string,
+): Map<string, string> {
+  const labels = new Map<string, string>()
+  for (const item of items) {
+    const mpn = firstNonEmpty(item.code, item.mpn).toLowerCase()
+    if (!mpn) continue
+    const label = resolveCategoryLabelFromCatalogItem(item, locale, fallback)
+    if (label) labels.set(mpn, label)
+  }
+  return labels
+}
+
+function patchPopularPartCategory(
+  row: CategoryPopularPartRow,
+  locale: AppLocale,
+  labels: Map<string, string>,
+  fallback: string,
+): CategoryPopularPartRow {
+  const mpnKey = row.mpn.trim().toLowerCase()
+  const category = labels.get(mpnKey)
+    || formatCategoryLabelForDisplay(row.category, { locale, fallback })
+    || row.category
+  return category === row.category ? row : { ...row, category }
+}
+
+function patchMostSearchedPartCategory(
+  part: TopSearchedPartItem,
+  locale: AppLocale,
+  labels: Map<string, string>,
+  fallback: string,
+): TopSearchedPartItem {
+  const mpnKey = part.mpn.trim().toLowerCase()
+  const category = labels.get(mpnKey)
+    || formatCategoryLabelForDisplay(part.category, { locale, fallback })
+    || part.category
+  return category === part.category ? part : { ...part, category }
 }
 
 export function mapCategoryProductItemsToMostSearchedParts(
   items: Array<Record<string, unknown>>,
+  locale: AppLocale,
+  fallback = '',
 ): TopSearchedPartItem[] {
   const out: TopSearchedPartItem[] = []
 
@@ -55,7 +120,7 @@ export function mapCategoryProductItemsToMostSearchedParts(
     out.push({
       mpn,
       href: `/parts/${slugFromEntityKey(mpn, manufacturerId)}`,
-      category: resolveCategoryLabel(item),
+      category: resolveCategoryLabelFromCatalogItem(item, locale, fallback),
       manufacturer: resolveManufacturerName(item),
       keySpecs: summary ? summary.slice(0, KEY_SPECS_MAX_LEN) : undefined,
       interest,
@@ -76,43 +141,63 @@ function resolveCategoryTaxonomyLabels(page: CategoryHubPage): { categoryL1: str
 }
 
 /**
- * SSR fallback when category hub has empty popular/most-searched parts but ES has catalog samples.
- * Data source: GET component/category/products (code.keyword asc) - catalog samples, not PG demand scores.
+ * Backfills sparse hot parts and normalizes category labels from ES catalog paths.
+ * On en/de locales, rewrites CJK L3 aliases to the nearest Latin taxonomy segment.
  */
 export async function enrichCategoryMostSearchedParts(
   page: CategoryHubPage,
   locale: AppLocale,
 ): Promise<CategoryHubPage> {
-  if (countCategoryHotParts(page) >= MIN_CATEGORY_HOT_PARTS) return page
-
   const { categoryL1, categoryL2 } = resolveCategoryTaxonomyLabels(page)
   if (!categoryL1) return page
+
+  const needsBackfill = countCategoryHotParts(page) < MIN_CATEGORY_HOT_PARTS
+  const needsLabelPatch = prefersLatinCategoryLabels(locale)
+  if (!needsBackfill && !needsLabelPatch) return page
 
   try {
     const items = await fetchCategoryProductItems({
       categoryL1,
       categoryL2,
-      pageSize: MOST_SEARCHED_PARTS_LIMIT,
+      pageSize: needsLabelPatch ? CATALOG_FETCH_SIZE : MOST_SEARCHED_PARTS_LIMIT,
       locale,
     })
-    const catalogParts = mapCategoryProductItemsToMostSearchedParts(items)
-    if (!catalogParts.length) return page
+    const fallback = categoryHubCategoryFallback(page)
+    const labels = buildCatalogCategoryLabels(items, locale, fallback)
+
+    let nextPage = page
+    if (needsLabelPatch && labels.size > 0) {
+      nextPage = {
+        ...nextPage,
+        popularParts: nextPage.popularParts.map((row) =>
+          patchPopularPartCategory(row, locale, labels, fallback),
+        ),
+        mostSearchedParts: nextPage.mostSearchedParts.map((part) =>
+          patchMostSearchedPartCategory(part, locale, labels, fallback),
+        ),
+      }
+    }
+
+    if (!needsBackfill) return nextPage
+
+    const catalogParts = mapCategoryProductItemsToMostSearchedParts(items, locale, fallback)
+    if (!catalogParts.length) return nextPage
 
     const seen = new Set<string>()
-    for (const row of page.popularParts) {
+    for (const row of nextPage.popularParts) {
       const mpn = row.mpn?.trim().toLowerCase()
       if (mpn) seen.add(mpn)
     }
-    for (const part of page.mostSearchedParts) {
+    for (const part of nextPage.mostSearchedParts) {
       const mpn = part.mpn?.trim().toLowerCase()
       if (mpn) seen.add(mpn)
     }
     const merged = [
-      ...page.mostSearchedParts,
+      ...nextPage.mostSearchedParts,
       ...catalogParts.filter((part) => !seen.has(part.mpn.trim().toLowerCase())),
     ].slice(0, MOST_SEARCHED_PARTS_LIMIT)
 
-    return { ...page, mostSearchedParts: merged }
+    return { ...nextPage, mostSearchedParts: merged }
   } catch (error) {
     console.error('[enrichCategoryMostSearchedParts]', {
       slug: page.slug,

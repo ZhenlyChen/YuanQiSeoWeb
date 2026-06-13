@@ -1,5 +1,5 @@
 import type { AppLocale } from '@/i18n/routing'
-import { formatCategoryLabel } from '@/lib/category-display'
+import { formatCategoryLabel, formatCategoryLabelForDisplay } from '@/lib/category-display'
 import { fetchManufacturerProductItems } from '@/lib/seo-api'
 import type {
   ManufacturerIntelligencePage,
@@ -34,9 +34,9 @@ function firstNonEmpty(...values: unknown[]): string {
   return ''
 }
 
-function resolveCategoryLabel(item: Record<string, unknown>): string {
+function resolveCategoryLabel(item: Record<string, unknown>, locale?: AppLocale): string {
   const categoryRaw = firstNonEmpty(item.category_str, item.category)
-  return formatCategoryLabel(categoryRaw || item.category) || 'Component'
+  return formatCategoryLabel(categoryRaw || item.category, { locale }) || 'Component'
 }
 
 function readManufacturerInfo(item: Record<string, unknown>): Record<string, unknown> | null {
@@ -52,9 +52,9 @@ function readManufacturerInfo(item: Record<string, unknown>): Record<string, unk
  */
 export function mapManufacturerProductItemsToMostSearchedParts(
   items: Array<Record<string, unknown>>,
-  options: { manufacturerName: string; manufacturerId: string },
+  options: { manufacturerName: string; manufacturerId: string; locale?: AppLocale },
 ): TopSearchedPartItem[] {
-  const { manufacturerName, manufacturerId } = options
+  const { manufacturerName, manufacturerId, locale } = options
   const out: TopSearchedPartItem[] = []
 
   for (const [idx, item] of items.slice(0, MOST_SEARCHED_PARTS_LIMIT).entries()) {
@@ -74,7 +74,7 @@ export function mapManufacturerProductItemsToMostSearchedParts(
     out.push({
       mpn,
       href: `/parts/${slugFromEntityKey(mpn, partManufacturerId)}`,
-      category: resolveCategoryLabel(item),
+      category: resolveCategoryLabel(item, locale),
       manufacturer: manufacturerName,
       keySpecs: summary ? summary.slice(0, KEY_SPECS_MAX_LEN) : undefined,
       interest,
@@ -107,6 +107,7 @@ export async function enrichManufacturerMostSearchedParts(
     const mostSearchedParts = mapManufacturerProductItemsToMostSearchedParts(items, {
       manufacturerName: page.name,
       manufacturerId,
+      locale,
     })
     if (!mostSearchedParts.length) return page
 

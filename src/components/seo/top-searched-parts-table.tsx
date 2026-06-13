@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { AlternativesGateModal } from '@/components/seo/alternatives-gate-modal'
 import { useSeoNavUser } from '@/components/seo/use-seo-nav-user'
 import { UIBadge } from '@/components/ui/ui-badge'
-import { formatCategoryLabel } from '@/lib/category-display'
+import { formatCategoryLabelForDisplay } from '@/lib/category-display'
+import type { AppLocale } from '@/i18n/routing'
 import { cn } from '@/lib/cn'
 import { partImageForMpn } from '@/lib/part-images'
 import { SEO_PUBLIC_BOUNDARY, buildCategoryTopPartsGateStats, buildGeneralGateStats } from '@/lib/seo-copy'
@@ -62,16 +63,24 @@ function TopSearchedPartRow({
   rank,
   variant,
   showDemandScores,
+  locale,
+  categoryFallback,
 }: {
   item: TopSearchedPartItem
   rank: number
   variant: 'default' | 'category'
   showDemandScores?: boolean
+  locale?: AppLocale
+  categoryFallback?: string
 }) {
   const imageSrc = item.imageUrl?.trim() || partImageForMpn(item.mpn)
   const partHref = item.href?.trim() || '#'
   const showCategoryColumns = variant === 'category'
   const placeholder = isPlaceholderPart(item)
+  const categoryLabel = formatCategoryLabelForDisplay(item.category, {
+    locale,
+    fallback: categoryFallback,
+  }) || '—'
 
   return (
     <tr className={cn('seo-top-parts__row', placeholder && 'seo-top-parts__row--placeholder')}>
@@ -99,7 +108,7 @@ function TopSearchedPartRow({
         )}
       </td>
       {showCategoryColumns ? (
-        <td className="seo-top-parts__category">{placeholder ? '\u00a0' : (formatCategoryLabel(item.category) || '—')}</td>
+        <td className="seo-top-parts__category">{placeholder ? '\u00a0' : categoryLabel}</td>
       ) : null}
       {showDemandScores ? (
         <td
@@ -110,7 +119,7 @@ function TopSearchedPartRow({
         </td>
       ) : null}
       {variant !== 'category' ? (
-        <td className="seo-top-parts__category">{placeholder ? '\u00a0' : (formatCategoryLabel(item.category) || '—')}</td>
+        <td className="seo-top-parts__category">{placeholder ? '\u00a0' : categoryLabel}</td>
       ) : null}
     </tr>
   )
@@ -121,11 +130,15 @@ function TopSearchedPartsTableBody({
   startRank = 1,
   variant,
   showDemandScores,
+  locale,
+  categoryFallback,
 }: {
   items: TopSearchedPartItem[]
   startRank?: number
   variant: 'default' | 'category'
   showDemandScores?: boolean
+  locale?: AppLocale
+  categoryFallback?: string
 }) {
   return (
     <>
@@ -136,6 +149,8 @@ function TopSearchedPartsTableBody({
           rank={startRank + index}
           variant={variant}
           showDemandScores={showDemandScores}
+          locale={locale}
+          categoryFallback={categoryFallback}
         />
       ))}
     </>
@@ -154,6 +169,8 @@ export function TopSearchedPartsTable({
   gateTitle,
   gateDescription,
   showDemandScores = false,
+  locale,
+  categoryFallback,
 }: {
   title?: string
   slug: string
@@ -167,6 +184,8 @@ export function TopSearchedPartsTable({
   gateDescription?: string
   /** Preview-only: show internal demand score column. */
   showDemandScores?: boolean
+  locale?: AppLocale
+  categoryFallback?: string
 }) {
   const { isLoggedIn, isReady } = useSeoNavUser()
   const showGated = !isReady || !isLoggedIn
@@ -236,7 +255,13 @@ export function TopSearchedPartsTable({
             <table className="seo-top-parts__table">
               {tableHead}
               <tbody>
-                <TopSearchedPartsTableBody items={preview} variant={variant} showDemandScores={showDemandScores} />
+                <TopSearchedPartsTableBody
+                  items={preview}
+                  variant={variant}
+                  showDemandScores={showDemandScores}
+                  locale={locale}
+                  categoryFallback={categoryFallback}
+                />
               </tbody>
             </table>
             <div className="seo-top-parts-gated-locked">
@@ -248,6 +273,8 @@ export function TopSearchedPartsTable({
                       startRank={FREE_VISIBLE + 1}
                       variant={variant}
                       showDemandScores={showDemandScores}
+                      locale={locale}
+                      categoryFallback={categoryFallback}
                     />
                   </tbody>
                 </table>
@@ -274,6 +301,8 @@ export function TopSearchedPartsTable({
                 items={padParts(ranked, MAX_VISIBLE)}
                 variant={variant}
                 showDemandScores={showDemandScores}
+                locale={locale}
+                categoryFallback={categoryFallback}
               />
             </tbody>
           </table>

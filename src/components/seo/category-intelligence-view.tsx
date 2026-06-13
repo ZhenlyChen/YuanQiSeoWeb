@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { DesignRiskGrid } from '@/components/seo/design-risk-grid'
 import { CategoryHeroBanner } from '@/components/seo/category-hero-banner'
 import { CategoryChoiceCards } from '@/components/seo/category-choice-cards'
@@ -17,6 +17,7 @@ import { buildCategorySectionNavItems } from '@/lib/category-section-nav-items'
 import { buildRelatedL1CategoryLinks } from '@/lib/category-taxonomy'
 import { resolveCategoryHotParts } from '@/lib/category-hot-parts'
 import { buildCategoryToolGrid } from '@/lib/category-tool-links'
+import type { AppLocale } from '@/i18n/routing'
 import type { CategoryHubPage } from '@/types/seo-intelligence'
 import Link from 'next/link'
 
@@ -76,6 +77,7 @@ function CategoryManufacturersSection({
 
 export function CategoryIntelligenceView({ page }: { page: CategoryHubPage }) {
   const t = useTranslations('categories')
+  const locale = useLocale() as AppLocale
 
   const chooseTitle = t('hub.howToChooseTitle', { categoryName: page.name })
   const subcatTitle = page.subcategoriesSectionTitle
@@ -121,6 +123,8 @@ export function CategoryIntelligenceView({ page }: { page: CategoryHubPage }) {
                     title={partsTitle}
                     items={resolveCategoryHotParts(page)}
                     variant="category"
+                    locale={locale}
+                    categoryFallback={page.name}
                   />
                 </div>
               </div>
