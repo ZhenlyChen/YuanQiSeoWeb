@@ -1,4 +1,4 @@
-import { getHelpCenterPages, MARKETING_ORIGIN, MARKETING_PAGES, MARKETING_TOOL_PAGES } from '@/lib/tool-urls'
+import { getHelpCenterPages, MARKETING_ORIGIN, MARKETING_PAGES, MARKETING_TOOL_PAGES, NAV_COMPARE_PAGES } from '@/lib/tool-urls'
 import type { AppLocale } from '@/i18n/routing'
 import { localizePath } from '@/lib/localized-path'
 
@@ -110,9 +110,9 @@ export function buildFooterColumns(labels: FooterLabels, locale: AppLocale = 'en
     {
       title: labels.compare,
       links: [
-        { label: labels.vsOctopart, href: localizePath('/partgenie-vs-octopart', locale) },
-        { label: labels.vsFindchips, href: localizePath('/partgenie-vs-findchips', locale) },
-        { label: labels.vsAlldatasheet, href: localizePath('/partgenie-vs-alldatasheet', locale) },
+        { label: labels.vsOctopart, href: NAV_COMPARE_PAGES.vsOctopart },
+        { label: labels.vsFindchips, href: NAV_COMPARE_PAGES.vsFindchips },
+        { label: labels.vsAlldatasheet, href: NAV_COMPARE_PAGES.vsAlldatasheet },
       ],
     },
     {
