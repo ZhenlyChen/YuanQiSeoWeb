@@ -137,9 +137,14 @@ export async function resolveDiscoverInsightSlug(
     if (!item) return null
     return { kind: 'item', item }
   }
-  return getJson<ResolveInsightSlugResult>(
+  const resolved = await getJson<ResolveInsightSlugResult>(
     `discover/items/resolve-slug/${encodeURIComponent(slug)}`,
   )
+  if (resolved) return resolved
+  // Back-compat: prod Service may lag SEOWeb release and only expose by-slug.
+  const item = await fetchDiscoverItemBySlug(slug)
+  if (!item) return null
+  return { kind: 'item', item }
 }
 
 export async function fetchInsightSlugs(maxPages = 5): Promise<string[]> {
