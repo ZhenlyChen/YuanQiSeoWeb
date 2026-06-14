@@ -121,6 +121,27 @@ export function fetchDiscoverItemBySlug(slug: string, options?: { previewToken?:
   return getJson<PublicDiscoverItemDetail>(`discover/items/by-slug/${encodeURIComponent(slug)}`)
 }
 
+export type ResolveInsightSlugResult = {
+  kind: 'item' | 'redirect'
+  item?: PublicDiscoverItemDetail
+  slug?: string
+  permanent?: boolean
+}
+
+export async function resolveDiscoverInsightSlug(
+  slug: string,
+  options?: { previewToken?: string },
+): Promise<ResolveInsightSlugResult | null> {
+  if (options?.previewToken) {
+    const item = await fetchDiscoverItemBySlug(slug, { previewToken: options.previewToken })
+    if (!item) return null
+    return { kind: 'item', item }
+  }
+  return getJson<ResolveInsightSlugResult>(
+    `discover/items/resolve-slug/${encodeURIComponent(slug)}`,
+  )
+}
+
 export async function fetchInsightSlugs(maxPages = 5): Promise<string[]> {
   const slugs = new Set<string>()
   let cursor: string | undefined

@@ -7,7 +7,8 @@ import { DiscoverPublishedAt } from '@/components/discover/DiscoverPublishedAt'
 import { DiscoverSourceLabel } from '@/components/discover/DiscoverSourceLabel'
 import { InsightBody } from '@/components/insights/InsightBody'
 import { SeoPageShell } from '@/components/seo/seo-page-shell'
-import { fetchDiscoverFeed, fetchDiscoverItemBySlug } from '@/lib/discover-api'
+import { fetchDiscoverFeed } from '@/lib/discover-api'
+import { loadPublishedInsight, loadInsightForMetadata } from '@/lib/insight-page-loader'
 import { InsightDiscoverMore } from '@/components/insights/InsightDiscoverMore'
 import { formatDiscoverCategoryLabel } from '@/lib/discover-label'
 import { localizePath } from '@/lib/localized-path'
@@ -23,15 +24,16 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const { locale: localeParam, slug } = await params
   const locale = parseAppLocale(localeParam)
   const sp = await searchParams
-  const item = await fetchDiscoverItemBySlug(slug, { previewToken: sp.preview })
+  const item = await loadInsightForMetadata(slug, sp.preview)
   if (!item) {
     return { title: 'Insight | PartGenie', robots: { index: false, follow: false } }
   }
+  const canonicalSlug = item.insightSlug?.trim() || slug
   return buildPageMetadataFromApi({
     title: item.headline,
     description: item.summary,
-    canonicalPath: `/${locale}/insights/${slug}`,
-    slug,
+    canonicalPath: `/${locale}/insights/${canonicalSlug}`,
+    slug: canonicalSlug,
     locale,
     robots: resolvePreviewRobots(sp.preview),
   })
@@ -42,14 +44,13 @@ export default async function InsightDetailPage({ params, searchParams }: PagePr
   const locale = parseAppLocale(localeParam)
   const sp = await searchParams
   const t = await getTranslations({ locale, namespace: 'insights' })
-  const [item, feedResult] = await Promise.all([
-    fetchDiscoverItemBySlug(slug, { previewToken: sp.preview }),
-    fetchDiscoverFeed(),
-  ])
-  if (!item) notFound()
+  const feedResult = await fetchDiscoverFeed()
+  const loaded = await loadPublishedInsight(slug, locale, sp.preview)
+  if (!loaded) notFound()
+  const { item, canonicalSlug } = loaded
 
   const discoverMoreItems = (feedResult?.items ?? []).filter(
-    (entry) => entry.industry?.insightSlug && entry.industry.insightSlug !== slug,
+    (entry) => entry.industry?.insightSlug && entry.industry.insightSlug !== canonicalSlug,
   ).slice(0, 3)
 
   return (
@@ -62,7 +63,7 @@ export default async function InsightDetailPage({ params, searchParams }: PagePr
       locale={locale}
       showPreviewBanner={Boolean(sp.preview)}
       previewBannerMessage={sp.preview ? t('previewBanner') : undefined}
-      pageContext={{ slug, kind: 'insight' }}
+      pageContext={{ slug: canonicalSlug, kind: 'insight' }}
       hideBreadcrumbs
     >
       <article className="mx-auto max-w-3xl px-4 py-10 md:px-6">
